@@ -54,11 +54,18 @@ class User
     #[ORM\OneToMany(targetEntity: Order::class, mappedBy: 'user')]
     private Collection $purchasedOrder;
 
+    /**
+     * @var Collection<int, Game>
+     */
+    #[ORM\ManyToMany(targetEntity: Game::class, inversedBy: 'users')]
+    private Collection $userGetGame;
+
     public function __construct()
     {
         $this->selectedCategory = new ArrayCollection();
         $this->preferedTag = new ArrayCollection();
         $this->purchasedOrder = new ArrayCollection();
+        $this->userGetGame = new ArrayCollection();
     }
 
 
@@ -225,6 +232,30 @@ class User
                 $purchasedOrder->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Game>
+     */
+    public function getUserGetGame(): Collection
+    {
+        return $this->userGetGame;
+    }
+
+    public function addUserGetGame(Game $userGetGame): static
+    {
+        if (!$this->userGetGame->contains($userGetGame)) {
+            $this->userGetGame->add($userGetGame);
+        }
+
+        return $this;
+    }
+
+    public function removeUserGetGame(Game $userGetGame): static
+    {
+        $this->userGetGame->removeElement($userGetGame);
 
         return $this;
     }

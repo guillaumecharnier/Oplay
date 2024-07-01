@@ -48,12 +48,27 @@ class Game
     #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'games')]
     private Collection $hasCategory;
 
+    /**
+     * @var Collection<int, User>
+     */
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'userGetGame')]
+    private Collection $users;
+
+    /**
+     * @var Collection<int, Order>
+     */
+    #[ORM\ManyToMany(targetEntity: Order::class, inversedBy: 'games')]
+    private Collection $gameHasOrder;
+
     
+
 
     public function __construct()
     {
         $this->hasTag = new ArrayCollection();
         $this->hasCategory = new ArrayCollection();
+        $this->users = new ArrayCollection();
+        $this->gameHasOrder = new ArrayCollection();
         
         
     }
@@ -196,6 +211,56 @@ class Game
         return $this;
     }
 
+    /**
+     * @return Collection<int, User>
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUser(User $user): static
+    {
+        if (!$this->users->contains($user)) {
+            $this->users->add($user);
+            $user->addUserGetGame($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUser(User $user): static
+    {
+        if ($this->users->removeElement($user)) {
+            $user->removeUserGetGame($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Order>
+     */
+    public function getGameHasOrder(): Collection
+    {
+        return $this->gameHasOrder;
+    }
+
+    public function addGameHasOrder(Order $gameHasOrder): static
+    {
+        if (!$this->gameHasOrder->contains($gameHasOrder)) {
+            $this->gameHasOrder->add($gameHasOrder);
+        }
+
+        return $this;
+    }
+
+    public function removeGameHasOrder(Order $gameHasOrder): static
+    {
+        $this->gameHasOrder->removeElement($gameHasOrder);
+
+        return $this;
+    }
 
     
 }

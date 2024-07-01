@@ -31,15 +31,14 @@ class Order
     /**
      * @var Collection<int, Game>
      */
-    #[ORM\ManyToMany(targetEntity: Game::class, mappedBy: 'GameQuantity')]
+    #[ORM\ManyToMany(targetEntity: Game::class, mappedBy: 'gameHasOrder')]
     private Collection $games;
-
-    
 
     public function __construct()
     {
         $this->games = new ArrayCollection();
     }
+
 
     public function getId(): ?int
     {
@@ -101,5 +100,25 @@ class Order
     {
         return $this->games;
     }
+
+    public function addGame(Game $game): static
+    {
+        if (!$this->games->contains($game)) {
+            $this->games->add($game);
+            $game->addGameHasOrder($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGame(Game $game): static
+    {
+        if ($this->games->removeElement($game)) {
+            $game->removeGameHasOrder($this);
+        }
+
+        return $this;
+    }
+
 
 }

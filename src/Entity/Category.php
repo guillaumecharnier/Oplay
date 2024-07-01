@@ -16,7 +16,7 @@ class Category
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
-    private ?string $nname = null;
+    private ?string $name = null;
 
     /**
      * @var Collection<int, User>
@@ -41,14 +41,14 @@ class Category
         return $this->id;
     }
 
-    public function getNname(): ?string
+    public function getname(): ?string
     {
-        return $this->nname;
+        return $this->name;
     }
 
-    public function setNname(string $nname): static
+    public function setname(string $name): static
     {
-        $this->nname = $nname;
+        $this->name = $name;
 
         return $this;
     }
