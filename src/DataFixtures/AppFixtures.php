@@ -11,6 +11,7 @@ use App\Entity\Tag;
 use App\Entity\User;
 use App\Entity\Theme;
 use App\Entity\Order;
+use App\Entity\UserGameKey;
 
 class AppFixtures extends Fixture
 {
@@ -130,11 +131,19 @@ class AppFixtures extends Fixture
             $order->setCreatedAt(\DateTimeImmutable::createFromMutable($faker->dateTimeThisYear()));
            
 
-            // Add random games to the order
-            $randomGames = $faker->randomElements($games, mt_rand(1, 5));
-            foreach ($randomGames as $game) {
-                $order->addGame($game);
-            }
+             // Add random games to the order with a random key for the user
+             $randomGames = $faker->randomElements($games, mt_rand(1, 5));
+             foreach ($randomGames as $game) {
+                 $order->addGame($game);
+ 
+                 // Create UserGameKey
+                 $userGameKey = new UserGameKey();
+                 $userGameKey->setUser($order->getUser());
+                 $userGameKey->setGame($game);
+                 $userGameKey->setGameKey(bin2hex(random_bytes(16))); // Generate a random key
+                 $userGameKey->setCreatedAt(\DateTimeImmutable::createFromMutable($faker->dateTimeThisYear()));
+                 $manager->persist($userGameKey);
+             }
 
             $manager->persist($order);
         }

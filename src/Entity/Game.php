@@ -60,6 +60,21 @@ class Game
     #[ORM\ManyToMany(targetEntity: Order::class, inversedBy: 'games')]
     private Collection $gameHasOrder;
 
+    /**
+     * @var Collection<int, UserGameKey>
+     */
+    #[ORM\OneToMany(targetEntity: UserGameKey::class, mappedBy: 'game')]
+    private Collection $userGameKeys;
+
+    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'UserGameKey')]
+    private ?self $game = null;
+
+    /**
+     * @var Collection<int, self>
+     */
+    #[ORM\OneToMany(targetEntity: self::class, mappedBy: 'game')]
+    private Collection $UserGameKey;
+
     public function __construct()
     {
         $this->hasTag = new ArrayCollection();
@@ -70,6 +85,8 @@ class Game
         // Initialisation de createdAt et releaseDate avec la date et l'heure actuelles
         $this->createdAt = new \DateTimeImmutable();
         $this->releaseDate = new \DateTimeImmutable();
+        $this->userGameKeys = new ArrayCollection();
+        $this->UserGameKey = new ArrayCollection();
     }
 
 
@@ -261,6 +278,56 @@ class Game
         $this->createdAt = $createdAt;
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, UserGameKey>
+     */
+    public function getUserGameKeys(): Collection
+    {
+        return $this->userGameKeys;
+    }
+
+    public function addUserGameKey(UserGameKey $userGameKey): static
+    {
+        if (!$this->userGameKeys->contains($userGameKey)) {
+            $this->userGameKeys->add($userGameKey);
+            $userGameKey->setGame($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserGameKey(UserGameKey $userGameKey): static
+    {
+        if ($this->userGameKeys->removeElement($userGameKey)) {
+            // set the owning side to null (unless already changed)
+            if ($userGameKey->getGame() === $this) {
+                $userGameKey->setGame(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getGame(): ?self
+    {
+        return $this->game;
+    }
+
+    public function setGame(?self $game): static
+    {
+        $this->game = $game;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, self>
+     */
+    public function getUserGameKey(): Collection
+    {
+        return $this->UserGameKey;
     }
 
     

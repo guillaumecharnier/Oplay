@@ -60,12 +60,22 @@ class User
     #[ORM\ManyToMany(targetEntity: Game::class, inversedBy: 'users')]
     private Collection $userGetGame;
 
+    /**
+     * @var Collection<int, UserGameKey>
+     */
+    #[ORM\OneToMany(targetEntity: UserGameKey::class, mappedBy: 'user')]
+    private Collection $userGameKeys;
+
+    
+
     public function __construct()
     {
         $this->selectedCategory = new ArrayCollection();
         $this->preferedTag = new ArrayCollection();
         $this->purchasedOrder = new ArrayCollection();
         $this->userGetGame = new ArrayCollection();
+        $this->userGameKeys = new ArrayCollection();
+        $this->userGameKey = new ArrayCollection();
     }
 
 
@@ -260,5 +270,34 @@ class User
         return $this;
     }
 
-    
+    /**
+     * @return Collection<int, UserGameKey>
+     */
+    public function getUserGameKeys(): Collection
+    {
+        return $this->userGameKeys;
+    }
+
+    public function addUserGameKey(UserGameKey $userGameKey): static
+    {
+        if (!$this->userGameKeys->contains($userGameKey)) {
+            $this->userGameKeys->add($userGameKey);
+            $userGameKey->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserGameKey(UserGameKey $userGameKey): static
+    {
+        if ($this->userGameKeys->removeElement($userGameKey)) {
+            // set the owning side to null (unless already changed)
+            if ($userGameKey->getUser() === $this) {
+                $userGameKey->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
 }
