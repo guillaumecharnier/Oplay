@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Liste des utilisateurs</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        img {
+            max-width: 50px;
+            max-height: 50px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Liste des utilisateurs</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Prénom</th>
+                <th>Nom</th>
+                <th>Pseudo</th>
+                <th>Email</th>
+                <th>Photo</th>
+                <th>Thème choisi</th>
+                <th>Jeux associés</th>
+                <th>Catégories choisies</th>
+                <th>Tags préférés</th>
+                <th>Commandes</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+                <tr>
+                    <td>{{ user.firstname }}</td>
+                    <td>{{ user.lastname }}</td>
+                    <td>{{ user.nickname }}</td>
+                    <td>{{ user.email }}</td>
+                    <td><img src="{{ user.picture }}" alt="{{ user.nickname }}"></td>
+                    <td>{{ user.chooseTheme.name }}</td>
+                    <td>
+                        <ul>
+                            {% for game in user.userGetGame %}
+                                <li>
+                                    <strong>{{ game.name }}</strong><br>
+                                    <em>Date de sortie:</em> {{ game.releaseDate|date('d/m/Y') }}<br>
+                                    <em>Date D'ajout:</em> {{ game.createdAt|date('d/m/Y') }}<br>
+                                    <em>Prix:</em> {{ game.price }} €<br>
+                                    <em>Description:</em> {{ game.description }}<br>
+                                    <em>Éditeur:</em> {{ game.editor }}<br>
+                                    <em>Catégories:</em>
+                                    <ul>
+                                        {% for category in game.hasCategory %}
+                                            <li>{{ category.name }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                    <em>Tags:</em>
+                                    <ul>
+                                        {% for tag in game.hasTag %}
+                                            <li>{{ tag.name }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            {% for category in user.selectedCategory %}
+                                <li>{{ category.name }}</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            {% for tag in user.preferedTag %}
+                                <li>{{ tag.name }}</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            {% for order in user.purchasedOrder %}
+                                <li>
+                                    <strong>Statut:</strong> {{ order.status }}<br>
+                                    <strong>Total:</strong> {{ order.total }} €<br>
+                                    <strong>Jeux associés:</strong>
+                                    <ul>
+                                        {% for game in order.games %}
+                                            <li>{{ game.name }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

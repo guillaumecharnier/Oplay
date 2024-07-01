@@ -60,9 +60,6 @@ class Game
     #[ORM\ManyToMany(targetEntity: Order::class, inversedBy: 'games')]
     private Collection $gameHasOrder;
 
-    
-
-
     public function __construct()
     {
         $this->hasTag = new ArrayCollection();
@@ -70,8 +67,11 @@ class Game
         $this->users = new ArrayCollection();
         $this->gameHasOrder = new ArrayCollection();
         
-        
+        // Initialisation de createdAt et releaseDate avec la date et l'heure actuelles
+        $this->createdAt = new \DateTimeImmutable();
+        $this->releaseDate = new \DateTimeImmutable();
     }
+
 
    
     public function getId(): ?int
@@ -103,18 +103,7 @@ class Game
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
-    {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(\DateTimeImmutable $createdAt): static
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
+    
     public function getPicture(): ?string
     {
         return $this->picture;
@@ -258,6 +247,18 @@ class Game
     public function removeGameHasOrder(Order $gameHasOrder): static
     {
         $this->gameHasOrder->removeElement($gameHasOrder);
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(?\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
 
         return $this;
     }
