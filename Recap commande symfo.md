@@ -172,8 +172,3 @@ Cette logique sera appliquée en utilisant les fonctions suivantes
 - `isGranted`
 - et `is_granted` dans `twig`
 
-
-# Sérialisation 
-
-# installer le composant de sérialization
-composer require symfony/serializer-pack
