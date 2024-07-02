@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\GameRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: GameRepository::class)]
@@ -13,27 +14,59 @@ class Game
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups([
+        'game_browse',
+        'game_show'
+    ])]
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
+    #[Groups([
+        'game_browse',
+        'game_show'
+    ])]
     private ?string $name = null;
 
     #[ORM\Column]
+    #[Groups([
+        'game_browse',
+        'game_show'
+    ])]
     private ?\DateTimeImmutable $releaseDate = null;
 
     #[ORM\Column]
+    #[Groups([
+        'game_browse',
+        'game_show'
+    ])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups([
+        'game_browse',
+        'game_show'
+    ])]
     private ?string $picture = null;
 
     #[ORM\Column]
+    #[Groups([
+        'game_browse',
+        'game_show'
+    ])]
     private ?float $price = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups([
+        'game_browse',
+        'game_show'
+    ])]
     private ?string $description = null;
 
     #[ORM\Column(length: 50)]
+    #[Groups([
+        'game_browse',
+        'game_show'
+    ])]
     private ?string $editor = null;
 
     /**

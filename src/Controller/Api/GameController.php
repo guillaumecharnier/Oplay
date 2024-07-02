@@ -7,55 +7,35 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
+
+#[Route('/api/game', name: 'app_api_game')]
 class GameController extends AbstractController
 {
-    #[Route('/game', name: 'app_games_index', methods: ['GET'])]
+    #[Route('/browse', name: 'browse', methods: ['GET'])]
     public function games(GameRepository $gameRepository): Response
     {
-        $games = $gameRepository->findAll();
-
-        // Transform the game into an array
-        $gameData = [];
-        foreach ($games as $game) {
-            $gameData[] = [
-                'id' => $game->getId(),
-                'name' => $game->getName(),
-                'release_date' => $game->getReleaseDate(),
-                'created_at' => $game->getCreatedAt(),
-                'picture' => $game->getPicture(),
-                'description' => $game->getDescription(),
-                'editor' => $game->getEditor(),
-            ];
-        }
-
+        $allGames = $gameRepository->findAll();
         // Return the data in JSON
-        return $this->json([
-            'games' => $gameData,
-        ]);
+        return $this->json($allGames, 200, [], ["groups" => "game_browse"]);
     }
 
-    #[Route('/game/{id}', name: 'app_game_index', methods: ['GET'])]
+    #[Route('/{id}/show', name: 'show', methods: ['GET'])]
     public function game(int $id, GameRepository $gameRepository): Response
     {
         $game = $gameRepository->find($id);
-        if (!$game) {
-            throw $this->createNotFoundException('Game not found');
-        }
-
-        // Transform the game into an array
-            $gameData[] = [
-                'id' => $game->getId(),
-                'name' => $game->getName(),
-                'release_date' => $game->getReleaseDate(),
-                'created_at' => $game->getCreatedAt(),
-                'picture' => $game->getPicture(),
-                'description' => $game->getDescription(),
-                'editor' => $game->getEditor(),
-            ];
                    // Return the data in JSON
-        return $this->json([
-            'game' => $gameData,
-        ]);
+                    if (is_null($game)) {
+                    $info = [
+                        'success' => false,
+                        'error_message' => 'Game non trouvée',
+                        'error_code' => 'Game_not_found',
+                    ];
+                    return $this->json($info, Response::HTTP_NOT_FOUND);
+                }
+        
+                // Traiter le cas où la catégorie est trouvée
+                // Par exemple, retourner les données de la catégorie
+                return $this->json($game, Response::HTTP_OK, [], ['groups' => 'game_show']);
         }
     }
     
