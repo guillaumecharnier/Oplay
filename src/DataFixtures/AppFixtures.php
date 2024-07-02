@@ -142,7 +142,7 @@ class AppFixtures extends Fixture
 
             // Create the order
             $order = new Order();
-
+            $order->setStatus($faker->randomElement(['pending', 'validated'])); // Randomly assign status
             $order->setUser($user);
             $order->setCreatedAt(\DateTimeImmutable::createFromMutable($faker->dateTimeThisYear()));
 
