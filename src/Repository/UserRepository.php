@@ -16,6 +16,15 @@ class UserRepository extends ServiceEntityRepository
         parent::__construct($registry, User::class);
     }
 
+    public function findAllWithThemes(): array
+    {
+        return $this->createQueryBuilder('u')
+            ->leftJoin('u.chooseTheme', 't')
+            ->addSelect('t') // Sélectionne le thème associé
+            ->getQuery()
+            ->getResult();
+    }
+
     //    /**
     //     * @return User[] Returns an array of User objects
     //     */
