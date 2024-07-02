@@ -118,9 +118,9 @@
                     </td>
                     <td>
                         <ul>
-                            {% for validateOrder in validateOrders %}
-                                {% if validateOrder.orders.contains(user.purchasedOrder) %}
+                            {% for validateOrder in validateOrders %}   
                                     <li>
+                                        <strong>ID:</strong> {{ validateOrder.id }}<br>
                                         <strong>Quantité:</strong> {{ validateOrder.quantity }}<br>
                                         <strong>Prix Total:</strong> {{ validateOrder.totalPrice }} €<br>
                                         <strong>Jeux:</strong>
@@ -130,10 +130,10 @@
                                             {% endfor %}
                                         </ul>
                                     </li>
-                                {% endif %}
                             {% endfor %}
                         </ul>
                     </td>
+
                 </tr>
             {% endfor %}
         </tbody>
