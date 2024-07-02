@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
@@ -13,27 +14,55 @@ class User
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups([
+        'user_browse',
+        'user_show'
+    ])]
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
+    #[Groups([
+        'user_browse',
+        'user_show'
+    ])]
     private ?string $firstname = null;
 
     #[ORM\Column(length: 50)]
+    #[Groups([
+        'user_browse',
+        'user_show'
+    ])]
     private ?string $lastname = null;
 
     #[ORM\Column(length: 50)]
+    #[Groups([
+        'user_browse',
+        'user_show'
+    ])]
     private ?string $nickname = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups([
+        'user_browse',
+        'user_show'
+    ])]
     private ?string $picture = null;
 
     #[ORM\Column(length: 100)]
+    #[Groups([
+        'user_browse',
+        'user_show'
+    ])]
     private ?string $email = null;
 
     #[ORM\Column(length: 100)]
     private ?string $password = null;
 
     #[ORM\ManyToOne(inversedBy: 'users')]
+    #[Groups([
+        'user_browse',
+        'user_show'
+    ])]
     private ?Theme $chooseTheme = null;
 
     /**
@@ -66,7 +95,6 @@ class User
     #[ORM\OneToMany(targetEntity: UserGameKey::class, mappedBy: 'user')]
     private Collection $userGameKeys;
 
-    
 
     public function __construct()
     {
