@@ -10,6 +10,35 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class UserController extends AbstractController
 {
+    #[Route('/user', name: 'app_users_index', methods: ['GET'])]
+    public function users(UserRepository $userRepository,ValidateOrderRepository $validateOrderRepository): Response
+    {
+        $users = $userRepository->findAll();
+
+        $validateOrders = $validateOrderRepository->findAll();
+        // Transform the user into an array
+        $userData = [];
+        foreach ($users as $user) {
+            $chooseThemeId = $user->getChooseTheme() ? $user->getChooseTheme()->getId() : null;
+            $userData[] = [
+                'id' => $user->getId(),
+                'choose_theme_id' => $chooseThemeId,
+                'firstname' => $user->getFirstname(),
+                'lastname' => $user->getLastname(),
+                'nickname' => $user->getNickname(),
+                'picture' => $user->getPicture(),
+                'email' => $user->getEmail(),
+            ];
+        }
+
+        // Return the data in JSON
+        return $this->json([
+            'user' => $userData,
+            'validateOrders' => $validateOrders,
+        ]);
+    }
+
+
     #[Route('/user/{id}', name: 'app_user_index', methods: ['GET'])]
     public function user(int $id, UserRepository $userRepository, ValidateOrderRepository $validateOrderRepository): Response
     {
