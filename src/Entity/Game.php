@@ -66,14 +66,15 @@ class Game
     #[ORM\OneToMany(targetEntity: UserGameKey::class, mappedBy: 'game')]
     private Collection $userGameKeys;
 
-    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'UserGameKey')]
-    private ?self $game = null;
-
     /**
-     * @var Collection<int, self>
+     * @var Collection<int, ValidateOrder>
      */
-    #[ORM\OneToMany(targetEntity: self::class, mappedBy: 'game')]
-    private Collection $UserGameKey;
+    #[ORM\ManyToMany(targetEntity: ValidateOrder::class, mappedBy: 'game')]
+    private Collection $validateOrders;
+
+    
+
+    
 
     public function __construct()
     {
@@ -86,7 +87,8 @@ class Game
         $this->createdAt = new \DateTimeImmutable();
         $this->releaseDate = new \DateTimeImmutable();
         $this->userGameKeys = new ArrayCollection();
-        $this->UserGameKey = new ArrayCollection();
+        $this->validateOrders = new ArrayCollection();
+        
     }
 
 
@@ -310,24 +312,31 @@ class Game
         return $this;
     }
 
-    public function getGame(): ?self
+    /**
+     * @return Collection<int, ValidateOrder>
+     */
+    public function getValidateOrders(): Collection
     {
-        return $this->game;
+        return $this->validateOrders;
     }
 
-    public function setGame(?self $game): static
+    public function addValidateOrder(ValidateOrder $validateOrder): static
     {
-        $this->game = $game;
+        if (!$this->validateOrders->contains($validateOrder)) {
+            $this->validateOrders->add($validateOrder);
+            $validateOrder->addGame($this);
+        }
 
         return $this;
     }
 
-    /**
-     * @return Collection<int, self>
-     */
-    public function getUserGameKey(): Collection
+    public function removeValidateOrder(ValidateOrder $validateOrder): static
     {
-        return $this->UserGameKey;
+        if ($this->validateOrders->removeElement($validateOrder)) {
+            $validateOrder->removeGame($this);
+        }
+
+        return $this;
     }
 
     

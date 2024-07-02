@@ -12,6 +12,7 @@ use App\Entity\User;
 use App\Entity\Theme;
 use App\Entity\Order;
 use App\Entity\UserGameKey;
+use App\Entity\ValidateOrder;
 
 class AppFixtures extends Fixture
 {
@@ -39,7 +40,7 @@ class AppFixtures extends Fixture
 
         // Create some themes
         $themes = [];
-        $themeNames = ['Theme A', 'Theme B', 'Theme C'];
+        $themeNames = ['Theme A', 'Theme B', 'Theme C', 'Theme D', 'Theme E'];
         foreach ($themeNames as $name) {
             $theme = new Theme();
             $theme->setName($name);
@@ -57,7 +58,7 @@ class AppFixtures extends Fixture
             $game->setPicture($faker->imageUrl());
             $game->setPrice($faker->randomFloat(2, 10, 100));
 
-            // Tronquer la description à 255 caractères maximum
+            // Truncate the description to maximum 255 characters
             $description = $faker->paragraph;
             if (strlen($description) > 255) {
                 $description = substr($description, 0, 252) . '...';
@@ -101,11 +102,21 @@ class AppFixtures extends Fixture
              $manager->persist($user);
              $users[] = $user;
  
-             // Assign random games to user
-             $randomGames = $faker->randomElements($games, mt_rand(1, 5));
-             foreach ($randomGames as $game) {
-                 $user->addUserGetGame($game);
-             }
+            // Assign random games to user
+            $randomGames = $faker->randomElements($games, mt_rand(1, 5)); // Adjust the range as needed
+            foreach ($randomGames as $game) {
+                $user->addUserGetGame($game);
+
+                // Create a user game key
+              
+                $userGameKey = new UserGameKey();
+                $userGameKey->setUser($user);
+                $userGameKey->setGame($game);
+                $userGameKey->setCreatedAt(\DateTimeImmutable::createFromMutable($faker->dateTimeThisYear()));
+                $userGameKey->setGameKey(sha1($game->getName() . $game->getId())); // Generate unique key based on game name and ID
+
+                $manager->persist($userGameKey); // Persist UserGameKey
+            }
 
              // Assign random category to user
              $randomCategory = $faker->randomElements($categories, mt_rand(1, 5));
@@ -119,35 +130,53 @@ class AppFixtures extends Fixture
                  $user->addPreferedTag($tag);
              }
          }
+         // Create orders
 
-        // Create orders
-        for ($i = 0; $i < 30; $i++) {
+        $usersWithOrders = [];
+        $total = 0;
+        foreach ($users as $user) {
+            // Check if user already has an order
+            if (in_array($user, $usersWithOrders)) {
+                continue; // Skip this user if they already have an order
+            }
+
+            // Create the order
             $order = new Order();
-            $order->setStatus($faker->randomElement(['pending', 'completed']));
-            $order->setTotal($faker->randomFloat(2, 50, 500));
-            $order->setUser($faker->randomElement($users));
-
-            // Set createdAt to current DateTimeImmutable
+            $order->setStatus('pending');
+            $order->setUser($user);
             $order->setCreatedAt(\DateTimeImmutable::createFromMutable($faker->dateTimeThisYear()));
-           
 
-             // Add random games to the order with a random key for the user
-             $randomGames = $faker->randomElements($games, mt_rand(1, 5));
-             foreach ($randomGames as $game) {
-                 $order->addGame($game);
- 
-                 // Create UserGameKey
-                 $userGameKey = new UserGameKey();
-                 $userGameKey->setUser($order->getUser());
-                 $userGameKey->setGame($game);
-                 $userGameKey->setGameKey(bin2hex(random_bytes(16))); // Generate a random key
-                 $userGameKey->setCreatedAt(\DateTimeImmutable::createFromMutable($faker->dateTimeThisYear()));
-                 $manager->persist($userGameKey);
-             }
+            // Calculate total for the order
+            $total = 0;
+            $randomGames = $faker->randomElements($games, mt_rand(1, 5));
+            foreach ($randomGames as $game) {
+                $order->addGame($game);
+                $total += $game->getPrice();
+            }
+            $order->setTotal($total);
 
             $manager->persist($order);
-        }
 
+            // Mark this user as having an order
+            $usersWithOrders[] = $user;
+
+            // Create ValidateOrder if this order is validated
+            if ($order->getStatus() === 'validated') {
+                $validateOrder = new ValidateOrder();
+                $validateOrder->setQuantity(count($order->getGames()));
+                $validateOrder->setTotalPrice($order->getTotal());
+                $validateOrder->addOrder($order);
+
+                foreach ($order->getGames() as $game) {
+                    $validateOrder->addGame($game);
+                }
+
+                $manager->persist($validateOrder);
+                $validatedOrders[] = $validateOrder;
+            }
+        
+        }
+        
         $manager->flush();
     }
 }

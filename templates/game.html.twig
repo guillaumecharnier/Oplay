@@ -1,10 +1,22 @@
-{# templates/games.html.twig #}
-
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <title>Liste des jeux</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        img {
+            max-width: 100px;
+        }
+    </style>
 </head>
 <body>
     <h1>Liste des jeux</h1>
@@ -29,7 +41,7 @@
                     <td>{{ game.name }}</td>
                     <td>{{ game.releaseDate|date('d/m/Y') }}</td>
                     <td>{{ game.createdAt|date('d/m/Y H:i:s') }}</td>
-                    <td><img src="{{ game.picture }}" alt="Image du jeu {{ game.name }}" width="100"></td>
+                    <td><img src="{{ game.picture }}" alt="Image du jeu {{ game.name }}"></td>
                     <td>{{ game.price }} €</td>
                     <td>{{ game.description }}</td>
                     <td>{{ game.editor }}</td>

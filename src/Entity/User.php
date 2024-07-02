@@ -75,7 +75,6 @@ class User
         $this->purchasedOrder = new ArrayCollection();
         $this->userGetGame = new ArrayCollection();
         $this->userGameKeys = new ArrayCollection();
-        $this->userGameKey = new ArrayCollection();
     }
 
 

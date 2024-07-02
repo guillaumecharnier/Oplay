@@ -35,6 +35,8 @@
                 <th>Catégories choisies</th>
                 <th>Tags préférés</th>
                 <th>Clés de jeux</th>
+                <th>Orders</th>
+                <th>Commandes Validées</th> <!-- Nouvelle colonne pour les commandes validées -->
             </tr>
         </thead>
         <tbody>
@@ -55,6 +57,7 @@
                                     <em>Prix:</em> {{ game.price }} €<br>
                                     <em>Description:</em> {{ game.description }}<br>
                                     <em>Éditeur:</em> {{ game.editor }}<br>
+                                    <em>ID:</em> {{ game.id }}<br>
                                     <em>Catégories:</em>
                                     <ul>
                                         {% for category in game.hasCategory %}
@@ -89,9 +92,45 @@
                         <ul>
                             {% for userGameKey in user.userGameKeys %}
                                 <li>
-                                    <strong>Jeu:</strong> {{ userGameKey.game.name }}<br>
-                                    <strong>Clé:</strong> {{ userGameKey.gameKey }}
+                                    <strong>Jeu:</strong> {{ userGameKey.game.id }}<br>
+                                    <strong>Clé:</strong> {{ userGameKey.gameKey }}<br>
+                                    <strong>Créée le :</strong> {{ userGameKey.createdAt|date('d/m/Y H:i:s') }}
                                 </li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            {% for order in user.purchasedOrder %}
+                                <li>
+                                    <strong>Status:</strong> {{ order.status }}<br>
+                                    <ul>
+                                        {% for game in order.games %}
+                                            <li><strong>Nom du jeu:</strong> {{ game.name }}</li>
+                                            <li><strong>Prix:</strong> {{ game.price }} €</li>
+                                        {% endfor %}
+                                    </ul>
+                                    <strong>Commande faite le:</strong> {{ order.createdAt|date('d/m/Y H:i:s') }}<br>
+                                    <strong>Total:</strong> {{ order.total }} €<br>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            {% for validateOrder in validateOrders %}
+                                {% if validateOrder.orders.contains(user.purchasedOrder) %}
+                                    <li>
+                                        <strong>Quantité:</strong> {{ validateOrder.quantity }}<br>
+                                        <strong>Prix Total:</strong> {{ validateOrder.totalPrice }} €<br>
+                                        <strong>Jeux:</strong>
+                                        <ul>
+                                            {% for game in validateOrder.game %}
+                                                <li>{{ game.name }} ({{ game.price }} €)</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </li>
+                                {% endif %}
                             {% endfor %}
                         </ul>
                     </td>

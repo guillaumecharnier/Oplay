@@ -34,9 +34,16 @@ class Order
     #[ORM\ManyToMany(targetEntity: Game::class, mappedBy: 'gameHasOrder')]
     private Collection $games;
 
+    /**
+     * @var Collection<int, ValidateOrder>
+     */
+    #[ORM\ManyToMany(targetEntity: ValidateOrder::class, mappedBy: 'orders')]
+    private Collection $validateOrders;
+
     public function __construct()
     {
         $this->games = new ArrayCollection();
+        $this->validateOrders = new ArrayCollection();
     }
 
 
@@ -115,6 +122,33 @@ class Order
     {
         if ($this->games->removeElement($game)) {
             $game->removeGameHasOrder($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ValidateOrder>
+     */
+    public function getValidateOrders(): Collection
+    {
+        return $this->validateOrders;
+    }
+
+    public function addValidateOrder(ValidateOrder $validateOrder): static
+    {
+        if (!$this->validateOrders->contains($validateOrder)) {
+            $this->validateOrders->add($validateOrder);
+            $validateOrder->addOrder($this);
+        }
+
+        return $this;
+    }
+
+    public function removeValidateOrder(ValidateOrder $validateOrder): static
+    {
+        if ($this->validateOrders->removeElement($validateOrder)) {
+            $validateOrder->removeOrder($this);
         }
 
         return $this;
