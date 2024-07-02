@@ -3,19 +3,18 @@
 namespace App\Controller\Api;
 
 use App\Repository\UserRepository;
-use App\Repository\ValidateOrderRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
+#[Route('/api/user', name: 'app_api_user', methods: ['GET'])]
 class UserController extends AbstractController
 {
-    #[Route('/user', name: 'app_users_index', methods: ['GET'])]
-    public function users(UserRepository $userRepository,ValidateOrderRepository $validateOrderRepository): Response
+    #[Route('/browse', name: 'browse', methods: ['GET'])]
+    public function users(UserRepository $userRepository): JsonResponse
     {
         $users = $userRepository->findAll();
-
-        $validateOrders = $validateOrderRepository->findAll();
         // Transform the user into an array
         $userData = [];
         foreach ($users as $user) {
@@ -32,23 +31,19 @@ class UserController extends AbstractController
         }
 
         // Return the data in JSON
-        return $this->json([
-            'user' => $userData,
-            'validateOrders' => $validateOrders,
-        ]);
-    }
+        return $this->json(['users' => $userData], 200, [], ["groups" => "user_browse"]);
+    }   
 
 
-    #[Route('/user/{id}', name: 'app_user_index', methods: ['GET'])]
-    public function user(int $id, UserRepository $userRepository, ValidateOrderRepository $validateOrderRepository): Response
+
+    #[Route('/{id}/show', name: 'show', methods: ['GET'])]
+    public function user(int $id, UserRepository $userRepository): JsonResponse
     {
         $user = $userRepository->find($id);
 
         if (!$user) {
             throw $this->createNotFoundException('User not found');
         }
-
-        $validateOrders = $validateOrderRepository->findAll();
 
         $chooseThemeId = $user->getChooseTheme() ? $user->getChooseTheme()->getId() : null;
 
@@ -64,9 +59,7 @@ class UserController extends AbstractController
         ];
 
         // Return the data in JSON
-        return $this->json([
-            'user' => $userData,
-            'validateOrders' => $validateOrders,
-        ]);
+        return $this->json(['user' => $userData], 200, [], ["groups" => "user_show"]);
+
     }
 }
