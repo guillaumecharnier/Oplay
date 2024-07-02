@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\TagRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: TagRepository::class)]
@@ -13,9 +14,17 @@ class Tag
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups([
+        'tag_browse',
+        'tag_show'
+    ])]
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
+    #[Groups([
+        'tag_browse',
+        'tag_show'
+    ])]
     private ?string $name = null;
 
     /**
