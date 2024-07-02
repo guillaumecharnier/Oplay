@@ -5,6 +5,7 @@ namespace App\Controller\Api;
 use App\Repository\GameRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 
 
@@ -12,7 +13,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class GameController extends AbstractController
 {
     #[Route('/browse', name: 'browse', methods: ['GET'])]
-    public function games(GameRepository $gameRepository): Response
+    public function games(GameRepository $gameRepository): JsonResponse
     {
         $allGames = $gameRepository->findAll();
         // Return the data in JSON
@@ -20,7 +21,7 @@ class GameController extends AbstractController
     }
 
     #[Route('/{id}/show', name: 'show', methods: ['GET'])]
-    public function game(int $id, GameRepository $gameRepository): Response
+    public function game(int $id, GameRepository $gameRepository): JsonResponse
     {
         $game = $gameRepository->find($id);
                    // Return the data in JSON
