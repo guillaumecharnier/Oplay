@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\ValidateOrder;
+
 use App\Repository\UserRepository;
 use App\Repository\ValidateOrderRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
