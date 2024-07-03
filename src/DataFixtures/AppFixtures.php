@@ -99,6 +99,7 @@ class AppFixtures extends Fixture
              $user->setEmail($faker->email);
              $user->setPassword($faker->password);
              $user->setChooseTheme($themes[array_rand($themes)]);
+             $user->setRoles($faker->randomElement(['ROLE_ADMIN'], ['ROLE_USER'])); // Randomly assign Roles
              $manager->persist($user);
              $users[] = $user;
  

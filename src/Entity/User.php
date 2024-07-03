@@ -95,6 +95,13 @@ class User
     #[ORM\OneToMany(targetEntity: UserGameKey::class, mappedBy: 'user')]
     private Collection $userGameKeys;
 
+    #[ORM\Column(length: 100)]
+    #[Groups([
+        'user_browse',
+        'user_show'
+    ])]
+    private ?string $roles = null;
+
 
     public function __construct()
     {
@@ -323,6 +330,18 @@ class User
                 $userGameKey->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getRoles(): ?string
+    {
+        return $this->roles;
+    }
+
+    public function setRoles(string $roles): static
+    {
+        $this->roles = $roles;
 
         return $this;
     }

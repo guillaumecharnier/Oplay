@@ -27,6 +27,7 @@ class UserController extends AbstractController
                 'nickname' => $user->getNickname(),
                 'picture' => $user->getPicture(),
                 'email' => $user->getEmail(),
+                'roles' => $user->getRoles(),
             ];
         }
 
@@ -56,6 +57,7 @@ class UserController extends AbstractController
             'nickname' => $user->getNickname(),
             'picture' => $user->getPicture(),
             'email' => $user->getEmail(),
+            'roles' => $user->getRoles(),
         ];
 
         // Return the data in JSON
