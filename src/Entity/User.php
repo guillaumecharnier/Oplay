@@ -5,11 +5,14 @@ namespace App\Entity;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Symfony\Component\Serializer\Attribute\Groups;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-class User
+#[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -53,8 +56,12 @@ class User
         'user_browse',
         'user_show'
     ])]
+
     private ?string $email = null;
 
+    /**
+     * @var string The hashed password
+     */
     #[ORM\Column(length: 100)]
     private ?string $password = null;
 
@@ -64,6 +71,16 @@ class User
         'user_show'
     ])]
     private ?Theme $chooseTheme = null;
+    
+    /**
+     * @var list<string> The user roles
+     */
+    #[ORM\Column(length: 100)]
+    #[Groups([
+        'user_browse',
+        'user_show'
+    ])]
+    private ?array $roles = [];
 
     /**
      * @var Collection<int, Category>
@@ -95,14 +112,6 @@ class User
     #[ORM\OneToMany(targetEntity: UserGameKey::class, mappedBy: 'user')]
     private Collection $userGameKeys;
 
-    #[ORM\Column(length: 100)]
-    #[Groups([
-        'user_browse',
-        'user_show'
-    ])]
-    private ?string $roles = null;
-
-
     public function __construct()
     {
         $this->selectedCategory = new ArrayCollection();
@@ -111,7 +120,6 @@ class User
         $this->userGetGame = new ArrayCollection();
         $this->userGameKeys = new ArrayCollection();
     }
-
 
     public function getId(): ?int
     {
@@ -178,7 +186,10 @@ class User
         return $this;
     }
 
-    public function getPassword(): ?string
+    /**
+     * @see PasswordAuthenticatedUserInterface
+     */
+    public function getPassword(): string
     {
         return $this->password;
     }
@@ -334,16 +345,49 @@ class User
         return $this;
     }
 
-    public function getRoles(): ?string
+    /**
+     * A visual identifier that represents this user.
+     *
+     * @see UserInterface
+     */
+    public function getUserIdentifier(): string
     {
-        return $this->roles;
+        return (string) $this->email;
     }
 
-    public function setRoles(string $roles): static
+    /**
+     * @see UserInterface
+     *
+     * @return list<string>
+     */
+    public function getRoles(): array
+    {
+        $roles = $this->roles;
+        // guarantee every user at least has ROLE_USER
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
+    }
+
+    /**
+     * @param list<string> $roles
+     */
+    
+    public function setRoles(array $roles): static
     {
         $this->roles = $roles;
 
         return $this;
     }
 
+    
+
+    /**
+     * @see UserInterface
+     */
+    public function eraseCredentials(): void
+    {
+        // If you store any temporary, sensitive data on the user, clear it here
+        // $this->plainPassword = null;
+    }
 }

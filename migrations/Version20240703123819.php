@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20240703072603 extends AbstractMigration
+final class Version20240703123819 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -27,8 +27,12 @@ final class Version20240703072603 extends AbstractMigration
         $this->addSql('CREATE TABLE game_order (game_id INT NOT NULL, order_id INT NOT NULL, INDEX IDX_C71AEA17E48FD905 (game_id), INDEX IDX_C71AEA178D9F6D38 (order_id), PRIMARY KEY(game_id, order_id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE `order` (id INT AUTO_INCREMENT NOT NULL, user_id INT DEFAULT NULL, created_at DATETIME NOT NULL COMMENT \'(DC2Type:datetime_immutable)\', status VARCHAR(50) NOT NULL, total DOUBLE PRECISION NOT NULL, INDEX IDX_F5299398A76ED395 (user_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE tag (id INT AUTO_INCREMENT NOT NULL, name VARCHAR(50) NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
+        $this->addSql('CREATE TABLE test_user (id INT AUTO_INCREMENT NOT NULL, choose_theme_id INT DEFAULT NULL, firstname VARCHAR(50) NOT NULL, lastname VARCHAR(50) NOT NULL, nickname VARCHAR(50) NOT NULL, picture VARCHAR(255) NOT NULL, email VARCHAR(100) NOT NULL, password VARCHAR(100) NOT NULL, roles VARCHAR(100) NOT NULL, INDEX IDX_88EAFC8689949FFF (choose_theme_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
+        $this->addSql('CREATE TABLE test_user_category (test_user_id INT NOT NULL, category_id INT NOT NULL, INDEX IDX_C0344B8D7B2F075D (test_user_id), INDEX IDX_C0344B8D12469DE2 (category_id), PRIMARY KEY(test_user_id, category_id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
+        $this->addSql('CREATE TABLE test_user_tag (test_user_id INT NOT NULL, tag_id INT NOT NULL, INDEX IDX_7DFCDD5E7B2F075D (test_user_id), INDEX IDX_7DFCDD5EBAD26311 (tag_id), PRIMARY KEY(test_user_id, tag_id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
+        $this->addSql('CREATE TABLE test_user_game (test_user_id INT NOT NULL, game_id INT NOT NULL, INDEX IDX_DB37EA8F7B2F075D (test_user_id), INDEX IDX_DB37EA8FE48FD905 (game_id), PRIMARY KEY(test_user_id, game_id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE theme (id INT AUTO_INCREMENT NOT NULL, name VARCHAR(50) NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
-        $this->addSql('CREATE TABLE user (id INT AUTO_INCREMENT NOT NULL, choose_theme_id INT DEFAULT NULL, firstname VARCHAR(50) NOT NULL, lastname VARCHAR(50) NOT NULL, nickname VARCHAR(50) NOT NULL, picture VARCHAR(255) NOT NULL, email VARCHAR(100) NOT NULL, password VARCHAR(100) NOT NULL, roles VARCHAR(100) NOT NULL, INDEX IDX_8D93D64989949FFF (choose_theme_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
+        $this->addSql('CREATE TABLE user (id INT AUTO_INCREMENT NOT NULL, choose_theme_id INT DEFAULT NULL, firstname VARCHAR(50) NOT NULL, lastname VARCHAR(50) NOT NULL, nickname VARCHAR(50) NOT NULL, picture VARCHAR(255) NOT NULL, email VARCHAR(100) NOT NULL, password VARCHAR(100) NOT NULL, roles VARCHAR(100) NOT NULL, INDEX IDX_8D93D64989949FFF (choose_theme_id), UNIQUE INDEX UNIQ_IDENTIFIER_EMAIL (email), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE user_category (user_id INT NOT NULL, category_id INT NOT NULL, INDEX IDX_E6C1FDC1A76ED395 (user_id), INDEX IDX_E6C1FDC112469DE2 (category_id), PRIMARY KEY(user_id, category_id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE user_tag (user_id INT NOT NULL, tag_id INT NOT NULL, INDEX IDX_E89FD608A76ED395 (user_id), INDEX IDX_E89FD608BAD26311 (tag_id), PRIMARY KEY(user_id, tag_id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE user_game (user_id INT NOT NULL, game_id INT NOT NULL, INDEX IDX_59AA7D45A76ED395 (user_id), INDEX IDX_59AA7D45E48FD905 (game_id), PRIMARY KEY(user_id, game_id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
@@ -43,6 +47,13 @@ final class Version20240703072603 extends AbstractMigration
         $this->addSql('ALTER TABLE game_order ADD CONSTRAINT FK_C71AEA17E48FD905 FOREIGN KEY (game_id) REFERENCES game (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE game_order ADD CONSTRAINT FK_C71AEA178D9F6D38 FOREIGN KEY (order_id) REFERENCES `order` (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE `order` ADD CONSTRAINT FK_F5299398A76ED395 FOREIGN KEY (user_id) REFERENCES user (id)');
+        $this->addSql('ALTER TABLE test_user ADD CONSTRAINT FK_88EAFC8689949FFF FOREIGN KEY (choose_theme_id) REFERENCES theme (id)');
+        $this->addSql('ALTER TABLE test_user_category ADD CONSTRAINT FK_C0344B8D7B2F075D FOREIGN KEY (test_user_id) REFERENCES test_user (id) ON DELETE CASCADE');
+        $this->addSql('ALTER TABLE test_user_category ADD CONSTRAINT FK_C0344B8D12469DE2 FOREIGN KEY (category_id) REFERENCES category (id) ON DELETE CASCADE');
+        $this->addSql('ALTER TABLE test_user_tag ADD CONSTRAINT FK_7DFCDD5E7B2F075D FOREIGN KEY (test_user_id) REFERENCES test_user (id) ON DELETE CASCADE');
+        $this->addSql('ALTER TABLE test_user_tag ADD CONSTRAINT FK_7DFCDD5EBAD26311 FOREIGN KEY (tag_id) REFERENCES tag (id) ON DELETE CASCADE');
+        $this->addSql('ALTER TABLE test_user_game ADD CONSTRAINT FK_DB37EA8F7B2F075D FOREIGN KEY (test_user_id) REFERENCES test_user (id) ON DELETE CASCADE');
+        $this->addSql('ALTER TABLE test_user_game ADD CONSTRAINT FK_DB37EA8FE48FD905 FOREIGN KEY (game_id) REFERENCES game (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE user ADD CONSTRAINT FK_8D93D64989949FFF FOREIGN KEY (choose_theme_id) REFERENCES theme (id)');
         $this->addSql('ALTER TABLE user_category ADD CONSTRAINT FK_E6C1FDC1A76ED395 FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE user_category ADD CONSTRAINT FK_E6C1FDC112469DE2 FOREIGN KEY (category_id) REFERENCES category (id) ON DELETE CASCADE');
@@ -68,6 +79,13 @@ final class Version20240703072603 extends AbstractMigration
         $this->addSql('ALTER TABLE game_order DROP FOREIGN KEY FK_C71AEA17E48FD905');
         $this->addSql('ALTER TABLE game_order DROP FOREIGN KEY FK_C71AEA178D9F6D38');
         $this->addSql('ALTER TABLE `order` DROP FOREIGN KEY FK_F5299398A76ED395');
+        $this->addSql('ALTER TABLE test_user DROP FOREIGN KEY FK_88EAFC8689949FFF');
+        $this->addSql('ALTER TABLE test_user_category DROP FOREIGN KEY FK_C0344B8D7B2F075D');
+        $this->addSql('ALTER TABLE test_user_category DROP FOREIGN KEY FK_C0344B8D12469DE2');
+        $this->addSql('ALTER TABLE test_user_tag DROP FOREIGN KEY FK_7DFCDD5E7B2F075D');
+        $this->addSql('ALTER TABLE test_user_tag DROP FOREIGN KEY FK_7DFCDD5EBAD26311');
+        $this->addSql('ALTER TABLE test_user_game DROP FOREIGN KEY FK_DB37EA8F7B2F075D');
+        $this->addSql('ALTER TABLE test_user_game DROP FOREIGN KEY FK_DB37EA8FE48FD905');
         $this->addSql('ALTER TABLE user DROP FOREIGN KEY FK_8D93D64989949FFF');
         $this->addSql('ALTER TABLE user_category DROP FOREIGN KEY FK_E6C1FDC1A76ED395');
         $this->addSql('ALTER TABLE user_category DROP FOREIGN KEY FK_E6C1FDC112469DE2');
@@ -88,6 +106,10 @@ final class Version20240703072603 extends AbstractMigration
         $this->addSql('DROP TABLE game_order');
         $this->addSql('DROP TABLE `order`');
         $this->addSql('DROP TABLE tag');
+        $this->addSql('DROP TABLE test_user');
+        $this->addSql('DROP TABLE test_user_category');
+        $this->addSql('DROP TABLE test_user_tag');
+        $this->addSql('DROP TABLE test_user_game');
         $this->addSql('DROP TABLE theme');
         $this->addSql('DROP TABLE user');
         $this->addSql('DROP TABLE user_category');

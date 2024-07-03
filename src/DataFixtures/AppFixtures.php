@@ -13,9 +13,18 @@ use App\Entity\Theme;
 use App\Entity\Order;
 use App\Entity\UserGameKey;
 use App\Entity\ValidateOrder;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AppFixtures extends Fixture
 {
+    private $passwordHasher;
+
+    public function __construct(UserPasswordHasherInterface $passwordHasher)
+    {
+        $this->passwordHasher = $passwordHasher;
+    }
+
+
     public function load(ObjectManager $manager): void
     {
         $faker = Factory::create();
@@ -97,9 +106,10 @@ class AppFixtures extends Fixture
              $user->setNickname($faker->userName);
              $user->setPicture($faker->imageUrl());
              $user->setEmail($faker->email);
-             $user->setPassword($faker->password);
+             $hashedPassword = $this->passwordHasher->hashPassword($user, $faker->password);
+             $user->setPassword($hashedPassword);
              $user->setChooseTheme($themes[array_rand($themes)]);
-             $user->setRoles($faker->randomElement(['ROLE_ADMIN'], ['ROLE_USER'])); // Randomly assign Roles
+             $user->setRoles([$faker->randomElement(['ROLE_ADMIN', 'ROLE_USER'])]); // Randomly assign Roles
              $manager->persist($user);
              $users[] = $user;
  
