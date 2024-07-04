@@ -107,18 +107,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var Collection<int, Order>
      */
     #[ORM\OneToMany(targetEntity: Order::class, mappedBy: 'user')]
+    #[Groups([
+        'user_browse',
+        'user_show'
+    ])]
     private Collection $purchasedOrder;
 
     /**
      * @var Collection<int, Game>
      */
     #[ORM\ManyToMany(targetEntity: Game::class, inversedBy: 'users')]
+    #[Groups([
+        'user_browse',
+        'user_show'
+    ])]
     private Collection $userGetGame;
 
     /**
      * @var Collection<int, UserGameKey>
      */
     #[ORM\OneToMany(targetEntity: UserGameKey::class, mappedBy: 'user')]
+    #[Groups([
+        'user_browse',
+        'user_show'
+    ])]
     private Collection $userGameKeys;
 
     public function __construct()

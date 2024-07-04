@@ -33,11 +33,15 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->getEntityManager()->flush();
     }
 
-    public function findAllWithThemes(): array
+    public function findAllWithAllRelations()
     {
         return $this->createQueryBuilder('u')
             ->leftJoin('u.chooseTheme', 't')
-            ->addSelect('t') // Sélectionne le thème associé
+            ->leftJoin('u.selectedCategory', 'c')
+            ->leftJoin('u.preferedTag', 'tag')
+            ->leftJoin('u.userGetGame', 'g')
+            ->leftJoin('u.userGameKeys', 'k')
+            ->leftJoin('u.purchasedOrder', 'o')
             ->getQuery()
             ->getResult();
     }

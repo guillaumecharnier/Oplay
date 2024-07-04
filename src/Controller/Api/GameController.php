@@ -28,8 +28,8 @@ class GameController extends AbstractController
                     if (is_null($game)) {
                     $info = [
                         'success' => false,
-                        'error_message' => 'Game non trouvée',
-                        'error_code' => 'Game_not_found',
+                        'error_message' => 'Jeu non trouvée',
+                        'error_code' => 'Jeu_not_found',
                     ];
                     return $this->json($info, Response::HTTP_NOT_FOUND);
                 }
