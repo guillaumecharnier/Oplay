@@ -98,6 +98,23 @@ class AppFixtures extends Fixture
             $games[] = $game;
         }
 
+        // Create specific admin user
+        $adminUser = new User();
+        $adminUser->setFirstname('Admin');
+        $adminUser->setLastname('User');
+        $adminUser->setNickname('admin');
+        $adminUser->setPicture($faker->imageUrl());
+        $adminUser->setEmail('admin@oplay.fr');
+        $hashedAdminPassword = $this->passwordHasher->hashPassword($adminUser, 'admin'); // Hashing 'admin' password
+        $adminUser->setPassword($hashedAdminPassword);
+        $adminUser->setChooseTheme($themes[array_rand($themes)]);
+        $adminUser->setRoles(['ROLE_ADMIN']); // Assign ROLE_ADMIN to this user
+        $manager->persist($adminUser);
+
+        $manager->flush();
+    
+        
+
          // Create users
          $users = [];
          for ($i = 0; $i < 20; $i++) {
@@ -113,6 +130,7 @@ class AppFixtures extends Fixture
              $user->setRoles([$faker->randomElement(['ROLE_ADMIN', 'ROLE_USER'])]); // Randomly assign Roles
              $manager->persist($user);
              $users[] = $user;
+            
  
             // Assign random games to user
             $randomGames = $faker->randomElements($games, mt_rand(1, 5)); // Adjust the range as needed
@@ -142,6 +160,7 @@ class AppFixtures extends Fixture
                  $user->addPreferedTag($tag);
              }
          }
+         
          // Create orders
 
         $usersWithOrders = [];
