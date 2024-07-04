@@ -19,6 +19,15 @@ class UserController extends AbstractController
         $userData = [];
         foreach ($users as $user) {
             $chooseThemeId = $user->getChooseTheme() ? $user->getChooseTheme()->getId() : null;
+
+            $selectedCategoryId = $user->getSelectedCategory()->map(function($category) {
+                return $category->getId();
+            })->toArray();
+
+            $preferedTagId = $user->getPreferedTag()->map(function($tag) {
+                return $tag->getId();
+            })->toArray();
+
             $userData[] = [
                 'id' => $user->getId(),
                 'choose_theme_id' => $chooseThemeId,
@@ -28,6 +37,8 @@ class UserController extends AbstractController
                 'picture' => $user->getPicture(),
                 'email' => $user->getEmail(),
                 'roles' => $user->getRoles(),
+                'selectedCategoryId' => $selectedCategoryId,
+                'preferedTagId' => $preferedTagId,
             ];
         }
 
@@ -48,6 +59,14 @@ class UserController extends AbstractController
 
         $chooseThemeId = $user->getChooseTheme() ? $user->getChooseTheme()->getId() : null;
 
+        $selectedCategoryId = $user->getSelectedCategory()->map(function($category) {
+            return $category->getId();
+        })->toArray();
+
+        $preferedTagId = $user->getPreferedTag()->map(function($tag) {
+            return $tag->getId();
+        })->toArray();
+
         // Transform the user into an array
         $userData = [
             'id' => $user->getId(),
@@ -58,6 +77,8 @@ class UserController extends AbstractController
             'picture' => $user->getPicture(),
             'email' => $user->getEmail(),
             'roles' => $user->getRoles(),
+            'selectedCategoryId' => $selectedCategoryId,
+            'preferedTagId' => $preferedTagId,
         ];
 
         // Return the data in JSON
