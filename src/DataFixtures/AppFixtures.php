@@ -34,7 +34,7 @@ class AppFixtures extends Fixture
         for ($i = 0; $i < 10; $i++) {
             $category = new Category();
             $category->setName($faker->word);
-            $category->setPicture($faker->imageUrl());
+            $category->setPicture('https://picsum.photos/200/300');
             $manager->persist($category);
             $categories[] = $category;
         }
@@ -65,7 +65,7 @@ class AppFixtures extends Fixture
             $game->setName($faker->sentence(3));
             $game->setReleaseDate(\DateTimeImmutable::createFromMutable($faker->dateTimeThisDecade())); // Convertir en DateTimeImmutable
             $game->setCreatedAt(\DateTimeImmutable::createFromMutable($faker->dateTimeThisYear())); // Convertir en DateTimeImmutable
-            $game->setPicture($faker->imageUrl());
+            $game->setPicture('https://picsum.photos/200/300');
             $game->setPrice($faker->randomFloat(2, 10, 100));
 
             // Truncate the description to maximum 255 characters
@@ -103,7 +103,7 @@ class AppFixtures extends Fixture
         $adminUser->setFirstname('Admin');
         $adminUser->setLastname('User');
         $adminUser->setNickname('admin');
-        $adminUser->setPicture($faker->imageUrl());
+        $adminUser->setPicture('https://picsum.photos/200/300');
         $adminUser->setEmail('admin@oplay.fr');
         $hashedAdminPassword = $this->passwordHasher->hashPassword($adminUser, 'admin'); // Hashing 'admin' password
         $adminUser->setPassword($hashedAdminPassword);
@@ -122,7 +122,7 @@ class AppFixtures extends Fixture
              $user->setFirstname($faker->firstName);
              $user->setLastname($faker->lastName);
              $user->setNickname($faker->userName);
-             $user->setPicture($faker->imageUrl());
+             $user->setPicture('https://picsum.photos/200/300');
              $user->setEmail($faker->email);
              $hashedPassword = $this->passwordHasher->hashPassword($user, $faker->password);
              $user->setPassword($hashedPassword);
