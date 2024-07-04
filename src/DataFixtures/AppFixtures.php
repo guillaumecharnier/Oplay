@@ -31,7 +31,7 @@ class AppFixtures extends Fixture
 
         // Create some categories
         $categories = [];
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < 6; $i++) {
             $category = new Category();
             $category->setName($faker->word);
             $category->setPicture('https://picsum.photos/200/300');
@@ -41,7 +41,7 @@ class AppFixtures extends Fixture
 
         // Create some tags
         $tags = [];
-        for ($i = 0; $i < 20; $i++) {
+        for ($i = 0; $i < 12; $i++) {
             $tag = new Tag();
             $tag->setName($faker->word);
             $manager->persist($tag);

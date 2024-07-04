@@ -85,4 +85,6 @@ class UserController extends AbstractController
         return $this->json(['user' => $userData], 200, [], ["groups" => "user_show"]);
 
     }
+
+    
 }
