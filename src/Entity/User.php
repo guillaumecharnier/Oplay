@@ -56,7 +56,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         'user_browse',
         'user_show'
     ])]
-
     private ?string $email = null;
 
     /**
