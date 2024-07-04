@@ -1,0 +1,13 @@
+### CONNECT APP
+GET http://localhost:8080/login
+Content-Type: application/json
+
+{
+    "username": "admin@oplay.fr",
+    "password": "admin"
+}
+
+
+### CONNECT APP
+POST http://localhost:8080/logout
+Content-Type: application/json

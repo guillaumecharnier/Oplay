@@ -28,8 +28,8 @@ class TagController extends AbstractController
         if (is_null($tag)) {
             $info = [
                 'success' => false,
-                'error_message' => 'Category non trouvée',
-                'error_code' => 'Category_not_found',
+                'error_message' => 'Tag non trouvée',
+                'error_code' => 'Tag_not_found',
             ];
             return $this->json($info, Response::HTTP_NOT_FOUND);
         }

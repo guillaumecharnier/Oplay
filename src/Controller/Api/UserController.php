@@ -7,84 +7,69 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\SerializerInterface;
 
 #[Route('/api/user', name: 'app_api_user', methods: ['GET'])]
 class UserController extends AbstractController
 {
+
     #[Route('/browse', name: 'browse', methods: ['GET'])]
-    public function users(UserRepository $userRepository): JsonResponse
+    public function users(UserRepository $userRepository, SerializerInterface $serializer): JsonResponse
     {
         $users = $userRepository->findAll();
-        // Transform the user into an array
-        $userData = [];
+
+        // Sérialiser les utilisateurs
+        $serializedUsers = [];
         foreach ($users as $user) {
-            $chooseThemeId = $user->getChooseTheme() ? $user->getChooseTheme()->getId() : null;
-
-            $selectedCategoryId = $user->getSelectedCategory()->map(function($category) {
-                return $category->getId();
-            })->toArray();
-
-            $preferedTagId = $user->getPreferedTag()->map(function($tag) {
-                return $tag->getId();
-            })->toArray();
-
-            $userData[] = [
+            $serializedUser = [
                 'id' => $user->getId(),
-                'choose_theme_id' => $chooseThemeId,
+                'choose_theme_id' => $user->getChooseTheme() ? $user->getChooseTheme()->getId() : null,
                 'firstname' => $user->getFirstname(),
                 'lastname' => $user->getLastname(),
                 'nickname' => $user->getNickname(),
                 'picture' => $user->getPicture(),
                 'email' => $user->getEmail(),
                 'roles' => $user->getRoles(),
-                'selectedCategoryId' => $selectedCategoryId,
-                'preferedTagId' => $preferedTagId,
+                'selectedCategory' => $user->getSelectedCategory()->map(fn($category) => $category->getName())->toArray(),
+                'preferedTag' => $user->getPreferedTag()->map(fn($tag) => $tag->getName())->toArray(),
+                'purchasedOrderIds' => $user->getPurchasedOrder()->map(fn($purchasedOrder) => $purchasedOrder->getId())->toArray(),
+                'userGetGame' => $user->getUserGetGame()->map(fn($userGetGame) => $userGetGame->getName())->toArray(),
+                'userGameKeys' => $user->getUserGameKeys()->map(fn($userGameKeys) => $userGameKeys->getGameKey())->toArray(),
+
             ];
+
+            $serializedUsers[] = $serializedUser;
         }
 
-        // Return the data in JSON
-        return $this->json(['users' => $userData], 200, [], ["groups" => "user_browse"]);
-    }   
+        // Sérialiser en JSON en utilisant SerializerInterface
+        $serializedData = $serializer->serialize($serializedUsers, 'json', [
+            'groups' => 'user_browse',
+            'circular_reference_handler' => function ($object) {
+                return $object->getId();
+            }
+        ]);
 
-
-
-    #[Route('/{id}/show', name: 'show', methods: ['GET'])]
-    public function user(int $id, UserRepository $userRepository): JsonResponse
-    {
-        $user = $userRepository->find($id);
-
-        if (!$user) {
-            throw $this->createNotFoundException('User not found');
-        }
-
-        $chooseThemeId = $user->getChooseTheme() ? $user->getChooseTheme()->getId() : null;
-
-        $selectedCategoryId = $user->getSelectedCategory()->map(function($category) {
-            return $category->getId();
-        })->toArray();
-
-        $preferedTagId = $user->getPreferedTag()->map(function($tag) {
-            return $tag->getId();
-        })->toArray();
-
-        // Transform the user into an array
-        $userData = [
-            'id' => $user->getId(),
-            'choose_theme_id' =>$chooseThemeId,
-            'firstname' => $user->getFirstname(),
-            'lastname' => $user->getLastname(),
-            'nickname' => $user->getNickname(),
-            'picture' => $user->getPicture(),
-            'email' => $user->getEmail(),
-            'roles' => $user->getRoles(),
-            'selectedCategoryId' => $selectedCategoryId,
-            'preferedTagId' => $preferedTagId,
-        ];
-
-        // Return the data in JSON
-        return $this->json(['user' => $userData], 200, [], ["groups" => "user_show"]);
-
+        return new JsonResponse($serializedData, 200, [], true);
     }
 
+  
+
+    #[Route('/{id}/show', name: 'show', methods: ['GET'])]
+    public function showCategory($id, UserRepository $userRepository): JsonResponse
+    {
+        $user= $userRepository->find($id);
+
+        if (is_null($user)) {
+            $info = [
+                'success' => false,
+                'error_message' => 'Utilisateur non trouvée',
+                'error_code' => 'Utilisateur_not_found',
+            ];
+            return $this->json($info, Response::HTTP_NOT_FOUND);
+        }
+
+        // Traiter le cas où le user est trouvée
+        return $this->json($user, Response::HTTP_OK, [], ['groups' => 'user_show']);
+    }
     
 }
