@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 
-#[Route('/api/tag', name: 'app_api_tag')]
+#[Route('/api/tag', name: 'app_api_tag_')]
 class TagController extends AbstractController
 {
     #[Route('/browse', name: 'browse', methods: "GET")]

@@ -14,7 +14,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
-#[Route('/api/user', name: 'app_api_user', methods: ['GET'])]
+#[Route('/api/user', name: 'app_api_user_', methods: ['GET'])]
 class UserController extends AbstractController
 {
 

@@ -63,11 +63,10 @@ class AppFixtures extends Fixture
             $category = new Category();
             $category->setName($categoryInfo['name']);
             $category->setPicture($categoryInfo['picture']);
-
             $manager->persist($category); // Persist the category entity
             $categoryEntityList[] = $category; // Add category to the list
         }
-        //definite Tag data
+        //Define Tag data
         $tagData = [
             [
                 'name' => 'Shooter'
@@ -106,7 +105,7 @@ class AppFixtures extends Fixture
                 'name' => 'Football'
             ],
         ];
-        // Create categories
+        // Create Tags
         $tagEntityList = [];
         foreach ($tagData as $tagInfo) {
             $tag = new Tag();
@@ -117,7 +116,7 @@ class AppFixtures extends Fixture
 
         // Create some themes
         $themes = [];
-        $themeNames = ['Theme A', 'Theme B', 'Theme C', 'Theme D', 'Theme E', 'Theme F'];
+        $themeNames = ['Action', 'Adventure', 'RPG', 'Strategy', 'Simulation', 'Sports'];
         foreach ($themeNames as $name) {
             $theme = new Theme();
             $theme->setName($name);
@@ -125,7 +124,7 @@ class AppFixtures extends Fixture
             $themes[] = $theme;
         }
 
-        // games data with real game names and images
+        // Define game data
         $gamesData = [
             [
                 'name' => 'The Witcher 3: Wild Hunt',
@@ -689,7 +688,7 @@ class AppFixtures extends Fixture
             ],
         ];
 
-        // create some games
+        // Create some games
         $gameEntityList = [];
         foreach ($gamesData as $gameData) {
             $game = new Game();
@@ -707,17 +706,13 @@ class AppFixtures extends Fixture
             }
             $game->setDescription($description);
 
-            foreach ($gameEntityList as $game) {
-                // Assigner des catégories aléatoires au jeu
-                $randomCategoryKeys = array_rand($categoryEntityList, min(3, count($categoryEntityList)));
-                if (!is_array($randomCategoryKeys)) {
-                    $randomCategoryKeys = [$randomCategoryKeys];
-                }
-                foreach ($randomCategoryKeys as $key) {
-                    $game->addHasCategory($categoryEntityList[$key]);
-                }
-                
-                $manager->persist($game); // Persist the game entity with assigned categories
+            // Assigner des catégories aléatoires au jeu
+            $randomCategoryKeys = array_rand($categoryEntityList, min(3, count($categoryEntityList)));
+            if (!is_array($randomCategoryKeys)) {
+                $randomCategoryKeys = [$randomCategoryKeys];
+            }
+            foreach ($randomCategoryKeys as $key) {
+                $game->addHasCategory($categoryEntityList[$key]);
             }
 
             // Assigner des tags aléatoires au jeu

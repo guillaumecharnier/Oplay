@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\ThemeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ThemeRepository::class)]
@@ -13,9 +14,17 @@ class Theme
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups([
+        'theme_browse',
+        'theme_show'
+    ])]
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
+    #[Groups([
+        'theme_browse',
+        'theme_show'
+    ])]
     private ?string $name = null;
 
     /**
