@@ -39,6 +39,13 @@ class Category
     #[ORM\ManyToMany(targetEntity: Game::class, mappedBy: 'hasCategory')]
     private Collection $games;
 
+    #[ORM\Column(length: 255)]
+    #[Groups([
+        'category_browse',
+        'category_show'
+    ])]
+    private ?string $picture = null;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
@@ -112,6 +119,18 @@ class Category
         if ($this->games->removeElement($game)) {
             $game->removeHasCategory($this);
         }
+
+        return $this;
+    }
+
+    public function getPicture(): ?string
+    {
+        return $this->picture;
+    }
+
+    public function setPicture(string $picture): static
+    {
+        $this->picture = $picture;
 
         return $this;
     }

@@ -86,12 +86,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var Collection<int, Category>
      */
     #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'users')]
+    #[Groups([
+        'user_browse',
+        'user_show'
+    ])]
     private Collection $selectedCategory;
 
     /**
      * @var Collection<int, Tag>
      */
     #[ORM\ManyToMany(targetEntity: Tag::class, inversedBy: 'users')]
+    #[Groups([
+        'user_browse',
+        'user_show'
+    ])]
     private Collection $preferedTag;
 
     /**

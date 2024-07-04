@@ -34,6 +34,7 @@ class AppFixtures extends Fixture
         for ($i = 0; $i < 10; $i++) {
             $category = new Category();
             $category->setName($faker->word);
+            $category->setPicture($faker->imageUrl());
             $manager->persist($category);
             $categories[] = $category;
         }
