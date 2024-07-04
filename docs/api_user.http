@@ -1,8 +1,33 @@
 ### BROWSE
-GET http://localhost:8080/api/user/browse
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3MjAwODgyODYsImV4cCI6MTcyMDA5MTg4Niwicm9sZXMiOlsiUk9MRV9BRE1JTiIsIlJPTEVfVVNFUiJdLCJ1c2VybmFtZSI6ImFkbWluQG9wbGF5LmZyIn0.s7UyjGh9te7vDwUL4-TBE6WE3-djvW-YCgjejx-LKoEx_BkydW5OsYm61iL49cxBlxjYEzXLP3XVySbF1RH9H5Ew6ZcdKSJh5AsB-6DVU19pMtbxP6H9GjiChiarppgu9Xrgu5OHtPsmXVZr0hXVhZ4ElE1mM2alMhaHKbVkrVEMHfkEcy6Y5cXAd7gRQwaHZgXPwZ7lSlAyXjjCMsN01YV5dwGO7rkirF_UiIC7Z40mIcWEmsdljh1Ag01o1ITpQHoRyAYa81FiZl3YflpSsh4vKhr7Wp1t51tkoe7QxZkS88orUeXVQYx_iNBdXNEBIgWnq7eJ47GzFBa4duXC4Q
+GET http://localhost:8081/api/user/browse
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3MjAwOTgzMTgsImV4cCI6MTcyMDEwMTkxOCwicm9sZXMiOlsiUk9MRV9BRE1JTiIsIlJPTEVfVVNFUiJdLCJ1c2VybmFtZSI6ImFkbWluQG9wbGF5LmZyIn0.CqH7bGFhZPprWci9w4xbJsx5nRikbaO4z0pbYAM9rodmlS_lqd7icz1qjK3NLfcs557wTLCH02KxqwRylrRjS23p1HkNztDP_8yBwDEJXUaDr1zFpdDKjtQGMeCfW0wXOkReQKfuOXBJsz_O_1ijtd8CYHXL3dQNcNioQoA4l2ccUbUVKCbmHw9j3kHmmgENBdcjXhTJ3PB_PFG-cJE4NT5XANXf8GHdgk51c3ntlnxBGFHLP8p-pINmsOTvf_cTy-4r9vfw_6K59JfEFlsgltK9G-oQXqd7QXt1d1GAbXZ7Nd63SiFrhPXX5FQrgdEpgwdZBcLLIA1v1xFB022-XQ
 
 ### SHOW{id}
 GET http://localhost:8080/api/user/1/show
 Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3MjAwODgyODYsImV4cCI6MTcyMDA5MTg4Niwicm9sZXMiOlsiUk9MRV9BRE1JTiIsIlJPTEVfVVNFUiJdLCJ1c2VybmFtZSI6ImFkbWluQG9wbGF5LmZyIn0.s7UyjGh9te7vDwUL4-TBE6WE3-djvW-YCgjejx-LKoEx_BkydW5OsYm61iL49cxBlxjYEzXLP3XVySbF1RH9H5Ew6ZcdKSJh5AsB-6DVU19pMtbxP6H9GjiChiarppgu9Xrgu5OHtPsmXVZr0hXVhZ4ElE1mM2alMhaHKbVkrVEMHfkEcy6Y5cXAd7gRQwaHZgXPwZ7lSlAyXjjCMsN01YV5dwGO7rkirF_UiIC7Z40mIcWEmsdljh1Ag01o1ITpQHoRyAYa81FiZl3YflpSsh4vKhr7Wp1t51tkoe7QxZkS88orUeXVQYx_iNBdXNEBIgWnq7eJ47GzFBa4duXC4Q
 
+### Register User
+POST http://localhost:8081/api/user/register
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3MjAxMDE5NzMsImV4cCI6MTcyMDEwNTU3Mywicm9sZXMiOlsiUk9MRV9BRE1JTiIsIlJPTEVfVVNFUiJdLCJ1c2VybmFtZSI6ImFkbWluQG9wbGF5LmZyIn0.fL-DuF0vyBppJPm-HvlN_7WN7B17R6zqIjRwZiV34etqMfLZ02210xKHm4ZDfrXYSAA2iGDMT_EU4floElGF9g8KLIB46I0WrrV08FpljQUVskX70C2Ga8QPQK0B0YYyUthBJpmCkV0y_N1BuWdBSD248BrLlBaK1JGd_4aKNhWpNTZEn2pZYUAbcTYxaL7g6YkqNL5XNVP1F8BJl6kBZJ8LmAlYLdbLp4WFWuxUr6gVD3XPbnYN-EVZ_WYKuEU_tQ0WXuyaoQGufkMJaWuv-pR4hOhee2NcMK0SLb6vPDQWAHzmcyplB0f3YlAHeMg1PLfGwDiiE4sbQBW-UQLsUw
+
+{
+    "firstname": "John",
+    "lastname": "Doe",
+    "nickname": "johndoe",
+    "email": "john.doe@example.com",
+    "password": "password123",
+    "picture": ""
+}
+
+### Upload data user
+PATCH http://localhost:8081/api/user/upload
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3MjAxMDE5NzMsImV4cCI6MTcyMDEwNTU3Mywicm9sZXMiOlsiUk9MRV9BRE1JTiIsIlJPTEVfVVNFUiJdLCJ1c2VybmFtZSI6ImFkbWluQG9wbGF5LmZyIn0.fL-DuF0vyBppJPm-HvlN_7WN7B17R6zqIjRwZiV34etqMfLZ02210xKHm4ZDfrXYSAA2iGDMT_EU4floElGF9g8KLIB46I0WrrV08FpljQUVskX70C2Ga8QPQK0B0YYyUthBJpmCkV0y_N1BuWdBSD248BrLlBaK1JGd_4aKNhWpNTZEn2pZYUAbcTYxaL7g6YkqNL5XNVP1F8BJl6kBZJ8LmAlYLdbLp4WFWuxUr6gVD3XPbnYN-EVZ_WYKuEU_tQ0WXuyaoQGufkMJaWuv-pR4hOhee2NcMK0SLb6vPDQWAHzmcyplB0f3YlAHeMg1PLfGwDiiE4sbQBW-UQLsUw
+
+{
+    "firstname": "John",
+    "lastname": "Doe",
+    "nickname": "Jojo",
+    "email": "Jojo@example.com",
+    "password": "password123",
+    "picture": ""
+}
