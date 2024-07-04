@@ -29,23 +29,90 @@ class AppFixtures extends Fixture
     {
         $faker = Factory::create();
 
-        // Create some categories
-        $categories = [];
-        for ($i = 0; $i < 6; $i++) {
-            $category = new Category();
-            $category->setName($faker->word);
-            $category->setPicture('https://picsum.photos/200/300');
-            $manager->persist($category);
-            $categories[] = $category;
-        }
+        // Define category data
+        $categoryData = [
+            [
+                'name' => 'Action',
+                'picture' => 'https://picsum.photos/200',
+            ],
+            [
+                'name' => 'Adventure',
+                'picture' => 'https://picsum.photos/200',
+            ],
+            [
+                'name' => 'RPG',
+                'picture' => 'https://picsum.photos/200',
+            ],
+            [
+                'name' => 'Strategy',
+                'picture' => 'https://picsum.photos/200',
+            ],
+            [
+                'name' => 'Simulation',
+                'picture' => 'https://picsum.photos/200',
+            ],
+            [
+                'name' => 'Sports',
+                'picture' => 'https://picsum.photos/200',
+            ],
+        ];
 
-        // Create some tags
-        $tags = [];
-        for ($i = 0; $i < 12; $i++) {
+        // Create categories
+        $categoryEntityList = [];
+        foreach ($categoryData as $categoryInfo) {
+            $category = new Category();
+            $category->setName($categoryInfo['name']);
+            $category->setPicture($categoryInfo['picture']);
+
+            $manager->persist($category); // Persist the category entity
+            $categoryEntityList[] = $category; // Add category to the list
+        }
+        //definite Tag data
+        $tagData = [
+            [
+                'name' => 'Shooter'
+            ],
+            [
+                'name' => 'Fighting'
+            ],
+            [
+                'name' => 'Stealth'
+            ],
+            [
+                'name' => 'Open World'
+            ],
+            [
+                'name' => 'Survival'
+            ],
+            [
+                'name' => 'Exploration'
+            ],
+            [
+                'name' => 'Fantasy'
+            ],
+            [
+                'name' => 'Sci-Fi'
+            ],
+            [
+                'name' => 'Turn-Based'
+            ],
+            [
+                'name' => 'Real-Time'
+            ],
+            [
+                'name' => 'Simulation'
+            ],
+            [
+                'name' => 'Football'
+            ],
+        ];
+        // Create categories
+        $tagEntityList = [];
+        foreach ($tagData as $tagInfo) {
             $tag = new Tag();
-            $tag->setName($faker->word);
+            $tag->setName($tagInfo['name']);
             $manager->persist($tag);
-            $tags[] = $tag;
+            $tagEntityList[] = $tag;
         }
 
         // Create some themes
@@ -640,22 +707,26 @@ class AppFixtures extends Fixture
             }
             $game->setDescription($description);
 
-            // Assigner des catégories aléatoires au jeu
-            $randomCategoryKeys = array_rand($categories, min(3, count($categories)));
-            if (!is_array($randomCategoryKeys)) {
-                $randomCategoryKeys = [$randomCategoryKeys];
-            }
-            foreach ($randomCategoryKeys as $key) {
-                $game->addHasCategory($categories[$key]);
+            foreach ($gameEntityList as $game) {
+                // Assigner des catégories aléatoires au jeu
+                $randomCategoryKeys = array_rand($categoryEntityList, min(3, count($categoryEntityList)));
+                if (!is_array($randomCategoryKeys)) {
+                    $randomCategoryKeys = [$randomCategoryKeys];
+                }
+                foreach ($randomCategoryKeys as $key) {
+                    $game->addHasCategory($categoryEntityList[$key]);
+                }
+                
+                $manager->persist($game); // Persist the game entity with assigned categories
             }
 
             // Assigner des tags aléatoires au jeu
-            $randomTagKeys = array_rand($tags, min(5, count($tags)));
+            $randomTagKeys = array_rand($tagEntityList, min(5, count($tagEntityList)));
             if (!is_array($randomTagKeys)) {
                 $randomTagKeys = [$randomTagKeys];
             }
             foreach ($randomTagKeys as $key) {
-                $game->addHasTag($tags[$key]);
+                $game->addHasTag($tagEntityList[$key]);
             }
 
             $gameEntityList[] = $game;
@@ -711,13 +782,16 @@ class AppFixtures extends Fixture
             }
 
             // Assign random category to user
-            $randomCategory = $faker->randomElements($categories, mt_rand(1, 5));
-            foreach ($randomCategory as $category) {
+            $randomCategories = $faker->randomElements($categoryEntityList, mt_rand(1, 5));
+            foreach ($randomCategories as $category) {
                 $user->addSelectedCategory($category);
             }
 
+            $manager->persist($user); // Persist the user entity with assigned categories
+            $manager->flush();
+
             // Assign random tag to user
-            $randomTag = $faker->randomElements($tags, mt_rand(1, 5));
+            $randomTag = $faker->randomElements($tagEntityList, mt_rand(1, 5));
             foreach ($randomTag as $tag) {
                 $user->addPreferedTag($tag);
             }
