@@ -21,7 +21,7 @@ class TagController extends AbstractController
     }
 
     #[Route('/{id}/show', name: 'show', methods: ['GET'])]
-    public function showCategory($id, TagRepository $tagRepository): JsonResponse
+    public function show($id, TagRepository $tagRepository): JsonResponse
     {
         $tag= $tagRepository->find($id);
 

@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class GameController extends AbstractController
 {
     #[Route('/browse', name: 'browse', methods: ['GET'])]
-    public function games(GameRepository $gameRepository): JsonResponse
+    public function browse(GameRepository $gameRepository): JsonResponse
     {
         $allGames = $gameRepository->findAll();
         // Return the data in JSON
@@ -21,7 +21,7 @@ class GameController extends AbstractController
     }
 
     #[Route('/{id}/show', name: 'show', methods: ['GET'])]
-    public function game(int $id, GameRepository $gameRepository): JsonResponse
+    public function show(int $id, GameRepository $gameRepository): JsonResponse
     {
         $game = $gameRepository->find($id);
                    // Return the data in JSON

@@ -19,7 +19,7 @@ class UserController extends AbstractController
 {
 
     #[Route('/browse', name: 'browse', methods: ['GET'])]
-    public function users(UserRepository $userRepository, SerializerInterface $serializer): JsonResponse
+    public function browse(UserRepository $userRepository, SerializerInterface $serializer): JsonResponse
     {
         $users = $userRepository->findAll();
 
@@ -58,7 +58,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/{id}/show', name: 'show', methods: ['GET'])]
-    public function usersShow(int $id, UserRepository $userRepository, SerializerInterface $serializer): JsonResponse
+    public function show(int $id, UserRepository $userRepository, SerializerInterface $serializer): JsonResponse
     {
         $user = $userRepository->find($id);
 
