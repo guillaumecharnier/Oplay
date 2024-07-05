@@ -18,3 +18,16 @@ Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3MjAxMDUyM
     "password": "password123",
     "picture": ""
 }
+
+### Edit User
+PATCH http://localhost:8080/api/user/21/edit
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3MjAxNzI4MDEsImV4cCI6MTcyMDE3NjQwMSwicm9sZXMiOlsiUk9MRV9BRE1JTiIsIlJPTEVfVVNFUiJdLCJ1c2VybmFtZSI6ImFkbWluQG9wbGF5LmZyIn0.eVXs1NFoow0IzodYK5qvlZKag-rBDIa_E0SumdLs1dbYzKWUR_RNQgqNXhIzzUC7SmFHP5fLQ1yckArggKMm-XJJtec8zKnO7aR6W3IqsBgDe1VsAqGZAiYOh7fmb1aOCvr45uf05pHiLLJzUE3YOgduL9f6GsmKV2v-P0OudHArAx7PuWP3iCOFItZceIHN7WKOXL00-Qh-fAc59Sq6VLQ6jDbR-f5-8oEgPky5mJIkPBmEDyV8EfDR-tcPXt6qQBH_ZgEBFvGl7vG50rXoP2JJyS538qS3wiyfaRW2Kzou7KrnX8L1iYnuJaopjTb3jn7nAfAYnmjBhnUTdwXexA
+
+{
+    "firstname": "Test2",
+    "lastname": "Test2",
+    "nickname": "Test2",
+    "email": "test2@example.com",
+    "password": "password123",
+    "picture": ""
+}
