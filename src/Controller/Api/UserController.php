@@ -147,5 +147,63 @@ class UserController extends AbstractController
 
         return new JsonResponse(['message' => 'User creaed successfully'], 201);
     }
+
+    #[Route('/{id}/edit', name: 'edit', methods: ['PATCH'])]
+    public function edit(
+        int $id,
+        Request $request,
+        EntityManagerInterface $entityManager,
+        ValidatorInterface $validator,
+        UserPasswordHasherInterface $passwordHasher
+    ): JsonResponse {
+        // Fetch the user from the database
+        $user = $entityManager->getRepository(User::class)->find($id);
+
+        if (!$user) {
+            return new JsonResponse(['error' => 'User not found'], 404);
+        }
+
+        // Decode the JSON data from the request
+        $data = json_decode($request->getContent(), true);
+
+        if (!$data) {
+            return new JsonResponse(['error' => 'Invalid JSON'], 400);
+        }
+
+        // Update user information
+        if (isset($data['firstname'])) {
+            $user->setFirstname($data['firstname']);
+        }
+        if (isset($data['lastname'])) {
+            $user->setLastname($data['lastname']);
+        }
+        if (isset($data['nickname'])) {
+            $user->setNickname($data['nickname']);
+        }
+        if (isset($data['email'])) {
+            $user->setEmail($data['email']);
+        }
+        if (isset($data['picture'])) {
+            $user->setPicture($data['picture']);
+        }
+        if (isset($data['password'])) {
+            $hashedPassword = $passwordHasher->hashPassword($user, $data['password']);
+            $user->setPassword($hashedPassword);
+        }
+
+        // Validate the user data
+        $errors = $validator->validate($user);
+        if (count($errors) > 0) {
+            $errorsString = (string) $errors;
+
+            return new JsonResponse(['error' => $errorsString], 400);
+        }
+
+        // Persist the updated user data
+        $entityManager->persist($user);
+        $entityManager->flush();
+
+        return new JsonResponse(['message' => 'User updated successfully'], 200);
+    }
     
 }
