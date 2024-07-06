@@ -73,12 +73,20 @@ class Game
      * @var Collection<int, Tag>
      */
     #[ORM\ManyToMany(targetEntity: Tag::class, inversedBy: 'games')]
+    #[Groups([
+        'game_browse',
+        'game_show'
+    ])]
     private Collection $hasTag;
 
     /**
      * @var Collection<int, Category>
      */
     #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'games')]
+    #[Groups([
+        'game_browse',
+        'game_show'
+    ])]
     private Collection $hasCategory;
 
     /**

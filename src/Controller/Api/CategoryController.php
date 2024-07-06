@@ -39,5 +39,37 @@ class CategoryController extends AbstractController
         return $this->json($category, Response::HTTP_OK, [], ['groups' => 'category_show']);
     }
 
+    #[Route('/{categoryId}/games', name: 'category_games', methods: ['GET'])]
+    public function getCategoryGames(CategoryRepository $categoryRepository, int $categoryId): JsonResponse
+    {
+        $category = $categoryRepository->find($categoryId);
+
+        if (!$category) {
+            return $this->json(['error' => 'Category not found'], 404);
+        }
+
+        // Récupérer les jeux associés à cette catégorie
+        $games = $category->getGames();
+
+        // Formater les données des jeux selon les besoins
+        $formattedGames = [];
+        foreach ($games as $game) {
+            $formattedGames[] = [
+                'id' => $game->getId(),
+                'name' => $game->getName(),
+                'description' => $game->getDescription(),
+                'editor' => $game->getEditor(),
+                'picture' => $game->getPicture(),
+                'price' => $game->getPrice(),
+                'releaseDate' => $game->getReleaseDate()->format('Y-m-d'),
+                'hasCategory' => $game->getHasCategory()->map(fn($category) => $category->getName())->toArray(),
+                'hasTag' => $game->getHasTag()->map(fn($tag) => $tag->getName())->toArray(),
+            ];
+        }
+
+        return $this->json($formattedGames, Response::HTTP_OK, [], ['groups' => 'game_browse']);
+    }
+    
+
 }
 
