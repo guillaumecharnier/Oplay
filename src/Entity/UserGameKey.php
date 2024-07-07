@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\UserGameKeyRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: UserGameKeyRepository::class)]
 class UserGameKey
@@ -11,9 +12,17 @@ class UserGameKey
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups([
+        'user_browse',
+        'user_show'
+    ])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups([
+        'user_browse',
+        'user_show'
+    ])]
     private ?string $gameKey = null;
 
     #[ORM\Column]
@@ -25,6 +34,10 @@ class UserGameKey
 
     #[ORM\ManyToOne(inversedBy: 'userGameKeys')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups([
+        'user_browse',
+        'user_show'
+    ])]
     private ?Game $game = null;
 
 

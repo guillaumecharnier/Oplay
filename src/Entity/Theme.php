@@ -16,14 +16,18 @@ class Theme
     #[ORM\Column]
     #[Groups([
         'theme_browse',
-        'theme_show'
+        'theme_show',
+        'user_browse',
+        'user_show'
     ])]
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
     #[Groups([
         'theme_browse',
-        'theme_show'
+        'theme_show',
+        'user_browse',
+        'user_show'
     ])]
     private ?string $name = null;
 

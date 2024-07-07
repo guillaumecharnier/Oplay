@@ -7,11 +7,11 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
 #[Route('/api/user', name: 'app_api_user_', methods: ['GET'])]
@@ -23,75 +23,32 @@ class UserController extends AbstractController
     {
         $users = $userRepository->findAll();
 
-        // Sérialiser les utilisateurs
-        $serializedUsers = [];
-        foreach ($users as $user) {
-            $serializedUser = [
-                'id' => $user->getId(),
-                'choose_theme_id' => $user->getChooseTheme() ? $user->getChooseTheme()->getId() : null,
-                'firstname' => $user->getFirstname(),
-                'lastname' => $user->getLastname(),
-                'nickname' => $user->getNickname(),
-                'picture' => $user->getPicture(),
-                'email' => $user->getEmail(),
-                'roles' => $user->getRoles(),
-                'selectedCategory' => $user->getSelectedCategory()->map(fn($category) => $category->getName())->toArray(),
-                'preferedTag' => $user->getPreferedTag()->map(fn($tag) => $tag->getName())->toArray(),
-                'purchasedOrderIds' => $user->getPurchasedOrder()->map(fn($purchasedOrder) => $purchasedOrder->getId())->toArray(),
-                'userGetGame' => $user->getUserGetGame()->map(fn($userGetGame) => $userGetGame->getName())->toArray(),
-                'userGameKeys' => $user->getUserGameKeys()->map(fn($userGameKeys) => $userGameKeys->getGameKey())->toArray(),
-
-            ];
-
-            $serializedUsers[] = $serializedUser;
-        }
-
-        // Sérialiser en JSON en utilisant SerializerInterface
-        $serializedData = $serializer->serialize($serializedUsers, 'json', [
+        // Sérialiser les utilisateurs en utilisant SerializerInterface
+        $serializedData = $serializer->serialize($users, 'json', [
             'groups' => 'user_browse',
             'circular_reference_handler' => function ($object) {
                 return $object->getId();
             }
         ]);
 
-        return new JsonResponse($serializedData, 200, [], true);
+        return new JsonResponse($serializedData, Response::HTTP_OK, [], true);
     }
 
-    #[Route('/{id}/show', name: 'show', methods: ['GET'])]
-    public function show(int $id, UserRepository $userRepository, SerializerInterface $serializer): JsonResponse
+    #[Route('/{id}/show', name: 'app_api_category_show', methods: ['GET'])]
+    public function show($id, UserRepository $userRepository): JsonResponse
     {
         $user = $userRepository->find($id);
 
-        if (!$user) {
-            return new JsonResponse(['message' => 'User not found'], 404);
+        if (is_null($user)) {
+            $info = [
+                'success' => false,
+                'error_message' => 'Utilisateur non trouvée',
+                'error_code' => 'User_not_found',
+            ];
+            return $this->json($info, Response::HTTP_NOT_FOUND);
         }
 
-        $serializedUser = [
-            'id' => $user->getId(),
-            'choose_theme_id' => $user->getChooseTheme() ? $user->getChooseTheme()->getId() : null,
-            'firstname' => $user->getFirstname(),
-            'lastname' => $user->getLastname(),
-            'nickname' => $user->getNickname(),
-            'picture' => $user->getPicture(),
-            'email' => $user->getEmail(),
-            'roles' => $user->getRoles(),
-            'selectedCategory' => $user->getSelectedCategory()->map(fn($category) => $category->getName())->toArray(),
-            'preferedTag' => $user->getPreferedTag()->map(fn($tag) => $tag->getName())->toArray(),
-            'purchasedOrderIds' => $user->getPurchasedOrder()->map(fn($purchasedOrder) => $purchasedOrder->getId())->toArray(),
-            'userGetGame' => $user->getUserGetGame()->map(fn($userGetGame) => $userGetGame->getName())->toArray(),
-            'userGameKeys' => $user->getUserGameKeys()->map(fn($userGameKey) => $userGameKey->getGameKey())->toArray(),
-        ];
-
-        // Sérialiser en JSON en utilisant SerializerInterface
-        $serializedData = $serializer->serialize($serializedUser, 'json', [
-            'groups' => 'user_show',
-            'circular_reference_handler' => function ($object) {
-                return $object->getId();
-            }
-        ]);
-
-        // Retourner les données en JSON
-        return new JsonResponse($serializedData, 200, [], true);
+        return $this->json($user, Response::HTTP_OK, [], ['groups' => 'user_show']);
     }
 
     #[Route('/register', name: 'register', methods: ['POST'])]
@@ -100,7 +57,6 @@ class UserController extends AbstractController
         EntityManagerInterface $entityManager,
         ValidatorInterface $validator,
         UserPasswordHasherInterface $passwordHasher,
-        SluggerInterface $slugger
     ): JsonResponse {
         // Take the Json data from the request
         $data = json_decode($request->getContent(), true);

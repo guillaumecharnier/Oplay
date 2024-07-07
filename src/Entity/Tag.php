@@ -16,14 +16,22 @@ class Tag
     #[ORM\Column]
     #[Groups([
         'tag_browse',
-        'tag_show'
+        'tag_show',
+        'game_browse',
+        'game_show',
+        'user_browse',
+        'user_show'
     ])]
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
     #[Groups([
         'tag_browse',
-        'tag_show'
+        'tag_show',
+        'game_browse',
+        'game_show',
+        'user_browse',
+        'user_show'
     ])]
     private ?string $name = null;
 

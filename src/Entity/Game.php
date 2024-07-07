@@ -16,14 +16,18 @@ class Game
     #[ORM\Column]
     #[Groups([
         'game_browse',
-        'game_show'
+        'game_show',
+        'user_browse',
+        'user_show'
     ])]
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
     #[Groups([
         'game_browse',
-        'game_show'
+        'game_show',
+        'user_browse',
+        'user_show'
     ])]
     private ?string $name = null;
 
@@ -85,7 +89,7 @@ class Game
     #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'games')]
     #[Groups([
         'game_browse',
-        'game_show'
+        'game_show',
     ])]
     private Collection $hasCategory;
 

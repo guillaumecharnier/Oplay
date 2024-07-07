@@ -6,6 +6,7 @@ use App\Repository\OrderRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: OrderRepository::class)]
 #[ORM\Table(name: '`order`')]
@@ -14,15 +15,31 @@ class Order
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups([
+        'user_browse',
+        'user_show'
+    ])]
     private ?int $id = null;
 
     #[ORM\Column]
+    #[Groups([
+        'user_browse',
+        'user_show'
+    ])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(length: 50)]
+    #[Groups([
+        'user_browse',
+        'user_show'
+    ])]
     private ?string $status = null;
 
     #[ORM\Column]
+    #[Groups([
+        'user_browse',
+        'user_show'
+    ])]
     private ?float $total = null;
 
     #[ORM\ManyToOne(inversedBy: 'purchasedOrder')]
