@@ -7,7 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-
+use Symfony\Component\Serializer\SerializerInterface;
 
 #[Route('/api/category', name: 'app_api_category_')]
 class CategoryController extends AbstractController
@@ -17,7 +17,7 @@ class CategoryController extends AbstractController
     {
         $allGenres = $categoryRepository->findAll();
         
-        return $this->json($allGenres, 200, [], ["groups" => "category_browse"]);
+        return $this->json($allGenres, Response::HTTP_OK, [], ["groups" => "category_browse"]);
     }
 
     #[Route('/{id}/show', name: 'app_api_category_show', methods: ['GET'])]
@@ -34,40 +34,35 @@ class CategoryController extends AbstractController
             return $this->json($info, Response::HTTP_NOT_FOUND);
         }
 
-        // Traiter le cas où la catégorie est trouvée
-        // Par exemple, retourner les données de la catégorie
         return $this->json($category, Response::HTTP_OK, [], ['groups' => 'category_show']);
     }
 
     #[Route('/{categoryId}/games', name: 'category_games', methods: ['GET'])]
-    public function getCategoryGames(CategoryRepository $categoryRepository, int $categoryId): JsonResponse
+    public function getCategoryGames(CategoryRepository $categoryRepository, SerializerInterface $serializer, $categoryId): JsonResponse
     {
         $category = $categoryRepository->find($categoryId);
 
-        if (!$category) {
-            return $this->json(['error' => 'Category not found'], 404);
+        if (is_null($category)) {
+            $info = [
+                'success' => false,
+                'error_message' => 'Category non trouvée',
+                'error_code' => 'Category_not_found',
+            ];
+            return $this->json($info, Response::HTTP_NOT_FOUND);
         }
 
         // Récupérer les jeux associés à cette catégorie
         $games = $category->getGames();
 
-        // Formater les données des jeux selon les besoins
-        $formattedGames = [];
-        foreach ($games as $game) {
-            $formattedGames[] = [
-                'id' => $game->getId(),
-                'name' => $game->getName(),
-                'description' => $game->getDescription(),
-                'editor' => $game->getEditor(),
-                'picture' => $game->getPicture(),
-                'price' => $game->getPrice(),
-                'releaseDate' => $game->getReleaseDate()->format('Y-m-d'),
-                'hasCategory' => $game->getHasCategory()->map(fn($category) => $category->getName())->toArray(),
-                'hasTag' => $game->getHasTag()->map(fn($tag) => $tag->getName())->toArray(),
-            ];
-        }
+        // Sérialiser les jeux en utilisant SerializerInterface
+        $serializedData = $serializer->serialize($games, 'json', [
+            'groups' => 'game_browse',
+            'circular_reference_handler' => function ($object) {
+                return $object->getId();
+            }
+        ]);
 
-        return $this->json($formattedGames, Response::HTTP_OK, [], ['groups' => 'game_browse']);
+        return new JsonResponse($serializedData, Response::HTTP_OK, [], true);
     }
     
 

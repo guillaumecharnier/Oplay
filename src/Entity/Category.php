@@ -16,15 +16,24 @@ class Category
     #[ORM\Column]
     #[Groups([
         'category_browse',
-        'category_show'
+        'category_show',
+        'game_browse',
+        'game_show',
+        'user_browse',
+        'user_show'
     ])]
     private ?int $id = null;
 
+    
+    #[ORM\Column(length: 50)]
     #[Groups([
         'category_browse',
-        'category_show'
+        'category_show',
+        'game_browse',
+        'game_show',
+        'user_browse',
+        'user_show' 
     ])]
-    #[ORM\Column(length: 50)]
     private ?string $name = null;
 
     /**
@@ -42,7 +51,7 @@ class Category
     #[ORM\Column(length: 255)]
     #[Groups([
         'category_browse',
-        'category_show'
+        'category_show',
     ])]
     private ?string $picture = null;
 

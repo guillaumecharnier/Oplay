@@ -69,7 +69,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToOne(inversedBy: 'users')]
     #[Groups([
         'user_browse',
-        'user_show'
+        'user_show',
     ])]
     private ?Theme $chooseTheme = null;
     

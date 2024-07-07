@@ -17,7 +17,7 @@ class ThemeController extends AbstractController
     {
         $allThemes = $themeRepository->findAll();
         
-        return $this->json($allThemes, 200, [], ["groups" => "theme_browse"]);
+        return $this->json($allThemes, Response::HTTP_OK, [], ["groups" => "theme_browse"]);
     }
 
     #[Route('/{id}/show', name: 'show', methods: ['GET'])]
@@ -28,13 +28,12 @@ class ThemeController extends AbstractController
         if (is_null($theme)) {
             $info = [
                 'success' => false,
-                'error_message' => 'Theme non trouvée',
+                'error_message' => 'Theme non trouvé',
                 'error_code' => 'Theme_not_found',
             ];
             return $this->json($info, Response::HTTP_NOT_FOUND);
         }
 
-        // Traiter le cas où la catégorie est trouvée
         return $this->json($theme, Response::HTTP_OK, [], ['groups' => 'theme_show']);
     }
 
