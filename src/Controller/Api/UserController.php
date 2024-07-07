@@ -14,13 +14,14 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
-#[Route('/api/user', name: 'app_api_user_', methods: ['GET'])]
+#[Route('/api/user', name: 'app_api_user_')]
 class UserController extends AbstractController
 {
 
     #[Route('/browse', name: 'browse', methods: ['GET'])]
     public function browse(UserRepository $userRepository, SerializerInterface $serializer): JsonResponse
     {
+        // Récupérer tous les utilisateurs depuis le repository
         $users = $userRepository->findAll();
 
         // Sérialiser les utilisateurs en utilisant SerializerInterface
@@ -31,23 +32,27 @@ class UserController extends AbstractController
             }
         ]);
 
+        // Retourner la réponse JSON contenant les utilisateurs sérialisés
         return new JsonResponse($serializedData, Response::HTTP_OK, [], true);
     }
 
-    #[Route('/{id}/show', name: 'app_api_category_show', methods: ['GET'])]
+    #[Route('/{id}/show', name: 'show', methods: ['GET'])]
     public function show($id, UserRepository $userRepository): JsonResponse
     {
+        // Trouver l'utilisateur spécifié par son ID
         $user = $userRepository->find($id);
 
+        // Si l'utilisateur n'est pas trouvé, retourner une réponse JSON avec un message d'erreur
         if (is_null($user)) {
             $info = [
                 'success' => false,
-                'error_message' => 'Utilisateur non trouvée',
+                'error_message' => 'Utilisateur non trouvé',
                 'error_code' => 'User_not_found',
             ];
             return $this->json($info, Response::HTTP_NOT_FOUND);
         }
 
+        // Retourner les détails de l'utilisateur sous forme de JSON avec le groupe 'user_show'
         return $this->json($user, Response::HTTP_OK, [], ['groups' => 'user_show']);
     }
 
@@ -58,14 +63,14 @@ class UserController extends AbstractController
         ValidatorInterface $validator,
         UserPasswordHasherInterface $passwordHasher,
     ): JsonResponse {
-        // Take the Json data from the request
+        // Prendre les données JSON de la requête
         $data = json_decode($request->getContent(), true);
 
         if (!$data) {
             return new JsonResponse(['error' => 'Invalid JSON'], 400);
         }
 
-        // Create the new user
+        // Créer le nouvel utilisateur
         $user = new User();
         $user->setFirstname($data['firstname']);
         $user->setLastname($data['lastname']);
@@ -73,7 +78,7 @@ class UserController extends AbstractController
         $user->setEmail($data['email']);
         $user->setRoles(['ROLE_USER']);
 
-        // Upload the picture if the user set a profil picture
+        // Télécharger l'image de profil si l'utilisateur a défini une image
         if (!empty($data['picture'])) {
             $pictureFile = base64_decode($data['picture']);
             if ($pictureFile) {
@@ -85,11 +90,11 @@ class UserController extends AbstractController
             }
         }
 
-        // Hash the password
+        // Hasher le mot de passe
         $hashedPassword = $passwordHasher->hashPassword($user, $data['password']);
         $user->setPassword($hashedPassword);
 
-        // Valide if the data 
+        // Valider les données utilisateur
         $errors = $validator->validate($user);
         if (count($errors) > 0) {
             $errorsString = (string) $errors;
@@ -97,11 +102,11 @@ class UserController extends AbstractController
             return new JsonResponse(['error' => $errorsString], 400);
         }
 
-        // Register the data
+        // Enregistrer les données utilisateur
         $entityManager->persist($user);
         $entityManager->flush();
 
-        return new JsonResponse(['message' => 'User creaed successfully'], 201);
+        return new JsonResponse(['message' => 'Utilisateur créé avec succès'], 201);
     }
 
     #[Route('/{id}/edit', name: 'edit', methods: ['PATCH'])]
@@ -112,21 +117,22 @@ class UserController extends AbstractController
         ValidatorInterface $validator,
         UserPasswordHasherInterface $passwordHasher
     ): JsonResponse {
-        // Fetch the user from the database
+        // Récupérer l'utilisateur depuis la base de données
         $user = $entityManager->getRepository(User::class)->find($id);
 
+        // Si l'utilisateur n'est pas trouvé, retourner une réponse JSON avec un message d'erreur
         if (!$user) {
-            return new JsonResponse(['error' => 'User not found'], 404);
+            return new JsonResponse(['error' => 'Utilisateur non trouvé'], 404);
         }
 
-        // Decode the JSON data from the request
+        // Décoder les données JSON de la requête
         $data = json_decode($request->getContent(), true);
 
         if (!$data) {
             return new JsonResponse(['error' => 'Invalid JSON'], 400);
         }
 
-        // Update user information
+        // Mettre à jour les informations de l'utilisateur
         if (isset($data['firstname'])) {
             $user->setFirstname($data['firstname']);
         }
@@ -143,11 +149,12 @@ class UserController extends AbstractController
             $user->setPicture($data['picture']);
         }
         if (isset($data['password'])) {
+            // Hasher le nouveau mot de passe
             $hashedPassword = $passwordHasher->hashPassword($user, $data['password']);
             $user->setPassword($hashedPassword);
         }
 
-        // Validate the user data
+        // Valider les données utilisateur
         $errors = $validator->validate($user);
         if (count($errors) > 0) {
             $errorsString = (string) $errors;
@@ -155,11 +162,11 @@ class UserController extends AbstractController
             return new JsonResponse(['error' => $errorsString], 400);
         }
 
-        // Persist the updated user data
+        // Persister les données utilisateur mises à jour
         $entityManager->persist($user);
         $entityManager->flush();
 
-        return new JsonResponse(['message' => 'User updated successfully'], 200);
+        return new JsonResponse(['message' => 'Utilisateur mis à jour avec succès'], 200);
     }
     
 }

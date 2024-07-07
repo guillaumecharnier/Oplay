@@ -29,7 +29,7 @@ class AppFixtures extends Fixture
     {
         $faker = Factory::create();
 
-        // Define category data
+        // Définition des données de catégorie
         $categoryData = [
             [
                 'name' => 'Action',
@@ -57,16 +57,17 @@ class AppFixtures extends Fixture
             ],
         ];
 
-        // Create categories
+        // Création des catégories
         $categoryEntityList = [];
         foreach ($categoryData as $categoryInfo) {
             $category = new Category();
             $category->setName($categoryInfo['name']);
             $category->setPicture($categoryInfo['picture']);
-            $manager->persist($category); // Persist the category entity
-            $categoryEntityList[] = $category; // Add category to the list
+            $manager->persist($category); // Persiste l'entité de catégorie
+            $categoryEntityList[] = $category; // Ajoute la catégorie à la liste
         }
-        //Define Tag data
+
+        // Définition des données de tag
         $tagData = [
             [
                 'name' => 'Shooter'
@@ -105,7 +106,8 @@ class AppFixtures extends Fixture
                 'name' => 'Football'
             ],
         ];
-        // Create Tags
+
+        // Création des tags
         $tagEntityList = [];
         foreach ($tagData as $tagInfo) {
             $tag = new Tag();
@@ -114,7 +116,7 @@ class AppFixtures extends Fixture
             $tagEntityList[] = $tag;
         }
 
-        // Create some themes
+        // Création des thèmes
         $themes = [];
         $themeNames = ['Action', 'Adventure', 'RPG', 'Strategy', 'Simulation', 'Sports'];
         foreach ($themeNames as $name) {
@@ -124,7 +126,7 @@ class AppFixtures extends Fixture
             $themes[] = $theme;
         }
 
-        // Define game data
+        // Définition des données de jeu
         $gamesData = [
             [
                 'name' => 'The Witcher 3: Wild Hunt',
@@ -688,7 +690,7 @@ class AppFixtures extends Fixture
             ],
         ];
 
-        // Create some games
+        // Création des jeux
         $gameEntityList = [];
         foreach ($gamesData as $gameData) {
             $game = new Game();
@@ -727,25 +729,25 @@ class AppFixtures extends Fixture
             $gameEntityList[] = $game;
         }
 
-        // Persist all games
+        // Persiste tous les jeux
         foreach ($gameEntityList as $game) {
             $manager->persist($game);
         }
 
-        // Create specific admin user
+        // Création d'un utilisateur administrateur spécifique
         $adminUser = new User();
         $adminUser->setFirstname('Admin');
         $adminUser->setLastname('User');
         $adminUser->setNickname('admin');
         $adminUser->setPicture('https://picsum.photos/200/300');
         $adminUser->setEmail('admin@oplay.fr');
-        $hashedAdminPassword = $this->passwordHasher->hashPassword($adminUser, 'admin'); // Hashing 'admin' password
+        $hashedAdminPassword = $this->passwordHasher->hashPassword($adminUser, 'admin'); // Hashage du mot de passe 'admin'
         $adminUser->setPassword($hashedAdminPassword);
         $adminUser->setChooseTheme($themes[array_rand($themes)]);
-        $adminUser->setRoles(['ROLE_ADMIN']); // Assign ROLE_ADMIN to this user
+        $adminUser->setRoles(['ROLE_ADMIN']); // Attribution du rôle ROLE_ADMIN à cet utilisateur
         $manager->persist($adminUser);
 
-        // Create users
+        // Création d'utilisateurs
         $users = [];
         for ($i = 0; $i < 20; $i++) {
             $user = new User();
@@ -757,57 +759,57 @@ class AppFixtures extends Fixture
             $hashedPassword = $this->passwordHasher->hashPassword($user, $faker->password);
             $user->setPassword($hashedPassword);
             $user->setChooseTheme($themes[array_rand($themes)]);
-            $user->setRoles([$faker->randomElement(['ROLE_ADMIN', 'ROLE_USER'])]); // Randomly assign Roles
+            $user->setRoles([$faker->randomElement(['ROLE_ADMIN', 'ROLE_USER'])]); // Attribution aléatoire des rôles
             $manager->persist($user);
             $users[] = $user;
 
-            // Assign random games to user
-            $randomGames = $faker->randomElements($gameEntityList, mt_rand(1, 5)); // Adjust the range as needed
+            // Assigner des jeux aléatoires à l'utilisateur
+            $randomGames = $faker->randomElements($gameEntityList, mt_rand(1, 5)); // Ajuster la plage selon les besoins
             foreach ($randomGames as $game) {
                 $user->addUserGetGame($game);
 
-                // Create a user game key
+                // Créer une clé de jeu utilisateur
                 $userGameKey = new UserGameKey();
                 $userGameKey->setUser($user);
                 $userGameKey->setGame($game);
                 $userGameKey->setCreatedAt(\DateTimeImmutable::createFromMutable($faker->dateTimeThisYear()));
-                $userGameKey->setGameKey(sha1($game->getName() . $game->getId())); // Generate unique key based on game name and ID
+                $userGameKey->setGameKey(sha1($game->getName() . $game->getId())); // Générer une clé unique basée sur le nom et l'ID du jeu
 
-                $manager->persist($userGameKey); // Persist UserGameKey
+                $manager->persist($userGameKey); // Persiste UserGameKey
             }
 
-            // Assign random category to user
+            // Assigner une catégorie aléatoire à l'utilisateur
             $randomCategories = $faker->randomElements($categoryEntityList, mt_rand(1, 5));
             foreach ($randomCategories as $category) {
                 $user->addSelectedCategory($category);
             }
 
-            $manager->persist($user); // Persist the user entity with assigned categories
+            $manager->persist($user); // Persiste l'entité utilisateur avec les catégories assignées
             $manager->flush();
 
-            // Assign random tag to user
+            // Assigner un tag aléatoire à l'utilisateur
             $randomTag = $faker->randomElements($tagEntityList, mt_rand(1, 5));
             foreach ($randomTag as $tag) {
                 $user->addPreferedTag($tag);
             }
         }
 
-        // Create orders
+        // Création de commandes
         $usersWithOrders = [];
         $total = 0;
         foreach ($users as $user) {
-            // Check if user already has an order
+            // Vérifier si l'utilisateur a déjà une commande
             if (in_array($user, $usersWithOrders)) {
-                continue; // Skip this user if they already have an order
+                continue; // Passer à l'utilisateur suivant s'il a déjà une commande
             }
 
-            // Create the order
+            // Créer la commande
             $order = new Order();
-            $order->setStatus($faker->randomElement(['pending', 'validated'])); // Randomly assign status
+            $order->setStatus($faker->randomElement(['pending', 'validated'])); // Attribution aléatoire du statut
             $order->setUser($user);
             $order->setCreatedAt(\DateTimeImmutable::createFromMutable($faker->dateTimeThisYear()));
 
-            // Calculate total for the order
+            // Calculer le total de la commande
             $total = 0;
             $randomGames = $faker->randomElements($gameEntityList, mt_rand(1, 5));
             foreach ($randomGames as $game) {
@@ -818,10 +820,10 @@ class AppFixtures extends Fixture
 
             $manager->persist($order);
 
-            // Mark this user as having an order
+            // Marquer cet utilisateur comme ayant une commande
             $usersWithOrders[] = $user;
 
-            // Create ValidateOrder if this order is validated
+            // Créer ValidateOrder si cette commande est validée
             if ($order->getStatus() === 'validated') {
                 $validateOrder = new ValidateOrder();
                 $validateOrder->setQuantity(count($order->getGames()));
