@@ -18,7 +18,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 class UserController extends AbstractController
 {
 
-    #[Route('/browse', name: 'browse', methods: ['GET'])]
+    #[Route('/', name: 'browse', methods: ['GET'])]
     public function browse(UserRepository $userRepository, SerializerInterface $serializer): JsonResponse
     {
         // Récupérer tous les utilisateurs depuis le repository
@@ -36,7 +36,7 @@ class UserController extends AbstractController
         return new JsonResponse($serializedData, Response::HTTP_OK, [], true);
     }
 
-    #[Route('/{id}/show', name: 'show', methods: ['GET'])]
+    #[Route('/{id}', name: 'show', methods: ['GET'])]
     public function show($id, UserRepository $userRepository): JsonResponse
     {
         // Trouver l'utilisateur spécifié par son ID

@@ -36,7 +36,7 @@
                 <th>Tags préférés</th>
                 <th>Clés de jeux</th>
                 <th>Orders</th>
-                <th>Commandes Validées</th> <!-- Nouvelle colonne pour les commandes validées -->
+                <th>Validate Orders</th>
             </tr>
         </thead>
         <tbody>
@@ -47,7 +47,13 @@
                     <td>{{ user.nickname }}</td>
                     <td>{{ user.email }}</td>
                     <td><img src="{{ user.picture }}" alt="{{ user.nickname }}"></td>
-                    <td>{{ user.chooseTheme.name }}</td>
+                    <td>
+                        {% if user.chooseTheme and user.chooseTheme.name is not null %}
+                            {{ user.chooseTheme.name }}
+                        {% else %}
+                            <span style="color: red;">Pas de thème</span>
+                        {% endif %}
+                    </td>
                     <td>
                         <ul>
                             {% for game in user.userGetGame %}
@@ -92,7 +98,7 @@
                         <ul>
                             {% for userGameKey in user.userGameKeys %}
                                 <li>
-                                    <strong>Jeu:</strong> {{ userGameKey.game.id }}<br>
+                                    <strong>{{ userGameKey.game.name }}<br></strong>
                                     <strong>Clé:</strong> {{ userGameKey.gameKey }}<br>
                                     <strong>Créée le :</strong> {{ userGameKey.createdAt|date('d/m/Y H:i:s') }}
                                 </li>
@@ -133,7 +139,6 @@
                             {% endfor %}
                         </ul>
                     </td>
-
                 </tr>
             {% endfor %}
         </tbody>
