@@ -15,7 +15,15 @@ use Symfony\Component\Routing\Annotation\Route;
      public function index(UserRepository $userRepository,ValidateOrderRepository $validateOrderRepository): Response
      {
          $users = $userRepository->findAll();
+         //dd($users);
          $validateOrders = $validateOrderRepository->findAll();
+
+         // Forcer le chargement des thèmes choisis pour chaque utilisateur
+        foreach ($users as $user) {
+            if ($user->getChooseTheme() !== null) {
+                $user->getChooseTheme()->getName(); // Accéder à la propriété pour forcer le chargement
+            }
+        }
 
          return $this->render('user.html.twig', [
              'users' => $users,
