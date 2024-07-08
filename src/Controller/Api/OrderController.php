@@ -17,7 +17,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class OrderController extends AbstractController
 {
   
-    #[Route('/add-to-cart', name: 'add_to_cart', methods: ['POST'])]
+    #[Route('/add', name: 'add', methods: ['POST'])]
     public function addToCart(Request $request, GameRepository $gameRepository, OrderRepository $orderRepository, EntityManagerInterface $entityManager): JsonResponse
     {
         // Récupérer l'utilisateur actuellement authentifié
@@ -72,7 +72,7 @@ class OrderController extends AbstractController
     }
 
 
-    #[Route('/remove-from-cart', name: 'remove_from_cart', methods: ['POST'])]
+    #[Route('/remove', name: 'remove', methods: ['POST'])]
     public function removeFromCart(Request $request, GameRepository $gameRepository, OrderRepository $orderRepository, EntityManagerInterface $entityManager): JsonResponse
     {
         // Récupérer l'utilisateur actuellement authentifié

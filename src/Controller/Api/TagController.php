@@ -12,7 +12,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 #[Route('/api/tag', name: 'app_api_tag_')]
 class TagController extends AbstractController
 {
-    #[Route('/browse', name: 'browse', methods: "GET")]
+    #[Route('/', name: 'browse', methods: "GET")]
     public function browse(TagRepository $tagRepository): JsonResponse
     {
         // Récupérer tous les tags depuis le repository
@@ -22,7 +22,7 @@ class TagController extends AbstractController
         return $this->json($allTags, Response::HTTP_OK, [], ["groups" => "tag_browse"]);
     }
 
-    #[Route('/{id}/show', name: 'show', methods: ['GET'])]
+    #[Route('/{id}', name: 'show', methods: ['GET'])]
     public function show($id, TagRepository $tagRepository): JsonResponse
     {
         // Trouver le tag spécifié par son ID
