@@ -3,7 +3,7 @@ POST http://localhost:8080/api/order/add-to-cart
 Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3MjA0NTA4NDIsImV4cCI6MTcyMDQ1NDQ0Miwicm9sZXMiOlsiUk9MRV9BRE1JTiIsIlJPTEVfVVNFUiJdLCJ1c2VybmFtZSI6ImFkbWluQG9wbGF5LmZyIn0.QT2zAMd-vKrw5_79mB8YZrTpE1CFJhiwI80ow3_HhOVcxbpdI1GsVdfZ7XwNIJ8BVLI-byiTN58orWrsI3k-Nm7H4nBRG5toSw4sBhbUbgCg9FILPQ0CS7STOTNkanJaaZKibv7XA2cGlo4i2vcHuRY9gNjdUsWPmX4VQ1Eoeh9kZra4a1HYBVlyueSNKQjiI45hoC0_AouSFy1NgnTmM461Yam7N7tWYib8rPgSoZ8rEsfxfZKdF-2zg6GiuuSUf-t-0uajmti7np6sp6Uycq74deT-Oh7CwD8ew2HZZipB-v00J4ZCw8pFwHaKOBLq0Hc-JZMXOXm3_TJUq5AoQQ
 
 {
-    "game_id": 73
+    "game_id": 90
 }
 
 
@@ -12,7 +12,7 @@ POST http://localhost:8080/api/order/remove-from-cart
 Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3MjA0NTA4NDIsImV4cCI6MTcyMDQ1NDQ0Miwicm9sZXMiOlsiUk9MRV9BRE1JTiIsIlJPTEVfVVNFUiJdLCJ1c2VybmFtZSI6ImFkbWluQG9wbGF5LmZyIn0.QT2zAMd-vKrw5_79mB8YZrTpE1CFJhiwI80ow3_HhOVcxbpdI1GsVdfZ7XwNIJ8BVLI-byiTN58orWrsI3k-Nm7H4nBRG5toSw4sBhbUbgCg9FILPQ0CS7STOTNkanJaaZKibv7XA2cGlo4i2vcHuRY9gNjdUsWPmX4VQ1Eoeh9kZra4a1HYBVlyueSNKQjiI45hoC0_AouSFy1NgnTmM461Yam7N7tWYib8rPgSoZ8rEsfxfZKdF-2zg6GiuuSUf-t-0uajmti7np6sp6Uycq74deT-Oh7CwD8ew2HZZipB-v00J4ZCw8pFwHaKOBLq0Hc-JZMXOXm3_TJUq5AoQQ
 
 {
-    "game_id": 72
+    "game_id": 90
 }
 
 ### Checkout
