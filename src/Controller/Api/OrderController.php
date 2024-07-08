@@ -132,38 +132,38 @@ class OrderController extends AbstractController
     }
 
     #[Route('/clear', name: 'clear_cart', methods: ['POST'])]
-public function clearCart(Request $request, OrderRepository $orderRepository, EntityManagerInterface $entityManager): JsonResponse
-{
-    // Récupérer l'utilisateur actuellement authentifié
-    $user = $this->getUser();
-    if (!$user) {
-        return new JsonResponse(['error' => 'Utilisateur non authentifié'], 401);
+    public function clearCart(Request $request, OrderRepository $orderRepository, EntityManagerInterface $entityManager): JsonResponse
+    {
+        // Récupérer l'utilisateur actuellement authentifié
+        $user = $this->getUser();
+        if (!$user) {
+            return new JsonResponse(['error' => 'Utilisateur non authentifié'], 401);
+        }
+
+        // Rechercher un panier en cours pour l'utilisateur
+        $order = $orderRepository->findCurrentOrderByUser($user);
+
+        // Vérifier si un panier actif existe
+        if (!$order) {
+            return new JsonResponse(['error' => 'Aucun panier actif trouvé'], 400);
+        }
+
+        // Supprimer tous les jeux du panier
+        foreach ($order->getGames() as $game) {
+            $order->removeGame($game); // Appel correct avec le jeu à supprimer
+        }
+
+        // Supprimer le panier s'il est vide
+        if ($order->getGames()->isEmpty()) {
+            $entityManager->remove($order);
+        } else {
+            $entityManager->persist($order);
+        }
+
+        $entityManager->flush();
+
+        return new JsonResponse(['message' => 'Panier vidé avec succès'], 200);
     }
-
-    // Rechercher un panier en cours pour l'utilisateur
-    $order = $orderRepository->findCurrentOrderByUser($user);
-
-    // Vérifier si un panier actif existe
-    if (!$order) {
-        return new JsonResponse(['error' => 'Aucun panier actif trouvé'], 400);
-    }
-
-    // Supprimer tous les jeux du panier
-    foreach ($order->getGames() as $game) {
-        $order->removeGame($game); // Appel correct avec le jeu à supprimer
-    }
-
-    // Supprimer le panier s'il est vide
-    if ($order->getGames()->isEmpty()) {
-        $entityManager->remove($order);
-    } else {
-        $entityManager->persist($order);
-    }
-
-    $entityManager->flush();
-
-    return new JsonResponse(['message' => 'Panier vidé avec succès'], 200);
-}
 
     #[Route('/checkout', name: 'checkout', methods: ['POST'])]
     public function checkout(OrderRepository $orderRepository, EntityManagerInterface $entityManager): JsonResponse

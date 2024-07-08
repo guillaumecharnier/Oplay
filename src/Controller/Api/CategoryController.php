@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
+
 #[Route('/api/category', name: 'app_api_category_')]
 class CategoryController extends AbstractController
 {
