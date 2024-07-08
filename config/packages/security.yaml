@@ -47,11 +47,15 @@ security:
     access_control:
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
         - { path: ^/api,       roles: IS_AUTHENTICATED_FULLY }
-        # - { path: ^/api,       roles: PUBLIC_ACCESS, methods: [GET] }
         - { path: ^/api,       roles: ROLE_ADMIN }
         - { path: ^/back, roles: ROLE_ADMIN }
-        
-        # - { path: ^/profile, roles: ROLE_USER }
+        # - { path: ^/api/order/add, roles: ROLE_USER }
+        # - { path: ^/api/order/remove, roles: ROLE_USER }
+        # - { path: ^/api/order/clear, roles: ROLE_USER }
+        # - { path: ^/api/order/checkout, roles: ROLE_USER }
+        # - { path: ^/api/user/browse, roles: ROLE_ADMIN }
+        # - { path: ^/api/user/show/*, roles: ROLE_USER }
+        # - { path: ^/api/user/edit/*, roles: ROLE_USER }
 
 when@test:
     security:
