@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}ValidateOrder Details{% endblock %}
+
+{% block body %}
+    <div class="d-flex justify-content-center">
+        <div class="w-75">
+            <h1 class="text-center mb-4">Validate Order Details</h1>
+
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>User</th>
+                        <th>Games</th>
+                        <th>Quantity</th>
+                        <th>Total Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{ validate_order.id }}</td>
+                        <td>{{ validate_order.users.nickname }}</td>
+                        <td>
+                            <ul>
+                                {% for game in validate_order.game %}
+                                    <li>{{ game.name }}</li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                        <td>{{ validate_order.quantity }}</td>
+                        <td>{{ validate_order.totalPrice }}€</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="text-center mt-3 mb-4">
+                <a href="{{ path('app_validate_order_index') }}" class="btn btn-primary">Back to List</a>
+            </div>
+
+            <div class="text-center mt-3">
+                {{ include('backoffice/validate_order/_delete_form.html.twig') }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

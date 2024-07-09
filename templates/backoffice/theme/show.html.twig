@@ -8,7 +8,7 @@
             <div class="col-lg-8">
                 <h1 class="text-center mb-4">Theme</h1>
 
-                <table class="table">
+                <table class="table table-striped">
                     <tbody>
                         <tr>
                             <th style="width: 20%">Id</th>
@@ -22,8 +22,8 @@
                 </table>
 
                 <div class="text-center mt-3">
-                    <a href="{{ path('app_back_theme_index') }}" class="btn btn-primary btn-sm mb-2">Back to list</a>
-                    <a href="{{ path('app_back_theme_edit', {'id': theme.id}) }}" class="btn btn-secondary btn-sm mb-2">Edit</a>
+                    <a href="{{ path('app_theme_index') }}" class="btn btn-primary btn-sm mb-2">Back to list</a>
+                    <a href="{{ path('app_theme_edit', {'id': theme.id}) }}" class="btn btn-secondary btn-sm mb-2">Edit</a>
                 </div>
 
                 <div class="text-center mt-3">

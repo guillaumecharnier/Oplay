@@ -8,12 +8,12 @@
             <div class="col-lg-6">
                 <h1 class="text-center">Create new Theme</h1>
 
-                <form action="{{ path('app_back_theme_new') }}" method="post">
+                <form action="{{ path('app_theme_new') }}" method="post">
                     {{ form_widget(form) }}
 
                     <div class="text-center mt-3">
                         <button type="submit" class="btn btn-primary">Save</button>
-                        <a href="{{ path('app_back_theme_index') }}" class="btn btn-secondary ms-2">Back to list</a>
+                        <a href="{{ path('app_theme_index') }}" class="btn btn-secondary ms-2">Back to list</a>
                     </div>
                 </form>
             </div>

@@ -9,7 +9,7 @@
                 <h1 class="text-center mb-4">Theme index</h1>
 
                 <div class="text-center mt-4">
-                    <a href="{{ path('app_back_theme_new') }}" class="btn btn-success">Create new</a>
+                    <a href="{{ path('app_theme_new') }}" class="btn btn-success">Create new</a>
                 </div>
 
                 <table class="table table-striped">
@@ -26,8 +26,8 @@
                                 <td>{{ theme.id }}</td>
                                 <td>{{ theme.name }}</td>
                                 <td>
-                                    <a href="{{ path('app_back_theme_show', {'id': theme.id}) }}" class="btn btn-primary btn-sm">Show</a>
-                                    <a href="{{ path('app_back_theme_edit', {'id': theme.id}) }}" class="btn btn-secondary btn-sm">Edit</a>
+                                    <a href="{{ path('app_theme_show', {'id': theme.id}) }}" class="btn btn-primary btn-sm">Show</a>
+                                    <a href="{{ path('app_theme_edit', {'id': theme.id}) }}" class="btn btn-secondary btn-sm">Edit</a>
                                 </td>
                             </tr>
                         {% else %}

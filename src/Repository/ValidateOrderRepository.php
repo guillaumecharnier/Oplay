@@ -15,7 +15,14 @@ class ValidateOrderRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, ValidateOrder::class);
     }
-
+        public function findAllWithUser(): array
+        {
+            return $this->createQueryBuilder('vo')
+                ->leftJoin('vo.users', 'u') // Join with user entity
+                ->addSelect('u') // Select user entity
+                ->getQuery()
+                ->getResult();
+        }
     //    /**
     //     * @return ValidateOrder[] Returns an array of ValidateOrder objects
     //     */
