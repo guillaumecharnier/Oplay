@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/tag')]
+#[Route('back/tag')]
 class TagController extends AbstractController
 {
     #[Route('/', name: 'app_back_tag_index', methods: ['GET'])]
