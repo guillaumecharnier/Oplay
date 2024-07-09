@@ -18,15 +18,15 @@ class ValidateOrderController extends AbstractController
     public function index(ValidateOrderRepository $validateOrderRepository): Response
     {
         $validateOrders = $validateOrderRepository->findAllWithUser();
-
         return $this->render('backoffice/validate_order/index.html.twig', [
             'validateOrders' => $validateOrders,
         ]);
     }
 
     #[Route('/{id}', name: 'app_validate_order_show', methods: ['GET'])]
-    public function show(ValidateOrder $validateOrder): Response
+    public function show($id, ValidateOrderRepository $validateOrderRepository): Response
     {
+        $validateOrder = $validateOrderRepository->findWithUsersAndGameKeys($id);
         return $this->render('backoffice/validate_order/show.html.twig', [
             'validate_order' => $validateOrder,
         ]);

@@ -23,6 +23,19 @@ class ValidateOrderRepository extends ServiceEntityRepository
                 ->getQuery()
                 ->getResult();
         }
+
+        public function findWithUsersAndGameKeys(int $id): ?ValidateOrder
+        {
+            return $this->createQueryBuilder('vo')
+                ->leftJoin('vo.users', 'u')
+                ->addSelect('u')
+                ->leftJoin('u.userGameKeys', 'ugk')
+                ->addSelect('ugk')
+                ->andWhere('vo.id = :id')
+                ->setParameter('id', $id)
+                ->getQuery()
+                ->getOneOrNullResult();
+        }
     //    /**
     //     * @return ValidateOrder[] Returns an array of ValidateOrder objects
     //     */
