@@ -14,7 +14,7 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('back/theme')]
 class ThemeController extends AbstractController
 {
-    #[Route('/', name: 'app_back_theme_index', methods: ['GET'])]
+    #[Route('/', name: 'app_theme_index', methods: ['GET'])]
     public function index(ThemeRepository $themeRepository): Response
     {
         return $this->render('backoffice/theme/index.html.twig', [
@@ -22,7 +22,7 @@ class ThemeController extends AbstractController
         ]);
     }
 
-    #[Route('/new', name: 'app_back_theme_new', methods: ['GET', 'POST'])]
+    #[Route('/new', name: 'app_theme_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $theme = new Theme();
@@ -33,7 +33,7 @@ class ThemeController extends AbstractController
             $entityManager->persist($theme);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_back_theme_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_theme_index', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('backoffice/theme/new.html.twig', [
@@ -42,7 +42,7 @@ class ThemeController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_back_theme_show', methods: ['GET'])]
+    #[Route('/{id}', name: 'app_theme_show', methods: ['GET'])]
     public function show(Theme $theme): Response
     {
         return $this->render('backoffice/theme/show.html.twig', [
@@ -50,7 +50,7 @@ class ThemeController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'app_back_theme_edit', methods: ['GET', 'POST'])]
+    #[Route('/{id}/edit', name: 'app_theme_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Theme $theme, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(ThemeType::class, $theme);
@@ -59,7 +59,7 @@ class ThemeController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_back_theme_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_theme_index', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('backoffice/theme/edit.html.twig', [
@@ -68,7 +68,7 @@ class ThemeController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_back_theme_delete', methods: ['POST'])]
+    #[Route('/{id}', name: 'app_theme_delete', methods: ['POST'])]
     public function delete(Request $request, Theme $theme, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete' . $theme->getId(), $request->getPayload()->getString('_token'))) {
@@ -76,6 +76,6 @@ class ThemeController extends AbstractController
             $entityManager->flush();
         }
 
-        return $this->redirectToRoute('app_back_theme_index', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('app_theme_index', [], Response::HTTP_SEE_OTHER);
     }
 }

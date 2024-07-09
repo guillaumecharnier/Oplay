@@ -3,26 +3,36 @@
 {% block title %}Backoffice O'Play{% endblock %}
 
 {% block body %}
-    <!-- main -->
-    <div class="my-5 py-5 text-center">
-        <h1 class="display-6 fw-bold">Bienvenue sur le backoffice d'O'Play</h1>
-    </div>
-
     <div class="container-xl bg-light p-5 border-top">
-
-        <div class="row mb-2 justify-content-center">
-            <div class="col-12 col-lg-3 text-center">
-                <h2 class="text-muted fw-bold mb-4">Menu</h2>
-                <ul class="list-unstyled row">
-                    <li><a href="{{ path('app_category_index') }}" class="btn btn-primary mb-2">Liste des catégories</a></li>
-                    <li><a href="{{ path('app_order_index') }}" class="btn btn-primary mb-2">Liste des Paniers en cours</a></li>
-                    <li><a href="{{ path('app_game_index') }}" class="btn btn-primary mb-2">Liste des jeux</a></li>
-                    <li><a href="{{ path('app_back_tag_index') }}" class="btn btn-primary mb-2">Liste des tags</a></li>
-                    <li><a href="" class="btn btn-primary mb-2">Liste des thèmes</a></li>
-                    <li><a href="" class="btn btn-primary mb-2">Liste des utilisateurs</a></li>
-                </ul>
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <h1 class="text-center my-4">Bienvenue sur le backoffice d'O'Play</h1>
+                <h2 class="text-center text-muted fw-bold mb-4">Menu</h2>
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-3">
+                    <div class="col">
+                        <a href="{{ path('app_category_index') }}" class="btn btn-primary btn-sm d-block">Liste des catégories</a>
+                    </div>
+                    <div class="col">
+                        <a href="{{ path('app_order_index') }}" class="btn btn-primary btn-sm d-block">Liste des Paniers en cours</a>
+                    </div>
+                    <div class="col">
+                        <a href="{{ path('app_validate_order_index') }}" class="btn btn-primary btn-sm d-block">Commandes Validées</a>
+                    </div>
+                    <div class="col">
+                        <a href="{{ path('app_game_index') }}" class="btn btn-primary btn-sm d-block">Liste des jeux</a>
+                    </div>
+                    <div class="col">
+                        <a href="{{ path('app_tag_index') }}" class="btn btn-primary btn-sm d-block">Liste des tags</a>
+                    </div>
+                    <div class="col">
+                        <a href="{{ path('app_theme_index') }}" class="btn btn-primary d-block">Liste des thèmes</a>
+                    </div>
+                    <div class="col">
+                        <a href="#" class="btn btn-primary d-block">Liste des utilisateurs</a>
+                    </div>
+                    <!-- Ajoutez d'autres boutons ici selon vos besoins -->
+                </div>
             </div>
         </div>
-
     </div>
 {% endblock %}
