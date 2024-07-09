@@ -31,3 +31,12 @@ Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3MjA0NTYyN
     "password": "password123",
     "picture": ""
 }
+
+
+### Prefered Tag User
+POST http://localhost:8080/api/user/tags
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3MjA1MTQwMDQsImV4cCI6MTcyMDUxNzYwNCwicm9sZXMiOlsiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoiam9obi5kb2VAZXhhbXBsZS5jb20ifQ.WUnwkj4PG9IqOI3BPaUihZ8kvV3TVhpYHNgoD5I0wN5vrk4YdaafXIF6QQzg0XwNm4qY_M4hMi1uYdAzK5HAjSKNfqbQYDVQZXm7FAHqWOBOv2pJcG00Pr1UHQ2yHiH3AxAKIXSYvHstbHJvdEGnOkryMuhvkof-1XnTAOQc-0zdeEuOm4Rq8sQpcm-iSg7oni3uyhtk8EE62__xtighTGw7LHObIGTYWVOQ_ZArF63IMbhfAR1URZRtBENC9fL_GaMv4bmA5RLID87AIloQrolJ7f2YlYBovPBr_Gc8Hcjr4KIr5zFAxf9G5hvXIm3t4gsAuwGABtLLkKWzODWqbA
+
+{
+    "tag_ids": [11, 5, 7]
+}
