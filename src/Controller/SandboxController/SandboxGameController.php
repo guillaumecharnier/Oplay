@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\SandboxController;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
@@ -12,7 +12,7 @@ class SandboxGameController extends AbstractController
     #[Route('/game', name: 'app_genre_index', methods: ['GET'])]
     public function index(GameRepository $gameRepository): Response
     {
-        return $this->render('game.html.twig', [
+        return $this->render('sandbox/sandboxGame.html.twig', [
             'games' => $gameRepository->findAll(),
         ]);
     }

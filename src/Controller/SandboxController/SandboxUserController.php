@@ -1,6 +1,6 @@
 <?php
 
- namespace App\Controller;
+ namespace App\Controller\SandboxController;
 
 use App\Repository\UserRepository;
 use App\Repository\ValidateOrderRepository;
@@ -25,7 +25,7 @@ use Symfony\Component\Routing\Annotation\Route;
             }
         }
 
-         return $this->render('user.html.twig', [
+         return $this->render('sandbox/sandboxUser.html.twig', [
              'users' => $users,
              'validateOrders' => $validateOrders,
          ]);
