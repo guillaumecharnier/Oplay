@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Game index{% endblock %}
+
+{% block body %}
+    <div class="d-flex justify-content-center">
+        <div class="w-75">
+            <h1 class="text-center mb-4">Game index</h1>
+            <div class="text-center">
+                <a href="{{ path('app_game_new') }}" class="btn btn-success">Create new</a>
+            </div>
+
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th>Release Date</th>
+                        <th>Created At</th>
+                        <th>Picture</th>
+                        <th>Price</th>
+                        <th>Description</th>
+                        <th>Editor</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for game in games %}
+                    <tr>
+                        <td>{{ game.id }}</td>
+                        <td>{{ game.name }}</td>
+                        <td>{{ game.releaseDate ? game.releaseDate|date('Y-m-d') : '' }}</td>
+                        <td>{{ game.createdAt ? game.createdAt|date('Y-m-d') : '' }}</td>
+                        <td>{{ game.picture }}</td>
+                        <td>{{ game.price }}</td>
+                        <td>{{ game.description }}</td>
+                        <td>{{ game.editor }}</td>
+                        <td>
+                            <a href="{{ path('app_game_show', {'id': game.id}) }}" class="btn btn-primary btn-sm">Show</a>
+                            <a href="{{ path('app_game_edit', {'id': game.id}) }}" class="btn btn-secondary btn-sm">Edit</a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="9" class="text-center">No records found</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
