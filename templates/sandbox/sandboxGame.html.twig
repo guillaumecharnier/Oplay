@@ -1,8 +1,8 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>Liste des jeux</title>
+{% extends 'base.html.twig' %}
+
+
+{% block body %}
+
     <style>
         table {
             width: 100%;
@@ -17,8 +17,7 @@
             max-width: 100px;
         }
     </style>
-</head>
-<body>
+    
     <h1>Liste des jeux</h1>
 
     <table>
@@ -63,5 +62,4 @@
             {% endfor %}
         </tbody>
     </table>
-</body>
-</html>
+{% endblock %}
