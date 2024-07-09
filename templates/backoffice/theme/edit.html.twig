@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Theme{% endblock %}
+
+{% block body %}
+    <div class="d-flex justify-content-center">
+        <div class="w-50">
+            <h1 class="text-center">Edit Tag</h1>
+
+            {{ include('backoffice/theme/_form.html.twig', {'button_label': 'Update'}) }}
+
+            <div class="text-center mt-3">
+                <a href="{{ path('app_back_theme_index') }}" class="btn btn-secondary">Back to list</a>
+
+                <form action="{{ path('app_back_theme_delete', {'id': theme.id}) }}" method="post" style="display: inline-block;">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ theme.id) }}">
+                    <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this item?')">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

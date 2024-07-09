@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Theme index{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <h1 class="text-center">Theme index</h1>
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Name</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for theme in themes %}
+                        <tr>
+                            <td>{{ theme.id }}</td>
+                            <td>{{ theme.name }}</td>
+                            <td>
+                                <a href="{{ path('app_back_theme_show', {'id': theme.id}) }}" class="btn btn-primary">Show</a>
+                                <a href="{{ path('app_back_theme_edit', {'id': theme.id}) }}" class="btn btn-warning">Edit</a>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="3">No records found</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+                <div class="text-center mt-3">
+                    <a href="{{ path('app_back_theme_new') }}" class="btn btn-success">Create new</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
