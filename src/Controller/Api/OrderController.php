@@ -185,6 +185,7 @@ public function checkout(OrderRepository $orderRepository, EntityManagerInterfac
     $validateOrder->setUsers($user); // Associer l'utilisateur au ValidateOrder
     $validateOrder->setQuantity($order->getGames()->count());
     $validateOrder->setTotalPrice($order->getTotal());
+    $validateOrder->setCreatedAt(new \DateTimeImmutable());
 
     // Générer et associer des clés aléatoires aux jeux
     foreach ($order->getGames() as $game) {

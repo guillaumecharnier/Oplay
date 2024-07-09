@@ -8,13 +8,13 @@ Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3MjA0NjA5N
 
 ### Register User
 POST http://localhost:8080/api/user/register
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3MjA1MTAwMzIsImV4cCI6MTcyMDUxMzYzMiwicm9sZXMiOlsiUk9MRV9BRE1JTiIsIlJPTEVfVVNFUiJdLCJ1c2VybmFtZSI6ImFkbWluQG9wbGF5LmZyIn0.r1By17PGM8JovIB2juxpD48MRtFbzonGbwl02N2Hb162qwg_kwMeKkrWWp23G3bCjWQAqcw1S44WUo8VtyDHkOsQD9EWvxhckMj1dlxG-V_PN-CfAcINjqbaBb28V2DOhB7DbZRNjSrej_yDpT_p9XOxxX5hS0lRf8WLBrkgGrmy0PZGRo4HXgLaJ3kU2C-fztLvsPY3LRxnAQlLi9_HfIMLCfV5zbn8BZdV3S7RlT75UsHEiazh0W9qYnoIEToi-ijKxQQy4G-wqERHzPjDAkPEyLbjvz--by5jan9Clm03J-l3mgdPJKmissXUXaYrby6m-8vuCpv7qxcLdzIk8Q
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3MjA1NjA3MjksImV4cCI6MTcyMDU2NDMyOSwicm9sZXMiOlsiUk9MRV9BRE1JTiIsIlJPTEVfVVNFUiJdLCJ1c2VybmFtZSI6ImFkbWluQG9wbGF5LmZyIn0.DwxnU3Dht40AZCwz0jQBv2HyRYvPXfZKFwHtJ9GsF8RxP2oWvV4jpg-FP4ORpW7dSWX2y9akS9sKS_-EeImatv7OsuKyi0Uipikkzo4jwsukehC5MKGVnVcwpHaEMdxTsKsHpwLrlZUilPBEoABose4p9pVt3GkoklXmZViAYI1YpjzWkHVmmsmZ1frW6HDbONrpbSXGXq5baUENnqSLDipKwgyGM5JNVP0MxrhRMVcYSrg4TOhguzI9xkerpoOZTQbwXoiiVuoG2JhsGa7XjO27IQxv1t6A-D53Z1S9U5C7j4gdoTrYBZy2RQkKmWyJGlbe0bssMxGQ1iatunTknw
 
 {
-    "firstname": "John",
-    "lastname": "Doe",
-    "nickname": "johndoe",
-    "email": "john.doe@example.com",
+    "firstname": "Gui",
+    "lastname": "Gui",
+    "nickname": "GIOM",
+    "email": "gui.@oplay.fr",
     "password": "123",
     "picture": ""
 }

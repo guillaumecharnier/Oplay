@@ -827,9 +827,10 @@ class AppFixtures extends Fixture
             if ($order->getStatus() === 'validated') {
                 $validateOrder = new ValidateOrder();
                 $validateOrder->setQuantity(count($order->getGames()));
+
                 $validateOrder->setTotalPrice($order->getTotal());
                 $validateOrder->addOrder($order);
-
+                $validateOrder->setCreatedAt(\DateTimeImmutable::createFromMutable($faker->dateTimeThisYear()));
                 foreach ($order->getGames() as $game) {
                     $validateOrder->addGame($game);
                 }
