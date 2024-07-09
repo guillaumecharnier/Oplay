@@ -166,69 +166,70 @@ class OrderController extends AbstractController
     }
 
     #[Route('/checkout', name: 'checkout', methods: ['POST'])]
-    public function checkout(OrderRepository $orderRepository, EntityManagerInterface $entityManager): JsonResponse
-    {
-        // Récupérer l'utilisateur actuellement authentifié
-        $user = $this->getUser();
-        if (!$user) {
-            return new JsonResponse(['error' => 'Utilisateur non authentifié'], 401);
-        }
-
-        // Rechercher le panier en cours pour l'utilisateur
-        $order = $orderRepository->findCurrentOrderByUser($user);
-        if (!$order || $order->getGames()->isEmpty()) {
-            return new JsonResponse(['error' => 'Le panier est vide'], 400);
-        }
-
-        // Créer une nouvelle instance de ValidateOrder
-        $validateOrder = new ValidateOrder();
-        $validateOrder->setQuantity($order->getGames()->count());
-        $validateOrder->setTotalPrice($order->getTotal());
-
-        // Générer et associer des clés aléatoires aux jeux
-        foreach ($order->getGames() as $game) {
-            $activationKey = $this->generateActivationKey();
-
-            // Créer une instance de UserGameKey
-            $userGameKey = new UserGameKey();
-            $userGameKey->setUser($user);
-            $userGameKey->setGame($game);
-            $userGameKey->setGameKey($activationKey);
-            $userGameKey->setCreatedAt(new \DateTimeImmutable());
-
-            // Persiste l'entité UserGameKey
-            $entityManager->persist($userGameKey);
-
-            // Associer le jeu à l'utilisateur à travers la relation userGetGame de l'entité User
-            $user->addUserGetGame($game);
-        }
-
-        // Transférer les jeux de l'Order à ValidateOrder
-        foreach ($order->getGames() as $game) {
-            $validateOrder->addGame($game);
-        }
-
-        // Associer l'Order à ValidateOrder
-        $validateOrder->addOrder($order);
-
-        // Persiste l'entité ValidateOrder
-        $entityManager->persist($validateOrder);
-
-        // Supprimer tous les jeux du panier actuel
-        foreach ($order->getGames() as $game) {
-            $order->removeGame($game);
-        }
-        $entityManager->remove($order); // Optionnellement supprimer toute l'entité Order
-
-        // Flush des changements
-        $entityManager->flush();
-
-        return new JsonResponse(['message' => 'Commande complétée avec succès'], 200);
+public function checkout(OrderRepository $orderRepository, EntityManagerInterface $entityManager): JsonResponse
+{
+    // Récupérer l'utilisateur actuellement authentifié
+    $user = $this->getUser();
+    if (!$user) {
+        return new JsonResponse(['error' => 'Utilisateur non authentifié'], 401);
     }
 
-    // Méthode pour générer une clé aléatoire de jeu
-    private function generateActivationKey(): string
-    {
-        return bin2hex(random_bytes(16)); // Exemple de clé hexadécimale de 16 octets
+    // Rechercher le panier en cours pour l'utilisateur
+    $order = $orderRepository->findCurrentOrderByUser($user);
+    if (!$order || $order->getGames()->isEmpty()) {
+        return new JsonResponse(['error' => 'Le panier est vide'], 400);
     }
+
+    // Créer une nouvelle instance de ValidateOrder
+    $validateOrder = new ValidateOrder();
+    $validateOrder->setUsers($user); // Associer l'utilisateur au ValidateOrder
+    $validateOrder->setQuantity($order->getGames()->count());
+    $validateOrder->setTotalPrice($order->getTotal());
+
+    // Générer et associer des clés aléatoires aux jeux
+    foreach ($order->getGames() as $game) {
+        $activationKey = $this->generateActivationKey();
+
+        // Créer une instance de UserGameKey
+        $userGameKey = new UserGameKey();
+        $userGameKey->setUser($user);
+        $userGameKey->setGame($game);
+        $userGameKey->setGameKey($activationKey);
+        $userGameKey->setCreatedAt(new \DateTimeImmutable());
+
+        // Persiste l'entité UserGameKey
+        $entityManager->persist($userGameKey);
+
+        // Associer le jeu à l'utilisateur à travers la relation userGetGame de l'entité User
+        $user->addUserGetGame($game);
+    }
+
+    // Transférer les jeux de l'Order à ValidateOrder
+    foreach ($order->getGames() as $game) {
+        $validateOrder->addGame($game);
+    }
+
+    // Associer l'Order à ValidateOrder
+    $validateOrder->addOrder($order);
+
+    // Persiste l'entité ValidateOrder
+    $entityManager->persist($validateOrder);
+
+    // Supprimer tous les jeux du panier actuel
+    foreach ($order->getGames() as $game) {
+        $order->removeGame($game);
+    }
+    $entityManager->remove($order); // Optionnellement supprimer toute l'entité Order
+
+    // Flush des changements
+    $entityManager->flush();
+
+    return new JsonResponse(['message' => 'Commande complétée avec succès'], 200);
+}
+
+// Méthode pour générer une clé aléatoire de jeu
+private function generateActivationKey(): string
+{
+    return bin2hex(random_bytes(16)); // Exemple de clé hexadécimale de 16 octets
+}
 }
