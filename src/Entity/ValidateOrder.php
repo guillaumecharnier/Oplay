@@ -33,6 +33,10 @@ class ValidateOrder
     #[ORM\ManyToMany(targetEntity: Game::class, inversedBy: 'validateOrders')]
     private Collection $game;
 
+    #[ORM\ManyToOne(inversedBy: 'validateOrders')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $users = null;
+
     public function __construct()
     {
         $this->orders = new ArrayCollection();
@@ -112,6 +116,18 @@ class ValidateOrder
     public function removeGame(Game $game): static
     {
         $this->game->removeElement($game);
+
+        return $this;
+    }
+
+    public function getUsers(): ?User
+    {
+        return $this->users;
+    }
+
+    public function setUsers(?User $users): static
+    {
+        $this->users = $users;
 
         return $this;
     }
