@@ -3,6 +3,7 @@
 namespace App\Controller\Api;
 
 use App\Entity\User;
+use App\Repository\CategoryRepository;
 use App\Repository\TagRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\UserRepository;
@@ -211,6 +212,49 @@ class UserController extends AbstractController
         $entityManager->flush();
 
         return new JsonResponse(['message' => 'Tags mis à jour avec succès'], 200);
+    }
+
+    #[Route('/categories', name: 'update_category', methods: ['POST'])]
+    public function updateCategory(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        CategoryRepository $CategoryRepository
+    ): JsonResponse {
+        // Récupérer l'utilisateur actuellement authentifié
+        $user = $this->getUser();
+        if (!$user) {
+            return new JsonResponse(['error' => 'Utilisateur non authentifié'], 401);
+        }
+
+        // Prendre les données JSON de la requête
+        $data = json_decode($request->getContent(), true);
+        if (!isset($data['category_ids']) || !is_array($data['category_ids'])) {
+            return new JsonResponse(['error' => 'Liste des IDs de categories manquante ou incorrecte'], 400);
+        }
+
+        // Récupérer les categories actuels de l'utilisateur
+        $currentTags = $user->getSelectedCategory();
+
+        // Supprimer les categories actuels de l'utilisateur
+        foreach ($currentTags as $currentTag) {
+            $user->removeSelectedCategory($currentTag);
+        }
+
+        // Ajouter les nouveaux categories à l'utilisateur
+        foreach ($data['category_ids'] as $categoryId) {
+            $tag = $CategoryRepository->find($categoryId);
+            if ($tag) {
+                $user->addSelectedCategory($tag);
+            } else {
+                return new JsonResponse(['error' => "Category avec ID $categoryId non trouvé"], 404);
+            }
+        }
+
+        // Enregistrer les modifications
+        $entityManager->persist($user);
+        $entityManager->flush();
+
+        return new JsonResponse(['message' => 'Categorie mis a jour avec succes'], 200);
     }
     
 }
