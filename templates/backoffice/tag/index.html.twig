@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tag index{% endblock %}
+
+{% block body %}
+    <h1 class="text-center">Tag index</h1>
+
+    <div class="d-flex justify-content-center">
+        <div class="table-responsive w-50">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for tag in tags %}
+                    <tr>
+                        <td>{{ tag.id }}</td>
+                        <td>{{ tag.name }}</td>
+                        <td>
+                            <a href="{{ path('app_back_tag_show', {'id': tag.id}) }}" class="btn btn-info btn-sm">Show</a>
+                            <a href="{{ path('app_back_tag_edit', {'id': tag.id}) }}" class="btn btn-warning btn-sm">Edit</a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="3">No records found</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="text-center mt-4">
+        <a href="{{ path('app_back_tag_new') }}" class="btn btn-primary">Create new</a>
+    </div>
+{% endblock %}
