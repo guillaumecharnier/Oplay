@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/theme')]
+#[Route('back/theme')]
 class ThemeController extends AbstractController
 {
     #[Route('/', name: 'app_back_theme_index', methods: ['GET'])]
