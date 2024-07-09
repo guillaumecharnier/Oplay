@@ -5,6 +5,7 @@ namespace App\Controller\Api;
 use App\Entity\User;
 use App\Repository\CategoryRepository;
 use App\Repository\TagRepository;
+use App\Repository\ThemeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -240,7 +241,7 @@ class UserController extends AbstractController
             $user->removeSelectedCategory($currentTag);
         }
 
-        // Ajouter les nouveaux categories à l'utilisateur
+        // Ajouter les nouvelles categories à l'utilisateur
         foreach ($data['category_ids'] as $categoryId) {
             $tag = $CategoryRepository->find($categoryId);
             if ($tag) {
@@ -255,6 +256,49 @@ class UserController extends AbstractController
         $entityManager->flush();
 
         return new JsonResponse(['message' => 'Categorie mis a jour avec succes'], 200);
+    }
+
+    #[Route('/theme', name: 'update_theme', methods: ['POST'])]
+    public function updateTheme(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        ThemeRepository $themeRepository
+    ): JsonResponse {
+        // Récupérer l'utilisateur actuellement authentifié
+        $user = $this->getUser();
+        if (!$user) {
+            return new JsonResponse(['error' => 'Utilisateur non authentifié'], 401);
+        }
+
+        // Prendre les données JSON de la requête
+        $data = json_decode($request->getContent(), true);
+        if (!isset($data['theme_id'])) {
+            return new JsonResponse(['error' => 'ID de thème manquant'], 400);
+        }
+
+        // Récupérer le thème actuel de l'utilisateur (s'il en a déjà un)
+        $currentTheme = $user->getChooseTheme();
+
+        // Si l'utilisateur a déjà un thème, le retirer
+        if ($currentTheme !== null) {
+            $user->setChooseTheme(null);
+        }
+
+        // Récupérer le thème sélectionné par ID
+        $themeId = $data['theme_id'];
+        $theme = $themeRepository->find($themeId);
+        if (!$theme) {
+            return new JsonResponse(['error' => "Thème avec l'ID $themeId non trouvé"], 404);
+        }
+
+        // Associer le nouveau thème à l'utilisateur
+        $user->setChooseTheme($theme);
+
+        // Enregistrer les modifications
+        $entityManager->persist($user);
+        $entityManager->flush();
+
+        return new JsonResponse(['message' => 'Thème mis à jour avec succès'], 200);
     }
     
 }
