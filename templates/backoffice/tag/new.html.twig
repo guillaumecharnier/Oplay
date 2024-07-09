@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Tag{% endblock %}
+
+{% block body %}
+    <div class="d-flex justify-content-center">
+        <div class="w-50">
+            <h1 class="text-center">Create new Tag</h1>
+
+            <form method="post">
+                {{ form_start(form) }}
+                {{ form_widget(form) }}
+
+                <div class="text-center mt-3">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <a href="{{ path('app_back_tag_index') }}" class="btn btn-secondary">Back to list</a>
+                </div>
+                
+                {{ form_end(form) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}
