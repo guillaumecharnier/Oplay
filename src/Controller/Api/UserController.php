@@ -3,6 +3,7 @@
 namespace App\Controller\Api;
 
 use App\Entity\User;
+use App\Repository\TagRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -167,6 +168,49 @@ class UserController extends AbstractController
         $entityManager->flush();
 
         return new JsonResponse(['message' => 'Utilisateur mis à jour avec succès'], 200);
+    }
+    
+    #[Route('/tags', name: 'update_tags', methods: ['POST'])]
+    public function updateTags(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        TagRepository $tagRepository
+    ): JsonResponse {
+        // Récupérer l'utilisateur actuellement authentifié
+        $user = $this->getUser();
+        if (!$user) {
+            return new JsonResponse(['error' => 'Utilisateur non authentifié'], 401);
+        }
+
+        // Prendre les données JSON de la requête
+        $data = json_decode($request->getContent(), true);
+        if (!isset($data['tag_ids']) || !is_array($data['tag_ids'])) {
+            return new JsonResponse(['error' => 'Liste des IDs de tags manquante ou incorrecte'], 400);
+        }
+
+        // Récupérer les tags actuels de l'utilisateur
+        $currentTags = $user->getPreferedTag();
+
+        // Supprimer les tags actuels de l'utilisateur
+        foreach ($currentTags as $currentTag) {
+            $user->removePreferedTag($currentTag);
+        }
+
+        // Ajouter les nouveaux tags à l'utilisateur
+        foreach ($data['tag_ids'] as $tagId) {
+            $tag = $tagRepository->find($tagId);
+            if ($tag) {
+                $user->addPreferedTag($tag);
+            } else {
+                return new JsonResponse(['error' => "Tag avec ID $tagId non trouvé"], 404);
+            }
+        }
+
+        // Enregistrer les modifications
+        $entityManager->persist($user);
+        $entityManager->flush();
+
+        return new JsonResponse(['message' => 'Tags mis à jour avec succès'], 200);
     }
     
 }
