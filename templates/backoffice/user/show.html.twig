@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}User{% endblock %}
+
+{% block body %}
+    <div class="d-flex justify-content-center">
+        <div class="w-75">
+            <h1 class="text-center mb-4">User</h1>
+
+            <table class="table table-striped">
+                <tbody>
+                    <tr>
+                        <th>Id</th>
+                        <td>{{ user.id }}</td>
+                    </tr>
+                    <tr>
+                        <th>Firstname</th>
+                        <td>{{ user.firstname }}</td>
+                    </tr>
+                    <tr>
+                        <th>Lastname</th>
+                        <td>{{ user.lastname }}</td>
+                    </tr>
+                    <tr>
+                        <th>Nickname</th>
+                        <td>{{ user.nickname }}</td>
+                    </tr>
+                    <tr>
+                        <th>Picture</th>
+                        <td>{{ user.picture }}</td>
+                    </tr>
+                    <tr>
+                        <th>Email</th>
+                        <td>{{ user.email }}</td>
+                    </tr>
+                    <tr>
+                        <th>Roles</th>
+                        <td>{{ user.roles ? user.roles|join(', ') : '' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Games and Keys</th>
+                        <td>
+                            <ul>
+                                {% for key in user.userGameKeys %}
+                                    <li>
+                                        <strong>Game:</strong> {{ key.game.name }}<br>
+                                        <strong>Key:</strong> {{ key }}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="text-center mt-3">
+                <a href="{{ path('app_user_index') }}" class="btn btn-secondary">Back to list</a>
+                <a href="{{ path('app_user_edit', {'id': user.id}) }}" class="btn btn-primary ms-2">Edit</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -72,7 +72,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         'user_show',
     ])]
     private ?Theme $chooseTheme = null;
-    
+
     /**
      * @var list<string> The user roles
      */
@@ -400,7 +400,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @param list<string> $roles
      */
-    
+
     public function setRoles(array $roles): static
     {
         $this->roles = $roles;
@@ -408,7 +408,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    
+
 
     /**
      * @see UserInterface
