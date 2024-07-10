@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Category{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <div class="card">
+                    <h5 class="text-center mb-3">Edit Category</h5>
+                    <div class="card-body">
+                        {{ include('backoffice/category/_form.html.twig', {'button_label': 'Edit'}) }}
+
+                        <div class="text-center mt-3">
+                            <a href="{{ path('app_category_index') }}" class="btn btn-primary btn-sm mr-2">Back to list</a>
+                            {{ include('backoffice/category/_delete_form.html.twig') }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

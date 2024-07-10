@@ -11,7 +11,7 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/api/theme', name: 'app_api_theme_')]
 class ThemeController extends AbstractController
 {
-    #[Route('/browse', name: 'browse', methods: "GET")]
+    #[Route('/', name: 'browse', methods: "GET")]
     public function browse(ThemeRepository $themeRepository): JsonResponse
     {
         // Récupérer tous les thèmes depuis le repository
@@ -21,7 +21,7 @@ class ThemeController extends AbstractController
         return $this->json($allThemes, Response::HTTP_OK, [], ["groups" => "theme_browse"]);
     }
 
-    #[Route('/{id}/show', name: 'show', methods: ['GET'])]
+    #[Route('/{id}', name: 'show', methods: ['GET'])]
     public function show($id, ThemeRepository $themeRepository): JsonResponse
     {
         // Trouver le thème spécifié par son ID

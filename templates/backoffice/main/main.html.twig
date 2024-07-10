@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Backoffice O'Play{% endblock %}
+
+{% block body %}
+    <div class="container-xl bg-light p-5 border-top">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <h1 class="text-center my-4">Bienvenue sur le backoffice d'O'Play</h1>
+                <h2 class="text-center text-muted fw-bold mb-4">Menu</h2>
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-3">
+                    <div class="col">
+                        <a href="{{ path('app_category_index') }}" class="btn btn-primary btn-sm d-block">Liste des catégories</a>
+                    </div>
+                    <div class="col">
+                        <a href="{{ path('app_order_index') }}" class="btn btn-primary btn-sm d-block">Liste des Paniers en cours</a>
+                    </div>
+                    <div class="col">
+                        <a href="{{ path('app_validate_order_index') }}" class="btn btn-primary btn-sm d-block">Commandes Validées</a>
+                    </div>
+                    <div class="col">
+                        <a href="{{ path('app_game_index') }}" class="btn btn-primary btn-sm d-block">Liste des jeux</a>
+                    </div>
+                    <div class="col">
+                        <a href="{{ path('app_tag_index') }}" class="btn btn-primary btn-sm d-block">Liste des tags</a>
+                    </div>
+                    <div class="col">
+                        <a href="{{ path('app_theme_index') }}" class="btn btn-primary d-block">Liste des thèmes</a>
+                    </div>
+                    <div class="col">
+                        <a href="{{ path('app_user_index') }}" class="btn btn-primary d-block">Liste des utilisateurs</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

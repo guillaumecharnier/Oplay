@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Category{% endblock %}
+
+{% block body %}
+    <div class="d-flex justify-content-center">
+        <div class="w-50">
+            <h1 class="text-center mb-4">Create New Category</h1>
+
+            {{ include('backoffice/category/_form.html.twig') }}
+
+            <div class="text-center mt-3">
+                <a href="{{ path('app_category_index') }}" class="btn btn-primary btn-sm">Back to list</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

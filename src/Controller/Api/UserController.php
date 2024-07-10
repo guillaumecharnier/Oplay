@@ -3,6 +3,9 @@
 namespace App\Controller\Api;
 
 use App\Entity\User;
+use App\Repository\CategoryRepository;
+use App\Repository\TagRepository;
+use App\Repository\ThemeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,7 +21,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 class UserController extends AbstractController
 {
 
-    #[Route('/browse', name: 'browse', methods: ['GET'])]
+    #[Route('/', name: 'browse', methods: ['GET'])]
     public function browse(UserRepository $userRepository, SerializerInterface $serializer): JsonResponse
     {
         // Récupérer tous les utilisateurs depuis le repository
@@ -36,7 +39,7 @@ class UserController extends AbstractController
         return new JsonResponse($serializedData, Response::HTTP_OK, [], true);
     }
 
-    #[Route('/{id}/show', name: 'show', methods: ['GET'])]
+    #[Route('/{id}', name: 'show', methods: ['GET'])]
     public function show($id, UserRepository $userRepository): JsonResponse
     {
         // Trouver l'utilisateur spécifié par son ID
@@ -167,6 +170,135 @@ class UserController extends AbstractController
         $entityManager->flush();
 
         return new JsonResponse(['message' => 'Utilisateur mis à jour avec succès'], 200);
+    }
+    
+    #[Route('/tags', name: 'update_tags', methods: ['POST'])]
+    public function updateTags(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        TagRepository $tagRepository
+    ): JsonResponse {
+        // Récupérer l'utilisateur actuellement authentifié
+        $user = $this->getUser();
+        if (!$user) {
+            return new JsonResponse(['error' => 'Utilisateur non authentifié'], 401);
+        }
+
+        // Prendre les données JSON de la requête
+        $data = json_decode($request->getContent(), true);
+        if (!isset($data['tag_ids']) || !is_array($data['tag_ids'])) {
+            return new JsonResponse(['error' => 'Liste des IDs de tags manquante ou incorrecte'], 400);
+        }
+
+        // Récupérer les tags actuels de l'utilisateur
+        $currentTags = $user->getPreferedTag();
+
+        // Supprimer les tags actuels de l'utilisateur
+        foreach ($currentTags as $currentTag) {
+            $user->removePreferedTag($currentTag);
+        }
+
+        // Ajouter les nouveaux tags à l'utilisateur
+        foreach ($data['tag_ids'] as $tagId) {
+            $tag = $tagRepository->find($tagId);
+            if ($tag) {
+                $user->addPreferedTag($tag);
+            } else {
+                return new JsonResponse(['error' => "Tag avec ID $tagId non trouvé"], 404);
+            }
+        }
+
+        // Enregistrer les modifications
+        $entityManager->persist($user);
+        $entityManager->flush();
+
+        return new JsonResponse(['message' => 'Tags mis à jour avec succès'], 200);
+    }
+
+    #[Route('/categories', name: 'update_category', methods: ['POST'])]
+    public function updateCategory(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        CategoryRepository $CategoryRepository
+    ): JsonResponse {
+        // Récupérer l'utilisateur actuellement authentifié
+        $user = $this->getUser();
+        if (!$user) {
+            return new JsonResponse(['error' => 'Utilisateur non authentifié'], 401);
+        }
+
+        // Prendre les données JSON de la requête
+        $data = json_decode($request->getContent(), true);
+        if (!isset($data['category_ids']) || !is_array($data['category_ids'])) {
+            return new JsonResponse(['error' => 'Liste des IDs de categories manquante ou incorrecte'], 400);
+        }
+
+        // Récupérer les categories actuels de l'utilisateur
+        $currentTags = $user->getSelectedCategory();
+
+        // Supprimer les categories actuels de l'utilisateur
+        foreach ($currentTags as $currentTag) {
+            $user->removeSelectedCategory($currentTag);
+        }
+
+        // Ajouter les nouvelles categories à l'utilisateur
+        foreach ($data['category_ids'] as $categoryId) {
+            $tag = $CategoryRepository->find($categoryId);
+            if ($tag) {
+                $user->addSelectedCategory($tag);
+            } else {
+                return new JsonResponse(['error' => "Category avec ID $categoryId non trouvé"], 404);
+            }
+        }
+
+        // Enregistrer les modifications
+        $entityManager->persist($user);
+        $entityManager->flush();
+
+        return new JsonResponse(['message' => 'Categorie mis a jour avec succes'], 200);
+    }
+
+    #[Route('/theme', name: 'update_theme', methods: ['POST'])]
+    public function updateTheme(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        ThemeRepository $themeRepository
+    ): JsonResponse {
+        // Récupérer l'utilisateur actuellement authentifié
+        $user = $this->getUser();
+        if (!$user) {
+            return new JsonResponse(['error' => 'Utilisateur non authentifié'], 401);
+        }
+
+        // Prendre les données JSON de la requête
+        $data = json_decode($request->getContent(), true);
+        if (!isset($data['theme_id'])) {
+            return new JsonResponse(['error' => 'ID de thème manquant'], 400);
+        }
+
+        // Récupérer le thème actuel de l'utilisateur (s'il en a déjà un)
+        $currentTheme = $user->getChooseTheme();
+
+        // Si l'utilisateur a déjà un thème, le retirer
+        if ($currentTheme !== null) {
+            $user->setChooseTheme(null);
+        }
+
+        // Récupérer le thème sélectionné par ID
+        $themeId = $data['theme_id'];
+        $theme = $themeRepository->find($themeId);
+        if (!$theme) {
+            return new JsonResponse(['error' => "Thème avec l'ID $themeId non trouvé"], 404);
+        }
+
+        // Associer le nouveau thème à l'utilisateur
+        $user->setChooseTheme($theme);
+
+        // Enregistrer les modifications
+        $entityManager->persist($user);
+        $entityManager->flush();
+
+        return new JsonResponse(['message' => 'Thème mis à jour avec succès'], 200);
     }
     
 }

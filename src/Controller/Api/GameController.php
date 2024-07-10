@@ -11,7 +11,7 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/api/game', name: 'app_api_game_')]
 class GameController extends AbstractController
 {
-    #[Route('/browse', name: 'browse', methods: "GET")]
+    #[Route('/', name: 'browse', methods: "GET")]
     public function browse(GameRepository $gameRepository): JsonResponse
     {
         // Récupérer tous les jeux depuis le repository
@@ -21,7 +21,7 @@ class GameController extends AbstractController
         return $this->json($allGames, Response::HTTP_OK, [], ["groups" => "game_browse"]);
     }
 
-    #[Route('/{id}/show', name: 'show', methods: ['GET'])]
+    #[Route('/{id}', name: 'show', methods: ['GET'])]
     public function show($id, GameRepository $gameRepository): JsonResponse
     {
         // Trouver le jeu spécifié par son ID
@@ -31,8 +31,8 @@ class GameController extends AbstractController
         if (is_null($game)) {
             $info = [
                 'success' => false,
-                'error_message' => 'Tag non trouvé',
-                'error_code' => 'Tag_not_found',
+                'error_message' => 'Jeu non trouvé',
+                'error_code' => 'Game_not_found',
             ];
             return $this->json($info, Response::HTTP_NOT_FOUND);
         }

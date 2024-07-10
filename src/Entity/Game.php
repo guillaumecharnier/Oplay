@@ -117,9 +117,6 @@ class Game
     #[ORM\ManyToMany(targetEntity: ValidateOrder::class, mappedBy: 'game')]
     private Collection $validateOrders;
 
-    
-
-    
 
     public function __construct()
     {
@@ -127,17 +124,19 @@ class Game
         $this->hasCategory = new ArrayCollection();
         $this->users = new ArrayCollection();
         $this->gameHasOrder = new ArrayCollection();
-        
+
         // Initialisation de createdAt et releaseDate avec la date et l'heure actuelles
         $this->createdAt = new \DateTimeImmutable();
         $this->releaseDate = new \DateTimeImmutable();
         $this->userGameKeys = new ArrayCollection();
         $this->validateOrders = new ArrayCollection();
-        
     }
 
+    public function __toString(): string
+    {
+        return $this->name;
+    }
 
-   
     public function getId(): ?int
     {
         return $this->id;
@@ -167,7 +166,7 @@ class Game
         return $this;
     }
 
-    
+
     public function getPicture(): ?string
     {
         return $this->picture;
@@ -383,6 +382,4 @@ class Game
 
         return $this;
     }
-
-    
 }

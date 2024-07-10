@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}ValidateOrder Index{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1 class="text-center mb-4">ValidateOrder Index</h1>
+
+        <table class="table table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">Users</th>
+                    <th scope="col">Games</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Total Price</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for validateOrder in validateOrders %}
+                    <tr>
+                        <td>{{ validateOrder.id }}</td>
+                        <td>{{ validateOrder.users.nickname }}</td>
+                        <td>
+                            <ul>
+                                {% for game in validateOrder.game %}
+                                    <li>{{ game.name }}</li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                        <td>{{ validateOrder.quantity }}</td>
+                        <td>{{ validateOrder.totalPrice }}</td>
+                        <td>
+                            <a href="{{ path('app_validate_order_show', {'id': validateOrder.id}) }}" class="btn btn-primary btn-sm">Show</a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center">No records found</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

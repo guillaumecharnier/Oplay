@@ -12,8 +12,8 @@ GET http://localhost:8080/api/login_check
 Content-Type: application/json
 
 {
-    "username": "user@oplay.fr",
-    "password": "user"
+    "username": "gui.@oplay.fr",
+    "password": "123"
 }
 
 

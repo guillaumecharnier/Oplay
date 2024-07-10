@@ -805,7 +805,7 @@ class AppFixtures extends Fixture
 
             // Créer la commande
             $order = new Order();
-            $order->setStatus($faker->randomElement(['pending', 'validated'])); // Attribution aléatoire du statut
+            $order->setStatus($faker->randomElement(['pending'])); // Attribution aléatoire du statut
             $order->setUser($user);
             $order->setCreatedAt(\DateTimeImmutable::createFromMutable($faker->dateTimeThisYear()));
 
@@ -827,9 +827,10 @@ class AppFixtures extends Fixture
             if ($order->getStatus() === 'validated') {
                 $validateOrder = new ValidateOrder();
                 $validateOrder->setQuantity(count($order->getGames()));
+
                 $validateOrder->setTotalPrice($order->getTotal());
                 $validateOrder->addOrder($order);
-
+                $validateOrder->setCreatedAt(\DateTimeImmutable::createFromMutable($faker->dateTimeThisYear()));
                 foreach ($order->getGames() as $game) {
                     $validateOrder->addGame($game);
                 }

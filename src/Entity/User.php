@@ -72,7 +72,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         'user_show',
     ])]
     private ?Theme $chooseTheme = null;
-    
+
     /**
      * @var list<string> The user roles
      */
@@ -133,6 +133,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     ])]
     private Collection $userGameKeys;
 
+    /**
+     * @var Collection<int, ValidateOrder>
+     */
+    #[ORM\OneToMany(targetEntity: ValidateOrder::class, mappedBy: 'users')]
+    private Collection $validateOrders;
+
     public function __construct()
     {
         $this->selectedCategory = new ArrayCollection();
@@ -140,6 +146,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->purchasedOrder = new ArrayCollection();
         $this->userGetGame = new ArrayCollection();
         $this->userGameKeys = new ArrayCollection();
+        $this->validateOrders = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -393,7 +400,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @param list<string> $roles
      */
-    
+
     public function setRoles(array $roles): static
     {
         $this->roles = $roles;
@@ -401,7 +408,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    
+
 
     /**
      * @see UserInterface
@@ -410,5 +417,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    /**
+     * @return Collection<int, ValidateOrder>
+     */
+    public function getValidateOrders(): Collection
+    {
+        return $this->validateOrders;
+    }
+
+    public function addValidateOrder(ValidateOrder $validateOrder): static
+    {
+        if (!$this->validateOrders->contains($validateOrder)) {
+            $this->validateOrders->add($validateOrder);
+            $validateOrder->setUsers($this);
+        }
+
+        return $this;
+    }
+
+    public function removeValidateOrder(ValidateOrder $validateOrder): static
+    {
+        if ($this->validateOrders->removeElement($validateOrder)) {
+            // set the owning side to null (unless already changed)
+            if ($validateOrder->getUsers() === $this) {
+                $validateOrder->setUsers(null);
+            }
+        }
+
+        return $this;
     }
 }

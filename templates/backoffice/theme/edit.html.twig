@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Theme{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <h1 class="text-center mb-4">Edit Theme</h1>
+
+                {{ include('backoffice/theme/_form.html.twig', {'button_label': 'Update'}) }}
+
+                <div class="text-center mt-3">
+                    <a href="{{ path('app_theme_index') }}" class="btn btn-primary btn-sm mb-2">Back to list</a>
+
+                {{ include('backoffice/theme/_delete_form.html.twig') }}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

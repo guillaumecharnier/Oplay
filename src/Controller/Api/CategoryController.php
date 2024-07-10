@@ -9,10 +9,11 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
+
 #[Route('/api/category', name: 'app_api_category_')]
 class CategoryController extends AbstractController
 {
-    #[Route('/browse', name: 'browse', methods: "GET")]
+    #[Route('/', name: 'browse', methods: "GET")]
     public function browse(CategoryRepository $categoryRepository): JsonResponse
     {
         // Récupérer toutes les catégories depuis le repository
@@ -22,7 +23,7 @@ class CategoryController extends AbstractController
         return $this->json($allGenres, Response::HTTP_OK, [], ["groups" => "category_browse"]);
     }
 
-    #[Route('/{id}/show', name: 'app_api_category_show', methods: ['GET'])]
+    #[Route('/{id}', name: 'app_api_category_show', methods: ['GET'])]
     public function show($id, CategoryRepository $categoryRepository): JsonResponse
     {
         // Trouver la catégorie spécifiée par son ID

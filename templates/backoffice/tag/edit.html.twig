@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Tag{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <h1 class="text-center mb-4">Edit Tag</h1>
+
+                {{ include('backoffice/tag/_form.html.twig', {'button_label': 'Update'}) }}
+
+                <div class="text-center mt-3">
+                    <a href="{{ path('app_tag_index') }}" class="btn btn-primary mb-2">Back to List</a>
+
+                {{ include('backoffice/tag/_delete_form.html.twig') }}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
