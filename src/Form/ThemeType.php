@@ -19,7 +19,7 @@ class ThemeType extends AbstractType
                 'label' => 'Name',
                 'constraints' => [
                     new NotNull(),
-                    new Length(['min' => 5, 'max' => 25]),
+                    new Length(['min' => 3, 'max' => 25]),
                 ]
             ]);
     }
