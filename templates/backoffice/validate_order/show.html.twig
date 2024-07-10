@@ -32,17 +32,17 @@
                         <td>
                             <ul>
                                 {% for game in validate_order.getGame() %}
-    <li>ID du jeu : {{ game.getId() }}</li>
-    <li>Titre du jeu : {{ game.getName() }}</li>
-    <li>Clé du jeu :
-        {% for userGameKey in game.getUserGameKeys() %}
-            {% if userGameKey.getUser() == validate_order.getUsers() and userGameKey.getCreatedAt() >= validate_order.getCreatedAt() %}
-                {{ userGameKey.getGameKey() }}
-            {% endif %}
-        {% endfor %}
-    </li>
-    <br>
-{% endfor %}
+                                    <li>ID du jeu : {{ game.getId() }}</li>
+                                    <li>Titre du jeu : {{ game.getName() }}</li>
+                                    <li>Clé du jeu :
+                                        {% for userGameKey in game.getUserGameKeys() %}
+                                            {% if userGameKey.getUser() == validate_order.getUsers() and userGameKey.getCreatedAt() >= validate_order.getCreatedAt() %}
+                                                {{ userGameKey.getGameKey() }}
+                                            {% endif %}
+                                        {% endfor %}
+                                    </li>
+                                    <br>
+                                {% endfor %}
                             </ul>
                         </td>
                         <td>{{ validate_order.quantity }}</td>

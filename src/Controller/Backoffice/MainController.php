@@ -9,7 +9,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class MainController extends AbstractController
 {
-    #[Route('/back/', name: 'app_main_home', methods: 'GET')]
+    #[Route('/', name: 'app_main_home', methods: 'GET')]
     public function home(): Response
     {
 
