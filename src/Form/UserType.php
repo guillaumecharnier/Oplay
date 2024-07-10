@@ -10,6 +10,7 @@ use App\Entity\User;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -22,14 +23,17 @@ class UserType extends AbstractType
             ->add('lastname')
             ->add('nickname')
             ->add('picture')
-            ->add('email')
+            ->add('email', EmailType::class, [
+                'label' => 'E-mail'
+            ])
             ->add('roles', ChoiceType::class, [
+                'label' => 'Rôles',
+                'expanded' => true,
+                'multiple' => true,
                 'choices' => [
                     'Admin' => 'ROLE_ADMIN',
                     'User' => 'ROLE_USER',
                 ],
-                'multiple' => true,
-                'expanded' => true,
                 'attr' => ['class' => 'form-control'],
             ])->add('chooseTheme', EntityType::class, [
                 'class' => Theme::class,
