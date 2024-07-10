@@ -40,7 +40,10 @@ class UserGameKey
     ])]
     private ?Game $game = null;
 
-
+    public function __toString(): string
+    {
+        return $this->gameKey;
+    }
 
     public function getId(): ?int
     {

@@ -31,7 +31,7 @@
                         <a class="nav-link {% if app.request.attributes.get('_route') == 'app_theme_index' %}active{% endif %}" href="{{ path('app_theme_index') }}">Thèmes</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Utilisateurs</a>
+                        <a class="nav-link {% if app.request.attributes.get('_route') == 'app_user_index' %}active{% endif %}" href="{{ path('app_user_index') }}">Utilisateurs</a>
                     </li>
                 </ul>
             {% endif %}
