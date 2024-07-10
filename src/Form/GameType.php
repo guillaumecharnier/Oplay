@@ -12,59 +12,92 @@ use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class GameType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-    ->add('name', null, [
-        'label' => 'Nom du jeu',
-        'attr' => ['class' => 'form-control']
-    ])
-    ->add('releaseDate', DateType::class, [
-        'label' => 'Date de sortie',
-        'widget' => 'single_text',
-        'attr' => ['class' => 'form-control']
-    ])
-    ->add('createdAt', DateType::class, [
-        'label' => 'Date de création',
-        'widget' => 'single_text',
-        'attr' => ['class' => 'form-control']
-    ])
-    ->add('picture', null, [
-        'label' => 'Image',
-        'attr' => ['class' => 'form-control']
-    ])
-    ->add('price', MoneyType::class, [
-        'label' => 'Prix',
-        'currency' => 'EUR',
-        'attr' => ['class' => 'form-control']
-    ])
-    ->add('description', TextareaType::class, [
-        'label' => 'Description',
-        'attr' => ['class' => 'form-control', 'rows' => 5]
-    ])
-    ->add('editor', null, [
-        'label' => 'Éditeur',
-        'attr' => ['class' => 'form-control']
-    ])
-    ->add('hasCategory', EntityType::class, [
-        'class' => Category::class,
-        'choice_label' => 'name',
-        'label' => 'Catégories',
-        'multiple' => true,
-        'expanded' => true,
-        'attr' => ['class' => 'form-control']
-    ])
-    ->add('hasTag', EntityType::class, [
-        'class' => Tag::class,
-        'choice_label' => 'name',
-        'label' => 'Tags',
-        'multiple' => true,
-        'expanded' => true,
-        'attr' => ['class' => 'form-control']
-    ]);
+            ->add('name', null, [
+                'label' => 'Nom du jeu',
+                'attr' => ['class' => 'form-control'],
+                'constraints' => [
+                    new Assert\NotBlank(),
+                    new Assert\Length(['min' => 3, 'max' => 255]),
+                ],
+            ])
+            ->add('releaseDate', DateType::class, [
+                'label' => 'Date de sortie',
+                'widget' => 'single_text',
+                'attr' => ['class' => 'form-control'],
+                'constraints' => [
+                    new Assert\NotBlank(),
+                ],
+            ])
+            ->add('createdAt', DateType::class, [
+                'label' => 'Date de création',
+                'widget' => 'single_text',
+                'attr' => ['class' => 'form-control'],
+                'constraints' => [
+                    new Assert\NotBlank(),
+                ],
+            ])
+            ->add('picture', null, [
+                'label' => 'Image',
+                'attr' => ['class' => 'form-control'],
+                'constraints' => [
+                    new Assert\Url(),
+                ],
+            ])
+            ->add('price', MoneyType::class, [
+                'label' => 'Prix',
+                'currency' => 'EUR',
+                'attr' => ['class' => 'form-control'],
+                'constraints' => [
+                    new Assert\NotBlank(),
+                    new Assert\Type(['type' => 'numeric']),
+                    new Assert\Positive(),
+                ],
+            ])
+            ->add('description', TextareaType::class, [
+                'label' => 'Description',
+                'attr' => ['class' => 'form-control', 'rows' => 5],
+                'constraints' => [
+                    new Assert\NotBlank(),
+                    new Assert\Length(['min' => 10, 'max' => 255]),
+                ],
+            ])
+            ->add('editor', null, [
+                'label' => 'Éditeur',
+                'attr' => ['class' => 'form-control'],
+                'constraints' => [
+                    new Assert\NotBlank(),
+                    new Assert\Length(['min' => 3, 'max' => 255]),
+                ],
+            ])
+            ->add('hasCategory', EntityType::class, [
+                'class' => Category::class,
+                'choice_label' => 'name',
+                'label' => 'Catégories',
+                'multiple' => true,
+                'expanded' => true,
+                'attr' => ['class' => 'form-control'],
+                'constraints' => [
+                    new Assert\NotBlank(),
+                ],
+            ])
+            ->add('hasTag', EntityType::class, [
+                'class' => Tag::class,
+                'choice_label' => 'name',
+                'label' => 'Tags',
+                'multiple' => true,
+                'expanded' => true,
+                'attr' => ['class' => 'form-control'],
+                'constraints' => [
+                    new Assert\NotBlank(),
+                ],
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

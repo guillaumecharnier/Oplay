@@ -48,7 +48,7 @@ security:
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
         - { path: ^/api,       roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/api,       roles: ROLE_ADMIN }
-        # - { path: ^/back, roles: ROLE_ADMIN }
+        #- { path: ^/, roles: ROLE_ADMIN }
         # - { path: ^/api/order/add, roles: ROLE_USER }
         # - { path: ^/api/order/remove, roles: ROLE_USER }
         # - { path: ^/api/order/clear, roles: ROLE_USER }
@@ -56,6 +56,9 @@ security:
         # - { path: ^/api/user/browse, roles: ROLE_ADMIN }
         # - { path: ^/api/user/show/*, roles: ROLE_USER }
         # - { path: ^/api/user/edit/*, roles: ROLE_USER }
+    role_hierarchy:
+        ROLE_ADMIN: [ROLE_ADMIN]
+        ROLE_USER: [ROLE_USER]
 
 when@test:
     security:
