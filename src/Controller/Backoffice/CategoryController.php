@@ -7,9 +7,12 @@ use App\Form\CategoryType;
 use App\Repository\CategoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use App\Service\PictureService;
 
 #[Route('/back/category')]
 class CategoryController extends AbstractController
@@ -23,22 +26,31 @@ class CategoryController extends AbstractController
     }
 
     #[Route('/new', name: 'app_category_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, PictureService $pictureService): Response
     {
         $category = new Category();
         $form = $this->createForm(CategoryType::class, $category);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($category);
-            $entityManager->flush();
+            $pictureFile = $form->get('pictures')->getData();
+            if ($pictureFile) {
+                $relativePath = $pictureService->add($pictureFile, 'categories');
+                $category->setPicture($relativePath);
+            }
 
-            return $this->redirectToRoute('app_category_index', [], Response::HTTP_SEE_OTHER);
+            // Persist and flush only if 'picture' is not null
+            if ($category->getPicture()) {
+                $entityManager->persist($category);
+                $entityManager->flush();
+
+                return $this->redirectToRoute('app_category_index', [], Response::HTTP_SEE_OTHER);
+            }
         }
 
         return $this->render('backoffice/category/new.html.twig', [
             'category' => $category,
-            'form' => $form,
+            'form' => $form->createView(),
         ]);
     }
 
