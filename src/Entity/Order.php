@@ -49,6 +49,10 @@ class Order
      * @var Collection<int, Game>
      */
     #[ORM\ManyToMany(targetEntity: Game::class, mappedBy: 'gameHasOrder')]
+    #[Groups([
+        'user_browse',
+        'user_show'
+    ])]
     private Collection $games;
 
     /**
