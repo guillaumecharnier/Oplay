@@ -126,6 +126,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
 
     #[ORM\OneToMany(targetEntity: Order::class, mappedBy: 'user')]
+    #[Groups([
+        'user_browse',
+        'user_show'
+    ])]
     private Collection $orders;
 
     
