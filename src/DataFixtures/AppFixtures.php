@@ -7,6 +7,7 @@ use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
 use App\Entity\Game;
 use App\Entity\Category;
+use App\Entity\GameOrder;
 use App\Entity\Tag;
 use App\Entity\User;
 use App\Entity\Theme;
@@ -794,49 +795,37 @@ class AppFixtures extends Fixture
             }
         }
 
-        // Création de commandes
-        $usersWithOrders = [];
-        $total = 0;
+        // Création de commandes pour chaque utilisateur
         foreach ($users as $user) {
-            // Vérifier si l'utilisateur a déjà une commande
-            if (in_array($user, $usersWithOrders)) {
-                continue; // Passer à l'utilisateur suivant s'il a déjà une commande
-            }
-
             // Créer la commande
             $order = new Order();
-            $order->setStatus($faker->randomElement(['pending'])); // Attribution aléatoire du statut
+            $order->setStatus($faker->randomElement(['validate', 'pending'])); // Statut de commande aléatoire parmi "validate" et "pending"
             $order->setUser($user);
             $order->setCreatedAt(\DateTimeImmutable::createFromMutable($faker->dateTimeThisYear()));
 
-            // Calculer le total de la commande
-            $total = 0;
+            // Ajouter des jeux aléatoires à la commande
             $randomGames = $faker->randomElements($gameEntityList, mt_rand(1, 5));
             foreach ($randomGames as $game) {
-                $order->addGame($game);
-                $total += $game->getPrice();
+                $gameOrder = new GameOrder();
+                $gameOrder->setGame($game);
+                $gameOrder->setOrder($order);
+                $gameOrder->setQuantity(mt_rand(1, 3)); // Exemple de quantité aléatoire
+                $gameOrder->setTotalPrice($game->getPrice() * $gameOrder->getQuantity());
+                
+                // Ajouter le GameOrder à la commande
+                $order->addGameOrder($gameOrder);
+
+                // Persiste le GameOrder
+                $manager->persist($gameOrder);
             }
+
+            // Calculer le total de la commande
+            $total = array_sum(array_map(function($gameOrder) {
+                return $gameOrder->getTotalPrice();
+            }, $order->getGameOrders()->toArray()));
             $order->setTotal($total);
 
-            $manager->persist($order);
-
-            // Marquer cet utilisateur comme ayant une commande
-            $usersWithOrders[] = $user;
-
-            // Créer ValidateOrder si cette commande est validée
-            if ($order->getStatus() === 'validated') {
-                $validateOrder = new ValidateOrder();
-                $validateOrder->setQuantity(count($order->getGames()));
-
-                $validateOrder->setTotalPrice($order->getTotal());
-                $validateOrder->addOrder($order);
-                $validateOrder->setCreatedAt(\DateTimeImmutable::createFromMutable($faker->dateTimeThisYear()));
-                foreach ($order->getGames() as $game) {
-                    $validateOrder->addGame($game);
-                }
-
-                $manager->persist($validateOrder);
-            }
+            $manager->persist($order); // Persiste la commande
         }
 
         $manager->flush();

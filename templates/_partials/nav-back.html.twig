@@ -16,10 +16,7 @@
                         <a class="nav-link {% if app.request.attributes.get('_route') == 'app_category_index' %}active{% endif %}" href="{{ path('app_category_index') }}">Catégories</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% if app.request.attributes.get('_route') == 'app_order_index' %}active{% endif %}" href="{{ path('app_order_index') }}">Paniers en cours</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if app.request.attributes.get('_route') == 'app_validate_order_index' %}active{% endif %}" href="{{ path('app_validate_order_index') }}">Commandes Validées</a>
+                        <a class="nav-link {% if app.request.attributes.get('_route') == 'app_order_main' %}active{% endif %}" href="{{ path('app_order_main') }}">Commandes</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {% if app.request.attributes.get('_route') == 'app_game_index' %}active{% endif %}" href="{{ path('app_game_index') }}">Jeux</a>

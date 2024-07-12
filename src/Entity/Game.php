@@ -66,7 +66,7 @@ class Game
     #[ORM\Column(length: 255)]
     #[Groups([
         'game_browse',
-        'game_show',
+        'game_show'
     ])]
     private ?string $description = null;
 
@@ -93,7 +93,7 @@ class Game
     #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'games')]
     #[Groups([
         'game_browse',
-        'game_show',
+        'game_show'
     ])]
     private Collection $hasCategory;
 
@@ -104,36 +104,28 @@ class Game
     private Collection $users;
 
     /**
-     * @var Collection<int, Order>
-     */
-    #[ORM\ManyToMany(targetEntity: Order::class, inversedBy: 'games')]
-    private Collection $gameHasOrder;
-
-    /**
      * @var Collection<int, UserGameKey>
      */
     #[ORM\OneToMany(targetEntity: UserGameKey::class, mappedBy: 'game')]
     private Collection $userGameKeys;
 
     /**
-     * @var Collection<int, ValidateOrder>
+     * @var Collection<int, GameOrder>
      */
-    #[ORM\ManyToMany(targetEntity: ValidateOrder::class, mappedBy: 'game')]
-    private Collection $validateOrders;
-
+    #[ORM\OneToMany(targetEntity: GameOrder::class, mappedBy: 'game')]
+    private Collection $gameOrders;
 
     public function __construct()
     {
         $this->hasTag = new ArrayCollection();
         $this->hasCategory = new ArrayCollection();
         $this->users = new ArrayCollection();
-        $this->gameHasOrder = new ArrayCollection();
+        $this->userGameKeys = new ArrayCollection();
+        $this->gameOrders = new ArrayCollection();
 
         // Initialisation de createdAt et releaseDate avec la date et l'heure actuelles
         $this->createdAt = new \DateTimeImmutable();
         $this->releaseDate = new \DateTimeImmutable();
-        $this->userGameKeys = new ArrayCollection();
-        $this->validateOrders = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -169,7 +161,6 @@ class Game
 
         return $this;
     }
-
 
     public function getPicture(): ?string
     {
@@ -294,30 +285,6 @@ class Game
         return $this;
     }
 
-    /**
-     * @return Collection<int, Order>
-     */
-    public function getGameHasOrder(): Collection
-    {
-        return $this->gameHasOrder;
-    }
-
-    public function addGameHasOrder(Order $gameHasOrder): static
-    {
-        if (!$this->gameHasOrder->contains($gameHasOrder)) {
-            $this->gameHasOrder->add($gameHasOrder);
-        }
-
-        return $this;
-    }
-
-    public function removeGameHasOrder(Order $gameHasOrder): static
-    {
-        $this->gameHasOrder->removeElement($gameHasOrder);
-
-        return $this;
-    }
-
     public function getCreatedAt(): ?\DateTimeImmutable
     {
         return $this->createdAt;
@@ -361,27 +328,30 @@ class Game
     }
 
     /**
-     * @return Collection<int, ValidateOrder>
+     * @return Collection<int, GameOrder>
      */
-    public function getValidateOrders(): Collection
+    public function getGameOrders(): Collection
     {
-        return $this->validateOrders;
+        return $this->gameOrders;
     }
 
-    public function addValidateOrder(ValidateOrder $validateOrder): static
+    public function addGameOrder(GameOrder $gameOrder): static
     {
-        if (!$this->validateOrders->contains($validateOrder)) {
-            $this->validateOrders->add($validateOrder);
-            $validateOrder->addGame($this);
+        if (!$this->gameOrders->contains($gameOrder)) {
+            $this->gameOrders->add($gameOrder);
+            $gameOrder->setGame($this);
         }
 
         return $this;
     }
 
-    public function removeValidateOrder(ValidateOrder $validateOrder): static
+    public function removeGameOrder(GameOrder $gameOrder): static
     {
-        if ($this->validateOrders->removeElement($validateOrder)) {
-            $validateOrder->removeGame($this);
+        if ($this->gameOrders->removeElement($gameOrder)) {
+            // set the owning side to null (unless already changed)
+            if ($gameOrder->getGame() === $this) {
+                $gameOrder->setGame(null);
+            }
         }
 
         return $this;

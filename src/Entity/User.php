@@ -103,15 +103,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     ])]
     private Collection $preferedTag;
 
-    /**
-     * @var Collection<int, Order>
-     */
-    #[ORM\OneToMany(targetEntity: Order::class, mappedBy: 'user')]
-    #[Groups([
-        'user_browse',
-        'user_show'
-    ])]
-    private Collection $purchasedOrder;
 
     /**
      * @var Collection<int, Game>
@@ -133,20 +124,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     ])]
     private Collection $userGameKeys;
 
-    /**
-     * @var Collection<int, ValidateOrder>
-     */
-    #[ORM\OneToMany(targetEntity: ValidateOrder::class, mappedBy: 'users')]
-    private Collection $validateOrders;
 
+    #[ORM\OneToMany(targetEntity: Order::class, mappedBy: 'user')]
+    private Collection $orders;
+
+    
     public function __construct()
     {
         $this->selectedCategory = new ArrayCollection();
         $this->preferedTag = new ArrayCollection();
-        $this->purchasedOrder = new ArrayCollection();
         $this->userGetGame = new ArrayCollection();
         $this->userGameKeys = new ArrayCollection();
-        $this->validateOrders = new ArrayCollection();
+        $this->orders = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -289,35 +278,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @return Collection<int, Order>
-     */
-    public function getPurchasedOrder(): Collection
-    {
-        return $this->purchasedOrder;
-    }
-
-    public function addPurchasedOrder(Order $purchasedOrder): static
-    {
-        if (!$this->purchasedOrder->contains($purchasedOrder)) {
-            $this->purchasedOrder->add($purchasedOrder);
-            $purchasedOrder->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removePurchasedOrder(Order $purchasedOrder): static
-    {
-        if ($this->purchasedOrder->removeElement($purchasedOrder)) {
-            // set the owning side to null (unless already changed)
-            if ($purchasedOrder->getUser() === $this) {
-                $purchasedOrder->setUser(null);
-            }
-        }
-
-        return $this;
-    }
 
     /**
      * @return Collection<int, Game>
@@ -339,6 +299,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeUserGetGame(Game $userGetGame): static
     {
         $this->userGetGame->removeElement($userGetGame);
+
+        return $this;
+    }
+    
+    /**
+     * @return Collection<int, Order>
+     */
+    public function getOrders(): Collection
+    {
+        return $this->orders;
+    }
+
+    public function addOrder(Order $order): self
+    {
+        if (!$this->orders->contains($order)) {
+            $this->orders[] = $order;
+            $order->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrder(Order $order): self
+    {
+        if ($this->orders->removeElement($order)) {
+            // set the owning side to null (unless already changed)
+            if ($order->getUser() === $this) {
+                $order->setUser(null);
+            }
+        }
 
         return $this;
     }
@@ -407,9 +397,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
-
-
-
+    
     /**
      * @see UserInterface
      */
@@ -419,33 +407,4 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // $this->plainPassword = null;
     }
 
-    /**
-     * @return Collection<int, ValidateOrder>
-     */
-    public function getValidateOrders(): Collection
-    {
-        return $this->validateOrders;
-    }
-
-    public function addValidateOrder(ValidateOrder $validateOrder): static
-    {
-        if (!$this->validateOrders->contains($validateOrder)) {
-            $this->validateOrders->add($validateOrder);
-            $validateOrder->setUsers($this);
-        }
-
-        return $this;
-    }
-
-    public function removeValidateOrder(ValidateOrder $validateOrder): static
-    {
-        if ($this->validateOrders->removeElement($validateOrder)) {
-            // set the owning side to null (unless already changed)
-            if ($validateOrder->getUsers() === $this) {
-                $validateOrder->setUsers(null);
-            }
-        }
-
-        return $this;
-    }
 }
