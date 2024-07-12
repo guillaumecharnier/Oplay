@@ -50,6 +50,10 @@ class Order
      * @var Collection<int, GameOrder>
      */
     #[ORM\OneToMany(targetEntity: GameOrder::class, mappedBy: 'order', cascade: ['persist', 'remove'])]
+    #[Groups([
+        'user_browse',
+        'user_show'
+    ])]
     private Collection $gameOrders;
 
     public function __construct()

@@ -42,10 +42,6 @@ class GameOrder
 
     #[ORM\ManyToOne(targetEntity: Order::class, inversedBy: 'gameOrders')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups([
-        'user_browse',
-        'user_show'
-    ])]
     private ?Order $order = null;
 
     public function getId(): ?int

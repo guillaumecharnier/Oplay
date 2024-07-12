@@ -23,21 +23,29 @@
                             <td>{{ order.status }}</td>
                         </tr>
                         <tr>
-                            <th>Total</th>
-                            <td>{{ order.total }} €</td>
-                        </tr>
-                        <tr>
                             <th>Games</th>
                             <td>
                                 <ul>
                                     {% for gameOrder in order.gameOrders %}
-                                        <li>
-                                            {{ gameOrder.game.name }} - {{ gameOrder.game.price }} €
-                                            {% if order.status != 'pending' %}
-                                                <a href="{{ path('app_order_main') }}" class="btn btn-warning btn-sm mb-2">Generate New Key</a>
-                                            {% endif %}
-                                        </li>
+                                        <div class="card mb-3">
+                                            <div class="card-body">
+                                                <h5 class="card-title"> Game Order n° {{ gameOrder.id }} - {{ gameOrder.game.id }} </h5>
+                                                <p class="card-text">
+                                                    {{ gameOrder.game.name }} - {{ gameOrder.game.price }} €
+                                                    <span class="badge badge-primary" style="background-color: #007bff; color: white; padding: 5px 10px; border-radius: 10px;">
+                                                        {{ gameOrder.quantity }}x
+                                                    </span>
+                                                </p>
+                                                {% if order.status != 'pending' %}
+                                                    <a href="{{ path('app_order_main') }}" class="btn btn-warning btn-sm mb-2">Generate New Key</a>
+                                                {% endif %}
+                                            </div>
+                                        </div>
                                     {% endfor %}
+                                    <tr>
+                            <th>Total</th>
+                                <td>{{ order.total }} €</td>
+                            </tr>
                                 </ul>
                             </td>
                         </tr>

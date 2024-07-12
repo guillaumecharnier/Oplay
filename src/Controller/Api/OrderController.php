@@ -5,7 +5,6 @@ namespace App\Controller\Api;
 use App\Entity\GameOrder;
 use App\Entity\Order;
 use App\Entity\UserGameKey;
-use App\Entity\ValidateOrder;
 use App\Repository\GameRepository;
 use App\Repository\OrderRepository;
 use Doctrine\ORM\EntityManagerInterface;
