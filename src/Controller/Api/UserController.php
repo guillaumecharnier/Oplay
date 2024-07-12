@@ -112,7 +112,7 @@ class UserController extends AbstractController
         return new JsonResponse(['message' => 'Utilisateur créé avec succès'], 201);
     }
 
-    #[Route('/{id}/edit', name: 'edit', methods: ['PATCH'])]
+    #[Route('/{id}', name: 'edit', methods: ['PATCH'])]
     public function edit(
         int $id,
         Request $request,

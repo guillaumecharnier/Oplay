@@ -50,7 +50,7 @@ class PictureService
         imagewebp($picture_source, $path . '/' . $fichier);
 
         // Retourner le chemin relatif
-        return 'assets/uploads/' . $folder . '/' . $fichier;
+        return 'http://localhost:8080/assets/uploads/' . $folder . '/' . $fichier;
     }
 
     public function delete(string $relativePath): bool

@@ -48,21 +48,25 @@ class Game
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups([
         'game_browse',
-        'game_show'
+        'game_show',
+        'user_browse',
+        'user_show'
     ])]
     private ?string $picture = null;
 
     #[ORM\Column]
     #[Groups([
         'game_browse',
-        'game_show'
+        'game_show',
+        'user_browse',
+        'user_show'
     ])]
     private ?float $price = null;
 
     #[ORM\Column(length: 255)]
     #[Groups([
         'game_browse',
-        'game_show'
+        'game_show',
     ])]
     private ?string $description = null;
 

@@ -20,7 +20,13 @@
                         </tr>
                         <tr>
                             <th>Picture</th>
-                            <td>{{ category.picture }}</td>
+                            <td>
+                                {% if category.picture %}
+                                    <img src="{{ asset(category.picture) }}" class="d-block w-10" alt="{{ category.name }}">
+                                {% else %}
+                                    No picture
+                                {% endif %}
+                            </td>
                         </tr>
                     </tbody>
                 </table>

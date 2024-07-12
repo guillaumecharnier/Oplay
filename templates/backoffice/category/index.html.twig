@@ -26,7 +26,6 @@
                         <td>
                             {% if category.picture %}
                                 <img src="{{ asset(category.picture) }}" class="d-block w-10" alt="{{ category.name }}">
-                                {# <img src="{{ asset('assets/uploads/categories' ~ category.picture) }}" class="img-fluid" alt="{{ category.name }}"> #}
                             {% else %}
                                 No picture
                             {% endif %}
