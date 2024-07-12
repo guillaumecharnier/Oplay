@@ -29,6 +29,7 @@ class OrderController extends AbstractController
         // Récupérer les données JSON de la requête
         $data = json_decode($request->getContent(), true);
         $gameId = $data['game_id'] ?? null;
+        $quantity = $data['quantity'] ?? 1; // Quantité par défaut : 1
 
         // Vérifier si l'ID du jeu est présent dans la requête
         if (!$gameId) {
@@ -44,7 +45,7 @@ class OrderController extends AbstractController
         // Rechercher un panier en cours pour l'utilisateur
         $order = $orderRepository->findCurrentOrderByUser($user);
 
-        // Créer un nouveau panier s'il n'existe pas déjà
+        // Si aucun panier actif n'est trouvé, en créer un nouveau
         if (!$order) {
             $order = new Order();
             $order->setUser($user);
@@ -52,25 +53,39 @@ class OrderController extends AbstractController
             $order->setCreatedAt(new \DateTimeImmutable());
         }
 
-        // Ajouter le jeu au panier
-        $order->addGame($game);
+        // Ajouter le jeu au panier avec la quantité spécifiée
+        $order->addGame($game, $quantity);
 
-        // Calculer le prix total des jeux dans le panier
+        // Calculer le total du panier en fonction des jeux et de leurs quantités
         $total = 0;
         foreach ($order->getGames() as $gameInOrder) {
-            $total += $gameInOrder->getPrice();
+            $total += $gameInOrder->getPrice() * $order->getQuantity($gameInOrder);
         }
 
-        // Mettre à jour le total dans l'Order
+        // Mettre à jour le total du panier
         $order->setTotal($total);
 
-        // Persiste et flush l'entité Order
+        // Persister et enregistrer les modifications dans la base de données
         $entityManager->persist($order);
         $entityManager->flush();
 
-        return new JsonResponse(['message' => 'Jeu ajouté au panier'], 200);
-    }
+        // Construire la réponse JSON avec les détails du panier
+        $cart = [];
+        foreach ($order->getGames() as $gameInOrder) {
+            $cart[] = [
+                'id' => $gameInOrder->getId(),
+                'name' => $gameInOrder->getName(),
+                'price' => $gameInOrder->getPrice(),
+                'quantity' => $order->getQuantity($gameInOrder),
+            ];
+        }
 
+        return new JsonResponse([
+            'message' => 'Jeu ajouté au panier',
+            'cart' => $cart,
+            'total' => $order->getTotal(),
+        ], 200);
+    }
 
     #[Route('/remove', name: 'remove', methods: ['POST'])]
     public function removeFromCart(Request $request, GameRepository $gameRepository, OrderRepository $orderRepository, EntityManagerInterface $entityManager): JsonResponse
@@ -84,6 +99,7 @@ class OrderController extends AbstractController
         // Récupérer les données JSON de la requête
         $data = json_decode($request->getContent(), true);
         $gameId = $data['game_id'] ?? null;
+        $quantity = $data['quantity'] ?? 1; // Quantité par défaut à retirer : 1
 
         // Vérifier si l'ID du jeu est présent dans la requête
         if (!$gameId) {
@@ -109,13 +125,20 @@ class OrderController extends AbstractController
             return new JsonResponse(['error' => 'Le jeu n\'est pas dans le panier'], 400);
         }
 
-        // Supprimer le jeu du panier
-        $order->removeGame($game);
+        // Réduire la quantité spécifiée du jeu dans le panier
+        $currentQuantity = $order->getQuantity($game);
+        if ($quantity >= $currentQuantity) {
+            // Si la quantité à retirer est supérieure ou égale à la quantité actuelle, retirer le jeu complètement
+            $order->removeGame($game);
+        } else {
+            // Sinon, juste réduire la quantité
+            $order->setQuantity([$game->getId() => $currentQuantity - $quantity]);
+        }
 
         // Recalculer le total
         $total = 0.0;
         foreach ($order->getGames() as $gameInOrder) {
-            $total += $gameInOrder->getPrice(); // Adapter en fonction de votre logique de calcul du total
+            $total += $gameInOrder->getPrice() * $order->getQuantity($gameInOrder);
         }
         $order->setTotal($total);
 
@@ -128,9 +151,19 @@ class OrderController extends AbstractController
 
         $entityManager->flush();
 
-        return new JsonResponse(['message' => 'Jeu retiré du panier'], 200);
-    }
+        // Construire la réponse JSON avec les détails du panier et le nouveau total
+        $cartDetails = [];
+        foreach ($order->getGames() as $gameInOrder) {
+            $cartDetails[] = [
+                'id' => $gameInOrder->getId(),
+                'name' => $gameInOrder->getName(),
+                'price' => $gameInOrder->getPrice(),
+                'quantity' => $order->getQuantity($gameInOrder),
+            ];
+        }
 
+        return new JsonResponse(['message' => 'Jeu retiré du panier', 'cart' => $cartDetails, 'total' => $order->getTotal()], 200);
+    }
     #[Route('/clear', name: 'clear_cart', methods: ['POST'])]
     public function clearCart(Request $request, OrderRepository $orderRepository, EntityManagerInterface $entityManager): JsonResponse
     {

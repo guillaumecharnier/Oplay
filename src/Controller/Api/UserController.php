@@ -39,11 +39,14 @@ class UserController extends AbstractController
         return new JsonResponse($serializedData, Response::HTTP_OK, [], true);
     }
 
-    #[Route('/{id}', name: 'show', methods: ['GET'])]
-    public function show($id, UserRepository $userRepository): JsonResponse
+    #[Route('/detail', name: 'show', methods: ['GET'])]
+    public function show(): JsonResponse
     {
         // Trouver l'utilisateur spécifié par son ID
-        $user = $userRepository->find($id);
+        $user = $this->getUser();
+        if (!$user) {
+            return new JsonResponse(['error' => 'Utilisateur non authentifié'], 401);
+        }
 
         // Si l'utilisateur n'est pas trouvé, retourner une réponse JSON avec un message d'erreur
         if (is_null($user)) {

@@ -31,7 +31,10 @@
                             <td>
                                 <ul>
                                     {% for game in order.games %}
-                                        <li>{{ game.name }} - {{ game.price }} €</li>
+                                        <li>
+                                            {{ game.name }} - {{ game.price }} € 
+                                            <span class="badge badge-primary" style="background-color: #007bff; color: white; padding: 5px 10px; border-radius: 10px;">{{ order.getQuantity(game) }}x</span>
+                                        </li>
                                     {% endfor %}
                                 </ul>
                             </td>
@@ -43,8 +46,8 @@
                     <a href="{{ path('app_order_index') }}" class="btn btn-primary btn-sm mb-2">Back to List</a>
                 </div>
                 <div class="text-center mt-3">
-                {{ include('backoffice/order/_delete_form.html.twig') }}
-            </div
+                    {{ include('backoffice/order/_delete_form.html.twig') }}
+                </div>
             </div>
         </div>
     </div>
