@@ -61,12 +61,15 @@ class Order
     #[ORM\ManyToMany(targetEntity: ValidateOrder::class, mappedBy: 'orders')]
     private Collection $validateOrders;
 
+    #[ORM\Column(type: 'json')]
+    private array $quantities = [];
+
     public function __construct()
     {
         $this->games = new ArrayCollection();
         $this->validateOrders = new ArrayCollection();
+        $this->quantities = []; // Initialisation du tableau quantities
     }
-
 
     public function getId(): ?int
     {
@@ -129,11 +132,14 @@ class Order
         return $this->games;
     }
 
-    public function addGame(Game $game): static
+    public function addGame(Game $game, int $quantity = 1): static
     {
         if (!$this->games->contains($game)) {
             $this->games->add($game);
             $game->addGameHasOrder($this);
+            $this->quantities[$game->getId()] = $quantity;
+        } else {
+            $this->quantities[$game->getId()] += $quantity;
         }
 
         return $this;
@@ -143,6 +149,21 @@ class Order
     {
         if ($this->games->removeElement($game)) {
             $game->removeGameHasOrder($this);
+            unset($this->quantities[$game->getId()]);
+        }
+
+        return $this;
+    }
+
+    public function getQuantity(Game $game): int
+    {
+        return $this->quantities[$game->getId()] ?? 0;
+    }
+
+    public function setQuantity(array $quantities): static
+    {
+        foreach ($quantities as $gameId => $quantity) {
+            $this->quantities[$gameId] = $quantity;
         }
 
         return $this;
@@ -174,6 +195,4 @@ class Order
 
         return $this;
     }
-
-
 }
