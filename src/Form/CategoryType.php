@@ -4,9 +4,12 @@ namespace App\Form;
 
 use App\Entity\Category;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\FileType; // Add this line
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\All;
+use Symfony\Component\Validator\Constraints\Image;
 
 class CategoryType extends AbstractType
 {
@@ -21,12 +24,17 @@ class CategoryType extends AbstractType
                     new Assert\Length(['min' => 3, 'max' => 25]),
                 ],
             ])
-            ->add('picture', null, [
-                'label' => 'Image',
-                'attr' => ['class' => 'form-control'],
+            ->add('pictures', FileType::class, [
+                'label' => 'Picture',
+                'multiple' => false,
+                'mapped' => false,
+                'required' => false,
                 'constraints' => [
-                    new Assert\Url(),
-                ],
+                    new Image([
+                        'maxWidth' => 1980,
+                        'maxWidthMessage' => 'L\'image doit faire {{ max_width }} pixels de large au maximum'
+                    ])
+                ]
             ]);
     }
 

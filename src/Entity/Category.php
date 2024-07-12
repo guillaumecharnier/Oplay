@@ -24,7 +24,7 @@ class Category
     ])]
     private ?int $id = null;
 
-    
+
     #[ORM\Column(length: 50)]
     #[Groups([
         'category_browse',
@@ -32,7 +32,7 @@ class Category
         'game_browse',
         'game_show',
         'user_browse',
-        'user_show' 
+        'user_show'
     ])]
     private ?string $name = null;
 
