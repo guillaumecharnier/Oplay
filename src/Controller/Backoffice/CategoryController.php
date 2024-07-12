@@ -81,9 +81,19 @@ class CategoryController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_category_delete', methods: ['POST'])]
-    public function delete(Request $request, Category $category, EntityManagerInterface $entityManager): Response
+    public function delete(Request $request, Category $category, EntityManagerInterface $entityManager, PictureService $pictureService): Response
     {
-        if ($this->isCsrfTokenValid('delete' . $category->getId(), $request->getPayload()->getString('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $category->getId(), $request->get('_token'))) {
+            // Supprimer l'image associée si elle existe
+            if ($category->getPicture()) {
+                $relativePath = $category->getPicture();
+                if ($pictureService->delete($relativePath)) {
+                } else {
+                    $this->addFlash('danger', 'La suppression de l\'image a échoué');
+                }
+            }
+
+            // Supprimer la catégorie
             $entityManager->remove($category);
             $entityManager->flush();
         }

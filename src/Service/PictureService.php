@@ -53,28 +53,21 @@ class PictureService
         return 'assets/uploads/' . $folder . '/' . $fichier;
     }
 
-    public function delete(string $fichier, ?string $folder = '', ?int $width = 250, ?int $height = 250)
+    public function delete(string $relativePath): bool
     {
-        $path = $this->params->get('pictures_directory') . $folder;
+        // Concaténer correctement le chemin du fichier
+        $filePath = $this->params->get('kernel.project_dir') . '/public/' . $relativePath;
 
-        if ($fichier !== 'defaut.webp') {
-            $success = false;
-
-            $mini = $path . '/mini/' . $width . '-' . $height . '-' . $fichier;
-
-            if (file_exists($mini)) {
-                unlink($mini);
-                $success = true;
-            }
-
-            $original = $path . '/' . $fichier;
-
-            if (file_exists($original)) {
-                unlink($original);
-                $success = true;
-            }
-            return $success;
+        // Vérifier si le fichier existe et est un fichier
+        if (file_exists($filePath) && is_file($filePath)) {
+            // Supprimer le fichier
+            unlink($filePath);
+            return true;
+        } else {
+            // Enregistrer un log si le fichier n'est pas trouvé ou n'est pas un fichier
+            error_log('File not found or not a file: ' . $filePath);
         }
+
         return false;
     }
 }
