@@ -55,6 +55,9 @@ class PictureService
 
     public function delete(string $relativePath): bool
     {
+        // Retirer le préfixe 'http://localhost:8080/' du chemin relatif
+        $relativePath = str_replace('http://localhost:8080/', '', $relativePath);
+
         // Concaténer correctement le chemin du fichier
         $filePath = $this->params->get('kernel.project_dir') . '/public/' . $relativePath;
 
