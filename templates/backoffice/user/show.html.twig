@@ -67,7 +67,7 @@
                                         <p class="card-text">
                                             Key: {{ key.gameKey|mask_key }}
                                         </p>
-                                        Issues With user key ? -> <a href="{{ path('app_game_generate_key', {'id': key.id}) }}" class="btn btn-warning btn-sm mb-2">Generate New Key</a>
+                                        Issues With user key ? -> <a href="{{ path('app_game_generate_key_user', {'id': key.id}) }}" class="btn btn-warning btn-sm mb-2">Generate New Key</a>
                                     </div>
                                 </div>
                             {% endfor %}

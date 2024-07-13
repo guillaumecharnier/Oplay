@@ -30,24 +30,28 @@
                             <th>Games</th>
                             <td>
                                 <ul>
-                                    {% for gameOrder in order.gameOrders %}
-                                        <div class="card mb-3">
-                                            <div class="card-body">
-                                                <h5 class="card-title"> Game Order n° {{ gameOrder.id }} - {{ gameOrder.game.id }} </h5>
-                                                <p class="card-text">{{ gameOrder.game.name }} - {{ gameOrder.game.price }} €</p>
-                                                {% if order.status != 'pending' %}
-                                                    {% if gameOrder.game.userGameKeys|length > 0 %}
-                                                        <p class="card-text">
-                                                            Key: {{ gameOrder.game.userGameKeys[0].gameKey|mask_key }}
-                                                        </p>
-                                                    {% else %}
-                                                        <p class="card-text">No key available</p>
-                                                    {% endif %}
-                                                    Issues With user key ? -> <a href="{{ path('app_game_generate_key', {'id': gameOrder.game.id}) }}" class="btn btn-warning btn-sm mb-2">Generate New Key</a>
-                                                {% endif %}
-                                            </div>
-                                        </div>
-                                    {% endfor %}
+                                            <li>
+                                                <h5> Order n° {{ order.id }} </h5>
+                                                {% for gameOrder in order.gameOrders %}
+                                                    <div class="card mb-3">
+                                                        <div class="card-body">
+                                                            <h5 class="card-title"> Game Order n° {{ gameOrder.id }} - {{ gameOrder.game.id }} </h5>
+                                                            <p class="card-text">{{ gameOrder.game.name }} - {{ gameOrder.game.price }} €</p>
+                                                            {% if order.status != 'pending' %}
+                                                                {% if gameOrder.game.userGameKeys|length > 0 %}
+                                                                    <p class="card-text">
+                                                                        Key: {{ gameOrder.game.userGameKeys[0].gameKey|mask_key }}
+                                                                    </p>
+                                                                {% else %}
+                                                                    <p class="card-text">No key available</p>
+                                                                {% endif %}
+                                                                Issues With user key ? -> <a href="{{ path('app_game_generate_key_order', {'id': gameOrder.game.id}) }}" class="btn btn-warning btn-sm mb-2">Generate New Key</a>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                {% endfor %}
+                                            </li>
+                                        </ul>
                                     <tr>
                             <th>Total</th>
                                 <td>{{ order.total }} €</td>
