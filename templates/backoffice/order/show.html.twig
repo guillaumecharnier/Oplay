@@ -23,6 +23,10 @@
                             <td>{{ order.status }}</td>
                         </tr>
                         <tr>
+                            <th>User</th>
+                            <td>{{ order.user.nickname }}</td>
+                        </tr>
+                        <tr>
                             <th>Games</th>
                             <td>
                                 <ul>
@@ -30,14 +34,16 @@
                                         <div class="card mb-3">
                                             <div class="card-body">
                                                 <h5 class="card-title"> Game Order n° {{ gameOrder.id }} - {{ gameOrder.game.id }} </h5>
-                                                <p class="card-text">
-                                                    {{ gameOrder.game.name }} - {{ gameOrder.game.price }} €
-                                                    <span class="badge badge-primary" style="background-color: #007bff; color: white; padding: 5px 10px; border-radius: 10px;">
-                                                        {{ gameOrder.quantity }}x
-                                                    </span>
-                                                </p>
+                                                <p class="card-text">{{ gameOrder.game.name }} - {{ gameOrder.game.price }} €</p>
                                                 {% if order.status != 'pending' %}
-                                                    <a href="{{ path('app_order_main') }}" class="btn btn-warning btn-sm mb-2">Generate New Key</a>
+                                                    {% if gameOrder.game.userGameKeys|length > 0 %}
+                                                        <p class="card-text">
+                                                            Key: {{ gameOrder.game.userGameKeys[0].gameKey|mask_key }}
+                                                        </p>
+                                                    {% else %}
+                                                        <p class="card-text">No key available</p>
+                                                    {% endif %}
+                                                    Issues With user key ? -> <a href="{{ path('app_game_generate_key', {'id': gameOrder.game.id}) }}" class="btn btn-warning btn-sm mb-2">Generate New Key</a>
                                                 {% endif %}
                                             </div>
                                         </div>

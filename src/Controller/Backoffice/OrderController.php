@@ -59,9 +59,5 @@ class OrderController extends AbstractController
         return $this->redirectToRoute('app_order_index', [], Response::HTTP_SEE_OTHER);
     }
 
-    
-
-
-
 }
 

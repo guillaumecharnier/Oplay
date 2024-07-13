@@ -757,7 +757,26 @@ class AppFixtures extends Fixture
             $user->setEmail($faker->email);
             $hashedPassword = $this->passwordHasher->hashPassword($user, 'password'); // Utilisation d'un mot de passe simple à des fins de test
             $user->setPassword($hashedPassword);
+            $user->setChooseTheme($themes[array_rand($themes)]);
             $user->setRoles([$faker->randomElement(['ROLE_ADMIN', 'ROLE_USER'])]); // Attribution aléatoire des rôles
+
+            // Assignation de catégories aléatoires à l'utilisateur
+            $randomCategoryKeys = array_rand($categoryEntityList, min(3, count($categoryEntityList)));
+            if (!is_array($randomCategoryKeys)) {
+                $randomCategoryKeys = [$randomCategoryKeys];
+            }
+            foreach ($randomCategoryKeys as $key) {
+                $user->addSelectedCategory($categoryEntityList[$key]);
+            }
+
+            // Assignation de tags aléatoires à l'utilisateur
+            $randomTagKeys = array_rand($tagEntityList, min(5, count($tagEntityList)));
+            if (!is_array($randomTagKeys)) {
+                $randomTagKeys = [$randomTagKeys];
+            }
+            foreach ($randomTagKeys as $key) {
+                $user->addPreferedTag($tagEntityList[$key]);
+            }
             $manager->persist($user);
             $users[] = $user;
 

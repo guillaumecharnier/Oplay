@@ -3,8 +3,10 @@
 namespace App\Controller\Backoffice;
 
 use App\Entity\Game;
+use App\Entity\UserGameKey;
 use App\Form\GameType;
 use App\Repository\GameRepository;
+use App\Service\GameKeyService;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Service\PictureService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -79,4 +81,19 @@ class GameController extends AbstractController
 
         return $this->redirectToRoute('app_game_index', [], Response::HTTP_SEE_OTHER);
     }
+
+    #[Route('/{id}/generate-key', name: 'app_game_generate_key', methods: ['GET','POST'])]
+    public function generateGameKey(int $id,UserGameKey $userGameKey, GameKeyService $gameKeyService): Response
+    {
+        $gameKeyService = $gameKeyService->generateNewKey($userGameKey);
+
+        $user = $userGameKey->getUser();
+
+        // Ajout d'un message flash pour afficher un message de succès
+        $this->addFlash('success', 'Nouvelle clé générée avec succès !');
+
+        return $this->redirectToRoute('app_user_show', ['id' => $user->getId()]);
+    }
 }
+    
+

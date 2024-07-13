@@ -33,21 +33,44 @@
                         <th>Email</th>
                         <td>{{ user.email }}</td>
                     </tr>
+                     <tr>
+                        <th>Selected Tags</th>
+                        <td>
+                            {% for tag in user.preferedTag %}
+                                {{ tag.name }}{% if not loop.last %}, {% endif %}
+                            {% endfor %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Selected Categories</th>
+                        <td>
+                            {% for category in user.selectedCategory %}
+                                {{ category.name }}{% if not loop.last %}, {% endif %}
+                            {% endfor %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Selected Theme</th>
+                        <td>{{ user.chooseTheme.name }}</td>
+                    </tr>
                     <tr>
                         <th>Roles</th>
                         <td>{{ user.roles ? user.roles|join(', ') : '' }}</td>
                     </tr>
                     <tr>
                         <th>Games and Keys</th>
-                        <td>
-                            <ul>
-                                {% for key in user.userGameKeys %}
-                                    <li>
-                                        <strong>Game:</strong> {{ key.game.name }}<br>
-                                        <strong>Key:</strong> {{ key }}
-                                    </li>
-                                {% endfor %}
-                            </ul>
+                         <td>
+                            {% for key in user.userGameKeys %}
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Game: {{ key.game.name }}</h5>
+                                        <p class="card-text">
+                                            Key: {{ key.gameKey|mask_key }}
+                                        </p>
+                                        Issues With user key ? -> <a href="{{ path('app_game_generate_key', {'id': key.id}) }}" class="btn btn-warning btn-sm mb-2">Generate New Key</a>
+                                    </div>
+                                </div>
+                            {% endfor %}
                         </td>
                     </tr>
                 </tbody>
