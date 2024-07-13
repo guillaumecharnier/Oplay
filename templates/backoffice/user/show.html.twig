@@ -59,29 +59,22 @@
                     </tr>
                     <tr>
                         <th>Games and Keys</th>
-<td>
-    {% for order in user.orders %}
-        <div class="card mb-3">
-            <div class="card-body">
-                <h5>Order n° {{ order.id }}</h5>
-                {% for gameOrder in order.gameOrders %}
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <h5 class="card-title">Game: {{ gameOrder.game.name }}</h5>
-                            <p class="card-text">Price: {{ gameOrder.game.price }} €</p>
-                            {% if gameOrder.game.userGameKeys|length > 0 %}
-                                <p class="card-text">Key: {{ gameOrder.game.userGameKeys[0].gameKey|mask_key }}</p>
-                            {% else %}
-                                <p class="card-text">No key available</p>
-                            {% endif %}
-                            Issues with user key? -> <a href="{{ path('app_game_generate_key_order', {'id': gameOrder.game.id}) }}" class="btn btn-warning btn-sm mb-2">Generate New Key</a>
-                        </div>
-                    </div>
-                {% endfor %}
-            </div>
-        </div>
-    {% endfor %}
-</td>
+                         <td>
+                         {% for order in user.orders %}
+                         <h5> Order n° {{ order.id }} </h5>
+                            {% for key in user.userGameKeys %}
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Game: {{ key.game.name }}</h5>
+                                        <p class="card-text">
+                                            Key: {{ key.gameKey|mask_key }}
+                                        </p>
+                                        Issues With user key ? -> <a href="{{ path('app_game_generate_key_user', {'id': key.id}) }}" class="btn btn-warning btn-sm mb-2">Generate New Key</a>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% endfor %}
+                        </td>
                     </tr>
                 </tbody>
             </table>
