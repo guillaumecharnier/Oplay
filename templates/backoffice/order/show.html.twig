@@ -29,25 +29,40 @@
                         <tr>
                             <th>Games</th>
                             <td>
-                                {% for gameOrder in order.gameOrders %}
+                                 {% for gameOrder in order.gameOrders %}
                                     <div class="card mb-3">
-                                        <div class="card-body">  
-                                                <p class="card-text">{{ gameOrder.game.name }} - {{ gameOrder.game.price }} €</p>
-                                                <p class="card-text">Quantity : {{ gameOrder.quantity }}</p>
-                                                    {% if order.status != 'pending' %}
-                                                        {% if gameOrder.game.userGameKeys|length > 0 == gameOrder.order %}
-                                                         <p class="card-text">
-                                                            Key: {{ gameOrder.game.userGameKeys[0].gameKey|mask_key }}
-                                                         </p>
-                                                         
-                                                        {% else %}
-                                                        <p class="card-text">No key available</p>
+                                        <div class="card-body">
+                                            <p class="card-text">{{ gameOrder.game.name }} - {{ gameOrder.game.price }} €</p> <!-- Nom du jeu et prix unitaire -->
+
+                                            <p class="card-text">Quantity : {{ gameOrder.quantity }}</p> <!-- Quantité du jeu -->
+
+                                            {% set orderGameKeys = [] %}
+                                            {% for userGameKey in gameOrder.game.userGameKeys %}
+                                                {% if userGameKey.user.id == order.user.id and userGameKey.game.id == gameOrder.game.id %}
+                                                    {% if userGameKey.createdAt|date('Y-m-d H:i') == gameOrder.order.createdAt |date('Y-m-d H:i') %}
+                                                        {% set orderGameKeys = orderGameKeys|merge([userGameKey]) %}
                                                     {% endif %}
-                                                Issues With user key ? -> <a href="{{ path('app_game_generate_key_order', {'id': gameOrder.game.id}) }}" class="btn btn-warning btn-sm mb-2">Generate New Key</a>
+                                                {% endif %}
+                                            {% endfor %}
+
+                                            {% if orderGameKeys|length > 0 %}
+                                                {% for userGameKey in orderGameKeys %}
+                                                    <p class="card-text">
+                                                        key : {{ userGameKey.gameKey|mask_key }}
+                                                    </p>
+                                                {% endfor %}
+                                            {% else %}
+                                                <p class="card-text">Aucune clé disponible</p>
+                                            {% endif %}
+
+                                            {% if loop.last %}
+                                                {% if order.status != 'pending' %}
+                                                    Problèmes avec la clé utilisateur ? -> <a href="{{ path('app_game_generate_key_order', {'id': gameOrder.game.id}) }}" class="btn btn-warning btn-sm mb-2">Générer une nouvelle clé</a>
+                                                {% endif %}
                                             {% endif %}
                                         </div>
                                     </div>
-                                {% endfor %}                  
+                                {% endfor %}                 
                             <tr>
                             <th>Total</th>
                                 <td>{{ order.total }} €</td>
