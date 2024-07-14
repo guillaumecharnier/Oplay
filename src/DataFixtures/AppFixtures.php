@@ -760,27 +760,27 @@ class AppFixtures extends Fixture
             $user->setChooseTheme($themes[array_rand($themes)]);
             $user->setRoles([$faker->randomElement(['ROLE_ADMIN', 'ROLE_USER'])]); // Attribution aléatoire des rôles
 
-            // Assignation de catégories aléatoires à l'utilisateur
-            $randomCategoryKeys = array_rand($categoryEntityList, min(3, count($categoryEntityList)));
-            if (!is_array($randomCategoryKeys)) {
-                $randomCategoryKeys = [$randomCategoryKeys];
-            }
-            foreach ($randomCategoryKeys as $key) {
-                $user->addSelectedCategory($categoryEntityList[$key]);
-            }
+        // Assignation de catégories aléatoires à l'utilisateur
+        $randomCategoryKeys = array_rand($categoryEntityList, min(3, count($categoryEntityList)));
+        if (!is_array($randomCategoryKeys)) {
+            $randomCategoryKeys = [$randomCategoryKeys];
+        }
+        foreach ($randomCategoryKeys as $key) {
+            $user->addSelectedCategory($categoryEntityList[$key]);
+        }
 
-            // Assignation de tags aléatoires à l'utilisateur
-            $randomTagKeys = array_rand($tagEntityList, min(5, count($tagEntityList)));
-            if (!is_array($randomTagKeys)) {
-                $randomTagKeys = [$randomTagKeys];
-            }
-            foreach ($randomTagKeys as $key) {
-                $user->addPreferedTag($tagEntityList[$key]);
-            }
-            $manager->persist($user);
-            $users[] = $user;
+        // Assignation de tags aléatoires à l'utilisateur
+        $randomTagKeys = array_rand($tagEntityList, min(5, count($tagEntityList)));
+        if (!is_array($randomTagKeys)) {
+            $randomTagKeys = [$randomTagKeys];
+        }
+        foreach ($randomTagKeys as $key) {
+            $user->addPreferedTag($tagEntityList[$key]);
+        }
+        $manager->persist($user);
+        $users[] = $user;
 
-             // Création de commandes pour chaque utilisateur
+        // Création de commandes pour chaque utilisateur
         $order = new Order();
         $order->setUser($user);
         $order->setStatus('pending');
@@ -792,12 +792,11 @@ class AppFixtures extends Fixture
             $gameOrder = new GameOrder();
             $gameOrder->setGame($game);
             $gameOrder->setOrder($order);
-            $gameOrder->setQuantity(1);
+            $gameOrder->setQuantity(mt_rand(1, 3)); // Générer une quantité aléatoire
             $gameOrder->setTotalPrice($game->getPrice() * $gameOrder->getQuantity());
             $order->addGameOrder($gameOrder);
             $manager->persist($gameOrder);
         }
-
         // Calculer le total de la commande
         $total = 0;
         foreach ($order->getGameOrders() as $gameOrder) {
@@ -820,10 +819,13 @@ class AppFixtures extends Fixture
         'status' => 'pending'
     ]);
 
-        foreach ($pendingOrders as $order) {
-            // Générer et associer des clés aléatoires aux jeux dans le panier
-            foreach ($order->getGameOrders() as $gameOrder) {
-                $game = $gameOrder->getGame();
+    foreach ($pendingOrders as $order) {
+        // Générer et associer des clés aléatoires aux jeux dans le panier
+        foreach ($order->getGameOrders() as $gameOrder) {
+            $game = $gameOrder->getGame();
+
+            // Générer une clé par quantité commandée
+            for ($j = 0; $j < $gameOrder->getQuantity(); $j++) {
                 $activationKey = $this->generateActivationKey();
 
                 // Créer une instance de UserGameKey
@@ -831,22 +833,20 @@ class AppFixtures extends Fixture
                 $userGameKey->setUser($user);
                 $userGameKey->setGame($game);
                 $userGameKey->setGameKey($activationKey);
-                $userGameKey->setCreatedAt(new \DateTimeImmutable());
+                $userGameKey->setCreatedAt($order->getCreatedAt()); // Utiliser la date de création de la commande
 
                 // Persiste l'entité UserGameKey
                 $manager->persist($userGameKey);
-
-                // Associer le jeu à l'utilisateur à travers la relation userGetGame de l'entité User
-                $user->addUserGetGame($game);
             }
-
-            // Mettre à jour le statut de la commande à 'validated'
-            $order->setStatus('validated');
         }
-    }
 
-    // Flush des changements dans la base de données
-    $manager->flush();
+        // Mettre à jour le statut de la commande à 'validated'
+        $order->setStatus('validated');
+    }
+}
+
+// Flush des changements dans la base de données
+$manager->flush();
 }
 
 // Méthode pour générer une clé aléatoire de jeu
