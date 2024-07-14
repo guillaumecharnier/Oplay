@@ -841,7 +841,7 @@ class AppFixtures extends Fixture
             }
 
             // Mettre à jour le statut de la commande à 'validated'
-            $order->setStatus('validate');
+            $order->setStatus('validated');
         }
     }
 

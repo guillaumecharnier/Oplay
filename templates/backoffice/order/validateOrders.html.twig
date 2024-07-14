@@ -24,7 +24,7 @@
                             <a href="{{ path('app_order_main') }}" class="btn btn-primary btn-sm mb-2">Back to List</a>
                         </div
                         {% for order in orders %}
-                            {% if order.status == 'validate' %}
+                            {% if order.status == 'validated' %}
                                 <tr>
                                     <td>{{ order.id }}</td>
                                     <td>{{ order.user.nickname }}</td>

@@ -97,12 +97,7 @@ class Game
     ])]
     private Collection $hasCategory;
 
-    /**
-     * @var Collection<int, User>
-     */
-    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'userGetGame')]
-    private Collection $users;
-
+    
     /**
      * @var Collection<int, UserGameKey>
      */
@@ -258,33 +253,7 @@ class Game
         return $this;
     }
 
-    /**
-     * @return Collection<int, User>
-     */
-    public function getUsers(): Collection
-    {
-        return $this->users;
-    }
-
-    public function addUser(User $user): static
-    {
-        if (!$this->users->contains($user)) {
-            $this->users->add($user);
-            $user->addUserGetGame($this);
-        }
-
-        return $this;
-    }
-
-    public function removeUser(User $user): static
-    {
-        if ($this->users->removeElement($user)) {
-            $user->removeUserGetGame($this);
-        }
-
-        return $this;
-    }
-
+    
     public function getCreatedAt(): ?\DateTimeImmutable
     {
         return $this->createdAt;

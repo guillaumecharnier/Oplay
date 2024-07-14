@@ -56,7 +56,7 @@ class OrderController extends AbstractController
             $entityManager->flush();
         }
 
-        return $this->redirectToRoute('app_order_index', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('app_order_main', [], Response::HTTP_SEE_OTHER);
     }
 
 }

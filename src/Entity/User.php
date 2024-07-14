@@ -104,15 +104,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $preferedTag;
 
 
-    /**
-     * @var Collection<int, Game>
-     */
-    #[ORM\ManyToMany(targetEntity: Game::class, inversedBy: 'users')]
-    #[Groups([
-        'user_browse',
-        'user_show'
-    ])]
-    private Collection $userGetGame;
 
     /**
      * @var Collection<int, UserGameKey>
@@ -137,7 +128,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->selectedCategory = new ArrayCollection();
         $this->preferedTag = new ArrayCollection();
-        $this->userGetGame = new ArrayCollection();
         $this->userGameKeys = new ArrayCollection();
         $this->orders = new ArrayCollection();
     }
@@ -282,30 +272,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-
-    /**
-     * @return Collection<int, Game>
-     */
-    public function getUserGetGame(): Collection
-    {
-        return $this->userGetGame;
-    }
-
-    public function addUserGetGame(Game $userGetGame): static
-    {
-        if (!$this->userGetGame->contains($userGetGame)) {
-            $this->userGetGame->add($userGetGame);
-        }
-
-        return $this;
-    }
-
-    public function removeUserGetGame(Game $userGetGame): static
-    {
-        $this->userGetGame->removeElement($userGetGame);
-
-        return $this;
-    }
     
     /**
      * @return Collection<int, Order>

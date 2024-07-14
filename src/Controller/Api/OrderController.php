@@ -54,16 +54,29 @@ class OrderController extends AbstractController
             $order->setUser($user);
             $order->setStatus('pending');
             $order->setCreatedAt(new \DateTimeImmutable());
+            $entityManager->persist($order);
         }
 
-        // Ajouter le jeu au panier avec la quantité spécifiée
-        $gameOrder = new GameOrder();
-        $gameOrder->setGame($game);
-        $gameOrder->setOrder($order);
-        $gameOrder->setQuantity($quantity);
-        $gameOrder->setTotalPrice($game->getPrice() * $quantity);
+        // Vérifier si le jeu est déjà dans le panier
+        $existingGameOrder = $order->getGameOrders()->filter(function(GameOrder $gameOrder) use ($game) {
+            return $gameOrder->getGame()->getId() === $game->getId();
+        })->first();
 
-        $order->addGameOrder($gameOrder);
+        if ($existingGameOrder) {
+            // Le jeu est déjà dans le panier, mettre à jour la quantité et le prix total
+            $existingGameOrder->setQuantity($existingGameOrder->getQuantity() + $quantity);
+            $existingGameOrder->setTotalPrice($existingGameOrder->getQuantity() * $game->getPrice());
+            $entityManager->persist($existingGameOrder);
+        } else {
+            // Le jeu n'est pas dans le panier, ajouter une nouvelle entrée
+            $gameOrder = new GameOrder();
+            $gameOrder->setGame($game);
+            $gameOrder->setOrder($order);
+            $gameOrder->setQuantity($quantity);
+            $gameOrder->setTotalPrice($game->getPrice() * $quantity);
+            $order->addGameOrder($gameOrder);
+            $entityManager->persist($gameOrder);
+        }
 
         // Calculer le total du panier en fonction des jeux et de leurs quantités
         $total = 0;
@@ -74,9 +87,7 @@ class OrderController extends AbstractController
         // Mettre à jour le total du panier
         $order->setTotal($total);
 
-        // Persister et enregistrer les modifications dans la base de données
-        $entityManager->persist($order);
-        $entityManager->persist($gameOrder);
+        // Enregistrer les modifications dans la base de données
         $entityManager->flush();
 
         // Construire la réponse JSON avec les détails du panier
@@ -127,49 +138,52 @@ class OrderController extends AbstractController
             'status' => 'pending'
         ]);
 
-        // Si aucun panier actif n'est trouvé, retourner une erreur
         if (!$order) {
-            return new JsonResponse(['error' => 'Aucune commande en cours trouvée'], 404);
+            return new JsonResponse(['error' => 'Aucun panier en cours trouvé'], 404);
         }
 
-        // Rechercher l'association GameOrder correspondant au jeu dans la commande
+        // Rechercher l'objet GameOrder correspondant au jeu dans le panier
         $gameOrder = null;
-        foreach ($order->getGameOrders() as $go) {
-            if ($go->getGame()->getId() === $gameId) {
-                $gameOrder = $go;
+        foreach ($order->getGameOrders() as $item) {
+            if ($item->getGame()->getId() === $game->getId()) {
+                $gameOrder = $item;
                 break;
             }
         }
 
         if (!$gameOrder) {
-            return new JsonResponse(['error' => 'Jeu non trouvé dans le panier'], 404);
+            return new JsonResponse(['error' => 'Le jeu n\'est pas dans le panier'], 400);
         }
 
-        // Supprimer le jeu du panier
-        $order->removeGameOrder($gameOrder);
+        // Si la quantité est supérieure à 1, diminuer la quantité
+        if ($gameOrder->getQuantity() > 1) {
+            $gameOrder->setQuantity($gameOrder->getQuantity() - 1);
+            $gameOrder->setTotalPrice($game->getPrice() * $gameOrder->getQuantity());
+        } else {
+            // Si la quantité est 1, supprimer le jeu du panier
+            $order->removeGameOrder($gameOrder);
+            $entityManager->remove($gameOrder);
+        }
 
-        // Recalculer le total du panier en fonction des jeux et de leurs quantités
+        // Calculer le nouveau total du panier
         $total = 0;
-        foreach ($order->getGameOrders() as $go) {
-            $total += $go->getTotalPrice();
+        foreach ($order->getGameOrders() as $item) {
+            $total += $item->getTotalPrice();
         }
-
-        // Mettre à jour le total du panier
         $order->setTotal($total);
 
         // Persister et enregistrer les modifications dans la base de données
         $entityManager->persist($order);
-        $entityManager->remove($gameOrder);
         $entityManager->flush();
 
-        // Construire la réponse JSON avec les détails mis à jour du panier
+        // Construire la réponse JSON avec les détails du panier
         $cart = [];
-        foreach ($order->getGameOrders() as $go) {
+        foreach ($order->getGameOrders() as $item) {
             $cart[] = [
-                'id' => $go->getGame()->getId(),
-                'name' => $go->getGame()->getName(),
-                'price' => $go->getGame()->getPrice(),
-                'quantity' => $go->getQuantity(),
+                'id' => $item->getGame()->getId(),
+                'name' => $item->getGame()->getName(),
+                'price' => $item->getGame()->getPrice(),
+                'quantity' => $item->getQuantity(),
             ];
         }
 
@@ -217,7 +231,7 @@ class OrderController extends AbstractController
     }
 
     #[Route('/checkout', name: 'checkout', methods: ['POST'])]
-    public function checkout(OrderRepository $orderRepository, EntityManagerInterface $entityManager): JsonResponse
+    public function checkout(Request $request, OrderRepository $orderRepository, EntityManagerInterface $entityManager): JsonResponse
     {
         // Récupérer l'utilisateur actuellement authentifié
         $user = $this->getUser();
@@ -225,48 +239,44 @@ class OrderController extends AbstractController
             return new JsonResponse(['error' => 'Utilisateur non authentifié'], 401);
         }
 
-        // Rechercher le panier en cours pour l'utilisateur
+        // Rechercher un panier en cours pour l'utilisateur
         $order = $orderRepository->findOneBy([
             'user' => $user,
             'status' => 'pending'
         ]);
 
-        if (!$order || $order->getGameOrders()->isEmpty()) {
-            return new JsonResponse(['error' => 'Le panier est vide'], 400);
+        if (!$order) {
+            return new JsonResponse(['error' => 'Aucun panier en cours trouvé'], 404);
         }
 
-        // Générer et associer des clés aléatoires aux jeux
-        foreach ($order->getGameOrders() as $gameOrder) {
-            $game = $gameOrder->getGame();
-            $activationKey = $this->generateActivationKey();
-
-            // Créer une instance de UserGameKey
-            $userGameKey = new UserGameKey();
-            $userGameKey->setUser($user);
-            $userGameKey->setGame($game);
-            $userGameKey->setGameKey($activationKey);
-            $userGameKey->setCreatedAt(new \DateTimeImmutable());
-
-            // Persiste l'entité UserGameKey
-            $entityManager->persist($userGameKey);
-
-            // Associer le jeu à l'utilisateur à travers la relation userGetGame de l'entité User
-            $user->addUserGetGame($game);
-        }
-
-        // Mettre à jour le statut de la commande à 'validated'
+        // Mettre à jour le statut de la commande à "validated"
         $order->setStatus('validated');
-
-        // Persiste et enregistre les modifications dans la base de données
         $entityManager->persist($order);
+
+        // Générer les clés de jeu pour chaque jeu de la commande
+        foreach ($order->getGameOrders() as $gameOrder) {
+            for ($i = 0; $i < $gameOrder->getQuantity(); $i++) {
+                $userGameKey = new UserGameKey();
+                $userGameKey->setUser($user);
+                $userGameKey->setGame($gameOrder->getGame());
+                $userGameKey->setGameKey($this->generateUniqueGameKey()); // Générer une clé de jeu unique
+                $userGameKey->setCreatedAt(new \DateTimeImmutable());
+                $entityManager->persist($userGameKey);
+            }
+        }
+
+        // Enregistrer les modifications dans la base de données
         $entityManager->flush();
 
-        return new JsonResponse(['message' => 'Commande validée avec succès'], 200);
+        return new JsonResponse(['message' => 'Commande validée'], 200);
     }
 
-    // Méthode pour générer une clé aléatoire de jeu
-    private function generateActivationKey(): string
+    /**
+     * Génère une clé de jeu unique.
+     */
+    private function generateUniqueGameKey(): string
     {
-        return bin2hex(random_bytes(16)); // Exemple de clé hexadécimale de 16 octets
+        // Logique pour générer une clé de jeu unique
+        return bin2hex(random_bytes(16));
     }
 }

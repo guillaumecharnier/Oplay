@@ -11,7 +11,7 @@
                 <table class="table table-striped">
                     <tbody>
                         <tr>
-                            <th style="width: 20%">Id</th>
+                            <th style="width: 20%">Order n° </th>
                             <td>{{ order.id }}</td>
                         </tr>
                         <tr>
@@ -29,30 +29,26 @@
                         <tr>
                             <th>Games</th>
                             <td>
-                                <ul>
-                                            <li>
-                                                <h5> Order n° {{ order.id }} </h5>
-                                                {% for gameOrder in order.gameOrders %}
-                                                    <div class="card mb-3">
-                                                        <div class="card-body">
-                                                            <h5 class="card-title"> Game Order n° {{ gameOrder.id }} - {{ gameOrder.game.id }} </h5>
-                                                            <p class="card-text">{{ gameOrder.game.name }} - {{ gameOrder.game.price }} €</p>
-                                                            {% if order.status != 'pending' %}
-                                                                {% if gameOrder.game.userGameKeys|length > 0 %}
-                                                                    <p class="card-text">
-                                                                        Key: {{ gameOrder.game.userGameKeys[0].gameKey|mask_key }}
-                                                                    </p>
-                                                                {% else %}
-                                                                    <p class="card-text">No key available</p>
-                                                                {% endif %}
-                                                                Issues With user key ? -> <a href="{{ path('app_game_generate_key_order', {'id': gameOrder.game.id}) }}" class="btn btn-warning btn-sm mb-2">Generate New Key</a>
-                                                            {% endif %}
-                                                        </div>
-                                                    </div>
-                                                {% endfor %}
-                                            </li>
-                                        </ul>
-                                    <tr>
+                                {% for gameOrder in order.gameOrders %}
+                                    <div class="card mb-3">
+                                        <div class="card-body">  
+                                                <p class="card-text">{{ gameOrder.game.name }} - {{ gameOrder.game.price }} €</p>
+                                                <p class="card-text">Quantity : {{ gameOrder.quantity }}</p>
+                                                    {% if order.status != 'pending' %}
+                                                        {% if gameOrder.game.userGameKeys|length > 0 == gameOrder.order %}
+                                                         <p class="card-text">
+                                                            Key: {{ gameOrder.game.userGameKeys[0].gameKey|mask_key }}
+                                                         </p>
+                                                         
+                                                        {% else %}
+                                                        <p class="card-text">No key available</p>
+                                                    {% endif %}
+                                                Issues With user key ? -> <a href="{{ path('app_game_generate_key_order', {'id': gameOrder.game.id}) }}" class="btn btn-warning btn-sm mb-2">Generate New Key</a>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                {% endfor %}                  
+                            <tr>
                             <th>Total</th>
                                 <td>{{ order.total }} €</td>
                             </tr>
