@@ -32,37 +32,35 @@
                                  {% for gameOrder in order.gameOrders %}
                                     <div class="card mb-3">
                                         <div class="card-body">
-                                            <p class="card-text">{{ gameOrder.game.name }} - {{ gameOrder.game.price }} €</p> <!-- Nom du jeu et prix unitaire -->
-
-                                            <p class="card-text">Quantity : {{ gameOrder.quantity }}</p> <!-- Quantité du jeu -->
+                                            <p class="card-text">{{ gameOrder.game.name }} - {{ gameOrder.game.price }} €</p>
+                                            <p class="card-text">Quantité : {{ gameOrder.quantity }}</p>
 
                                             {% set orderGameKeys = [] %}
                                             {% for userGameKey in gameOrder.game.userGameKeys %}
                                                 {% if userGameKey.user.id == order.user.id and userGameKey.game.id == gameOrder.game.id %}
-                                                    {% if userGameKey.createdAt|date('Y-m-d H:i') == gameOrder.order.createdAt |date('Y-m-d H:i') %}
+                                                    {% if userGameKey.createdAt|date('Y-m-d H:i') == gameOrder.order.createdAt|date('Y-m-d H:i') %}
                                                         {% set orderGameKeys = orderGameKeys|merge([userGameKey]) %}
                                                     {% endif %}
                                                 {% endif %}
                                             {% endfor %}
 
                                             {% if orderGameKeys|length > 0 %}
-                                                {% for userGameKey in orderGameKeys %}
-                                                    <p class="card-text">
-                                                        key : {{ userGameKey.gameKey|mask_key }}
-                                                    </p>
-                                                {% endfor %}
+                                                <ul>
+                                                    {% for userGameKey in orderGameKeys %}
+                                                        <li>
+                                                            Clé : {{ userGameKey.gameKey|mask_key }}
+                                                        </li>
+                                                        {% if order.status != 'pending' %}
+                                                            Issues -> <a href="{{ path('app_game_generate_key_order', {'id': gameOrder.game.id}) }}" class="btn btn-warning btn-sm mb-2">Generate New Key</a>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </ul>
                                             {% else %}
                                                 <p class="card-text">Aucune clé disponible</p>
                                             {% endif %}
-
-                                            {% if loop.last %}
-                                                {% if order.status != 'pending' %}
-                                                    Problèmes avec la clé utilisateur ? -> <a href="{{ path('app_game_generate_key_order', {'id': gameOrder.game.id}) }}" class="btn btn-warning btn-sm mb-2">Générer une nouvelle clé</a>
-                                                {% endif %}
-                                            {% endif %}
                                         </div>
                                     </div>
-                                {% endfor %}                 
+                                {% endfor %}             
                             <tr>
                             <th>Total</th>
                                 <td>{{ order.total }} €</td>
