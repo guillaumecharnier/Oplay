@@ -35,7 +35,8 @@ class UserType extends AbstractType
                     'User' => 'ROLE_USER',
                 ],
                 'attr' => ['class' => 'form-control'],
-            ])->add('chooseTheme', EntityType::class, [
+            ])
+            ->add('chooseTheme', EntityType::class, [
                 'class' => Theme::class,
                 'choice_label' => 'name',
                 'attr' => ['class' => 'form-control'],
@@ -54,12 +55,13 @@ class UserType extends AbstractType
                 'expanded' => true,
                 'attr' => ['class' => 'form-control'],
             ])
-            ->add('userGetGame', EntityType::class, [
+            ->add('userGameKeys', EntityType::class, [
                 'class' => Game::class,
                 'choice_label' => 'name',
                 'multiple' => true,
                 'expanded' => true,
                 'attr' => ['class' => 'form-control'],
+                'mapped' => false // Since UserGameKeys is not a direct property of User, we set this to false
             ]);
     }
 
