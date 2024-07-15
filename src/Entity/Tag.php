@@ -47,6 +47,9 @@ class Tag
     #[ORM\ManyToMany(targetEntity: Game::class, mappedBy: 'hasTag')]
     private Collection $games;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $picture = null;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
@@ -120,6 +123,18 @@ class Tag
         if ($this->games->removeElement($game)) {
             $game->removeHasTag($this);
         }
+
+        return $this;
+    }
+
+    public function getPicture(): ?string
+    {
+        return $this->picture;
+    }
+
+    public function setPicture(?string $picture): static
+    {
+        $this->picture = $picture;
 
         return $this;
     }

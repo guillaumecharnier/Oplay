@@ -74,40 +74,53 @@ class AppFixtures extends Fixture
         // Définition des données de tag
         $tagData = [
             [
-                'name' => 'Shooter'
+                'name' => 'Shooter',
+                'picture' => 'https://picsum.photos/200'
             ],
             [
-                'name' => 'Fighting'
+                'name' => 'Fighting',
+                'picture' => 'https://picsum.photos/200'
+                
             ],
             [
-                'name' => 'Stealth'
+                'name' => 'Stealth',
+                'picture' => 'https://picsum.photos/200'
             ],
             [
-                'name' => 'Open World'
+                'name' => 'Open World',
+                'picture' => 'https://picsum.photos/200'
             ],
             [
-                'name' => 'Survival'
+                'name' => 'Survival',
+                'picture' => 'https://picsum.photos/200'
             ],
             [
-                'name' => 'Exploration'
+                'name' => 'Exploration',
+                'picture' => 'https://picsum.photos/200'
             ],
             [
-                'name' => 'Fantasy'
+                'name' => 'Fantasy',
+                'picture' => 'https://picsum.photos/200'
             ],
             [
-                'name' => 'Sci-Fi'
+                'name' => 'Sci-Fi',
+                'picture' => 'https://picsum.photos/200'
             ],
             [
-                'name' => 'Turn-Based'
+                'name' => 'Turn-Based',
+                'picture' => 'https://picsum.photos/200'
             ],
             [
-                'name' => 'Real-Time'
+                'name' => 'Real-Time',
+                'picture' => 'https://picsum.photos/200'
             ],
             [
-                'name' => 'Simulation'
+                'name' => 'Simulation',
+                'picture' => 'https://picsum.photos/200'
             ],
             [
-                'name' => 'Football'
+                'name' => 'Football',
+                'picture' => 'https://picsum.photos/200'
             ],
         ];
 
@@ -116,6 +129,7 @@ class AppFixtures extends Fixture
         foreach ($tagData as $tagInfo) {
             $tag = new Tag();
             $tag->setName($tagInfo['name']);
+            $tag->setPicture($tagInfo['picture']);
             $manager->persist($tag);
             $tagEntityList[] = $tag;
         }

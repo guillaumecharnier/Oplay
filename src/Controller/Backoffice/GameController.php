@@ -97,12 +97,34 @@ class GameController extends AbstractController
         return $this->redirectToRoute('app_user_show', ['id' => $user->getId()]);
     }
 
-    #[Route('/{id}/generate-key', name: 'app_game_generate_key_order', methods: ['GET','POST'])]
-    public function generateGameKeyOrder(UserGameKey $userGameKey, GameKeyService $gameKeyService, GameOrderRepository $gameOrder): Response
-    {
-        $gameKeyService = $gameKeyService->generateNewKey($userGameKey);
+    #[Route('/{id}/generate-key', name: 'app_game_generate_key_order', methods: ['GET', 'POST'])]
+    public function generateGameKeyOrder(
+        UserGameKey $userGameKey, 
+        GameKeyService $gameKeyService, 
+        EntityManagerInterface $entityManager,
+        GameOrderRepository $gameOrderRepository
+    ): Response {
+        // Générer une nouvelle clé de jeu
+        $newKey = $gameKeyService->generateNewKey();
 
-        $order = $gameOrder->getGame()->getUserGameKeys;
+        // Mettre à jour l'objet UserGameKey avec la nouvelle clé
+        $userGameKey->setGameKey($newKey);
+
+        // Sauvegarder les changements dans la base de données
+        $entityManager->persist($userGameKey);
+        $entityManager->flush();
+
+        // Récupérer la commande associée à cette clé de jeu
+        $gameOrder = $gameOrderRepository->findOneBy([
+            'game' => $userGameKey->getGame(),
+            'order.user' => $userGameKey->getUser(),
+        ]);
+
+        if (!$gameOrder) {
+            throw $this->createNotFoundException('The game order does not exist');
+        }
+
+        $order = $gameOrder->getOrder();
 
         // Ajout d'un message flash pour afficher un message de succès
         $this->addFlash('success', 'Nouvelle clé générée avec succès !');

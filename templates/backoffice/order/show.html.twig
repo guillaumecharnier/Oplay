@@ -51,7 +51,7 @@
                                                             Clé : {{ userGameKey.gameKey|mask_key }}
                                                         </li>
                                                         {% if order.status != 'pending' %}
-                                                            Issues -> <a href="{{ path('app_game_generate_key_order', {'id': gameOrder.game.id}) }}" class="btn btn-warning btn-sm mb-2">Generate New Key</a>
+                                                            Issues -> <a href="{{ path('app_game_generate_key_order', {'id': gameOrder.id}) }}" class="btn btn-warning btn-sm mb-2">Generate New Key</a>
                                                         {% endif %}
                                                     {% endfor %}
                                                 </ul>
