@@ -56,12 +56,27 @@ class GameController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_game_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Game $game, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, Game $game, EntityManagerInterface $entityManager, PictureService $pictureService): Response
     {
         $form = $this->createForm(GameType::class, $game);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // Gérer le téléchargement de l'image
+            $pictureFile = $form->get('pictures')->getData();
+
+            if ($pictureFile) {
+                // Supprimer l'ancienne image si elle existe
+                if ($game->getPicture()) {
+                    $pictureService->delete($game->getPicture());
+                }
+
+                // Ajouter la nouvelle image
+                $relativePath = $pictureService->add($pictureFile, 'games');
+                $game->setPicture($relativePath);
+            }
+
+            $entityManager->persist($game);
             $entityManager->flush();
 
             return $this->redirectToRoute('app_game_index', [], Response::HTTP_SEE_OTHER);
@@ -69,21 +84,10 @@ class GameController extends AbstractController
 
         return $this->render('backoffice/game/edit.html.twig', [
             'game' => $game,
-            'form' => $form,
+            'form' => $form->createView(),
         ]);
     }
-
-    #[Route('/{id}', name: 'app_game_delete', methods: ['POST'])]
-    public function delete(Request $request, Game $game, EntityManagerInterface $entityManager): Response
-    {
-        if ($this->isCsrfTokenValid('delete' . $game->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($game);
-            $entityManager->flush();
-        }
-
-        return $this->redirectToRoute('app_game_index', [], Response::HTTP_SEE_OTHER);
-    }
-
+    
     #[Route('/{id}/generate-key', name: 'app_game_generate_key_user', methods: ['GET','POST'])]
     public function generateGameKeyUser(UserGameKey $userGameKey, GameKeyService $gameKeyService): Response
     {
@@ -95,41 +99,6 @@ class GameController extends AbstractController
         $this->addFlash('success', 'Nouvelle clé générée avec succès !');
 
         return $this->redirectToRoute('app_user_show', ['id' => $user->getId()]);
-    }
-
-    #[Route('/{id}/generate-key', name: 'app_game_generate_key_order', methods: ['GET', 'POST'])]
-    public function generateGameKeyOrder(
-        UserGameKey $userGameKey, 
-        GameKeyService $gameKeyService, 
-        EntityManagerInterface $entityManager,
-        GameOrderRepository $gameOrderRepository
-    ): Response {
-        // Générer une nouvelle clé de jeu
-        $newKey = $gameKeyService->generateNewKey();
-
-        // Mettre à jour l'objet UserGameKey avec la nouvelle clé
-        $userGameKey->setGameKey($newKey);
-
-        // Sauvegarder les changements dans la base de données
-        $entityManager->persist($userGameKey);
-        $entityManager->flush();
-
-        // Récupérer la commande associée à cette clé de jeu
-        $gameOrder = $gameOrderRepository->findOneBy([
-            'game' => $userGameKey->getGame(),
-            'order.user' => $userGameKey->getUser(),
-        ]);
-
-        if (!$gameOrder) {
-            throw $this->createNotFoundException('The game order does not exist');
-        }
-
-        $order = $gameOrder->getOrder();
-
-        // Ajout d'un message flash pour afficher un message de succès
-        $this->addFlash('success', 'Nouvelle clé générée avec succès !');
-
-        return $this->redirectToRoute('app_order_show', ['id' => $order->getId()]);
     }
 }
     
