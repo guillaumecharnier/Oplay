@@ -7,12 +7,12 @@ use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
 use App\Entity\Game;
 use App\Entity\Category;
+use App\Entity\GameOrder;
 use App\Entity\Tag;
 use App\Entity\User;
 use App\Entity\Theme;
 use App\Entity\Order;
 use App\Entity\UserGameKey;
-use App\Entity\ValidateOrder;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AppFixtures extends Fixture
@@ -23,7 +23,11 @@ class AppFixtures extends Fixture
     {
         $this->passwordHasher = $passwordHasher;
     }
-
+    private function getGames(ObjectManager $manager)
+    {
+        $gameRepository = $manager->getRepository(Game::class);
+        return $gameRepository->findAll();
+    }
 
     public function load(ObjectManager $manager): void
     {
@@ -70,40 +74,53 @@ class AppFixtures extends Fixture
         // Définition des données de tag
         $tagData = [
             [
-                'name' => 'Shooter'
+                'name' => 'Shooter',
+                'picture' => 'https://picsum.photos/200'
             ],
             [
-                'name' => 'Fighting'
+                'name' => 'Fighting',
+                'picture' => 'https://picsum.photos/200'
+                
             ],
             [
-                'name' => 'Stealth'
+                'name' => 'Stealth',
+                'picture' => 'https://picsum.photos/200'
             ],
             [
-                'name' => 'Open World'
+                'name' => 'Open World',
+                'picture' => 'https://picsum.photos/200'
             ],
             [
-                'name' => 'Survival'
+                'name' => 'Survival',
+                'picture' => 'https://picsum.photos/200'
             ],
             [
-                'name' => 'Exploration'
+                'name' => 'Exploration',
+                'picture' => 'https://picsum.photos/200'
             ],
             [
-                'name' => 'Fantasy'
+                'name' => 'Fantasy',
+                'picture' => 'https://picsum.photos/200'
             ],
             [
-                'name' => 'Sci-Fi'
+                'name' => 'Sci-Fi',
+                'picture' => 'https://picsum.photos/200'
             ],
             [
-                'name' => 'Turn-Based'
+                'name' => 'Turn-Based',
+                'picture' => 'https://picsum.photos/200'
             ],
             [
-                'name' => 'Real-Time'
+                'name' => 'Real-Time',
+                'picture' => 'https://picsum.photos/200'
             ],
             [
-                'name' => 'Simulation'
+                'name' => 'Simulation',
+                'picture' => 'https://picsum.photos/200'
             ],
             [
-                'name' => 'Football'
+                'name' => 'Football',
+                'picture' => 'https://picsum.photos/200'
             ],
         ];
 
@@ -112,6 +129,7 @@ class AppFixtures extends Fixture
         foreach ($tagData as $tagInfo) {
             $tag = new Tag();
             $tag->setName($tagInfo['name']);
+            $tag->setPicture($tagInfo['name']);
             $manager->persist($tag);
             $tagEntityList[] = $tag;
         }
@@ -691,7 +709,7 @@ class AppFixtures extends Fixture
         ];
 
         // Création des jeux
-        $gameEntityList = [];
+        $games = [];
         foreach ($gamesData as $gameData) {
             $game = new Game();
             $game->setName($gameData['name'])
@@ -725,13 +743,8 @@ class AppFixtures extends Fixture
             foreach ($randomTagKeys as $key) {
                 $game->addHasTag($tagEntityList[$key]);
             }
-
-            $gameEntityList[] = $game;
-        }
-
-        // Persiste tous les jeux
-        foreach ($gameEntityList as $game) {
             $manager->persist($game);
+            $games[] = $game;
         }
 
         // Création d'un utilisateur administrateur spécifique
@@ -747,7 +760,9 @@ class AppFixtures extends Fixture
         $adminUser->setRoles(['ROLE_ADMIN']); // Attribution du rôle ROLE_ADMIN à cet utilisateur
         $manager->persist($adminUser);
 
-        // Création d'utilisateurs
+        $manager->flush();
+
+        // Création de 20 utilisateurs
         $users = [];
         for ($i = 0; $i < 20; $i++) {
             $user = new User();
@@ -756,89 +771,104 @@ class AppFixtures extends Fixture
             $user->setNickname($faker->userName);
             $user->setPicture('https://picsum.photos/200/300');
             $user->setEmail($faker->email);
-            $hashedPassword = $this->passwordHasher->hashPassword($user, $faker->password);
+            $hashedPassword = $this->passwordHasher->hashPassword($user, 'password'); // Utilisation d'un mot de passe simple à des fins de test
             $user->setPassword($hashedPassword);
             $user->setChooseTheme($themes[array_rand($themes)]);
             $user->setRoles([$faker->randomElement(['ROLE_ADMIN', 'ROLE_USER'])]); // Attribution aléatoire des rôles
-            $manager->persist($user);
-            $users[] = $user;
 
-            // Assigner des jeux aléatoires à l'utilisateur
-            $randomGames = $faker->randomElements($gameEntityList, mt_rand(1, 5)); // Ajuster la plage selon les besoins
-            foreach ($randomGames as $game) {
-                $user->addUserGetGame($game);
+        // Assignation de catégories aléatoires à l'utilisateur
+        $randomCategoryKeys = array_rand($categoryEntityList, min(3, count($categoryEntityList)));
+        if (!is_array($randomCategoryKeys)) {
+            $randomCategoryKeys = [$randomCategoryKeys];
+        }
+        foreach ($randomCategoryKeys as $key) {
+            $user->addSelectedCategory($categoryEntityList[$key]);
+        }
 
-                // Créer une clé de jeu utilisateur
+        // Assignation de tags aléatoires à l'utilisateur
+        $randomTagKeys = array_rand($tagEntityList, min(5, count($tagEntityList)));
+        if (!is_array($randomTagKeys)) {
+            $randomTagKeys = [$randomTagKeys];
+        }
+        foreach ($randomTagKeys as $key) {
+            $user->addPreferedTag($tagEntityList[$key]);
+        }
+        $manager->persist($user);
+        $users[] = $user;
+
+        // Création de commandes pour chaque utilisateur
+        $order = new Order();
+        $order->setUser($user);
+        $order->setStatus('pending');
+        $order->setCreatedAt(new \DateTimeImmutable());
+
+        // Ajouter des GameOrder aléatoires à la commande
+        $randomGames = $faker->randomElements($games, mt_rand(1, 5));
+        foreach ($randomGames as $game) {
+            $gameOrder = new GameOrder();
+            $gameOrder->setGame($game);
+            $gameOrder->setOrder($order);
+            $gameOrder->setQuantity(mt_rand(1, 3)); // Générer une quantité aléatoire
+            $gameOrder->setTotalPrice($game->getPrice() * $gameOrder->getQuantity());
+            $order->addGameOrder($gameOrder);
+            $manager->persist($gameOrder);
+        }
+        // Calculer le total de la commande
+        $total = 0;
+        foreach ($order->getGameOrders() as $gameOrder) {
+            $total += $gameOrder->getTotalPrice();
+        }
+        $order->setTotal($total);
+
+        // Persiste la commande
+        $manager->persist($order);
+    }
+
+    $manager->flush();
+
+    // Rechercher les commandes en cours pour chaque utilisateur et valider les commandes
+    foreach ($users as $user) {
+    $orderRepository = $manager->getRepository(Order::class);;
+    // Rechercher les commandes en attente pour l'utilisateur
+    $pendingOrders = $orderRepository->findBy([
+        'user' => $user,
+        'status' => 'pending'
+    ]);
+
+    foreach ($pendingOrders as $order) {
+        // Générer et associer des clés aléatoires aux jeux dans le panier
+        foreach ($order->getGameOrders() as $gameOrder) {
+            $game = $gameOrder->getGame();
+
+            // Générer une clé par quantité commandée
+            for ($j = 0; $j < $gameOrder->getQuantity(); $j++) {
+                $activationKey = $this->generateActivationKey();
+
+                // Créer une instance de UserGameKey
                 $userGameKey = new UserGameKey();
                 $userGameKey->setUser($user);
                 $userGameKey->setGame($game);
-                $userGameKey->setCreatedAt(\DateTimeImmutable::createFromMutable($faker->dateTimeThisYear()));
-                $userGameKey->setGameKey(sha1($game->getName() . $game->getId())); // Générer une clé unique basée sur le nom et l'ID du jeu
+                $userGameKey->setGameKey($activationKey);
+                $userGameKey->setCreatedAt($order->getCreatedAt()); // Utiliser la date de création de la commande
 
-                $manager->persist($userGameKey); // Persiste UserGameKey
-            }
-
-            // Assigner une catégorie aléatoire à l'utilisateur
-            $randomCategories = $faker->randomElements($categoryEntityList, mt_rand(1, 5));
-            foreach ($randomCategories as $category) {
-                $user->addSelectedCategory($category);
-            }
-
-            $manager->persist($user); // Persiste l'entité utilisateur avec les catégories assignées
-            $manager->flush();
-
-            // Assigner un tag aléatoire à l'utilisateur
-            $randomTag = $faker->randomElements($tagEntityList, mt_rand(1, 5));
-            foreach ($randomTag as $tag) {
-                $user->addPreferedTag($tag);
+                // Persiste l'entité UserGameKey
+                $manager->persist($userGameKey);
             }
         }
 
-        // Création de commandes
-        $usersWithOrders = [];
-        $total = 0;
-        foreach ($users as $user) {
-            // Vérifier si l'utilisateur a déjà une commande
-            if (in_array($user, $usersWithOrders)) {
-                continue; // Passer à l'utilisateur suivant s'il a déjà une commande
-            }
-
-            // Créer la commande
-            $order = new Order();
-            $order->setStatus($faker->randomElement(['pending'])); // Attribution aléatoire du statut
-            $order->setUser($user);
-            $order->setCreatedAt(\DateTimeImmutable::createFromMutable($faker->dateTimeThisYear()));
-
-            // Calculer le total de la commande
-            $total = 0;
-            $randomGames = $faker->randomElements($gameEntityList, mt_rand(1, 5));
-            foreach ($randomGames as $game) {
-                $order->addGame($game);
-                $total += $game->getPrice();
-            }
-            $order->setTotal($total);
-
-            $manager->persist($order);
-
-            // Marquer cet utilisateur comme ayant une commande
-            $usersWithOrders[] = $user;
-
-            // Créer ValidateOrder si cette commande est validée
-            if ($order->getStatus() === 'validated') {
-                $validateOrder = new ValidateOrder();
-                $validateOrder->setQuantity(count($order->getGames()));
-
-                $validateOrder->setTotalPrice($order->getTotal());
-                $validateOrder->addOrder($order);
-                $validateOrder->setCreatedAt(\DateTimeImmutable::createFromMutable($faker->dateTimeThisYear()));
-                foreach ($order->getGames() as $game) {
-                    $validateOrder->addGame($game);
-                }
-
-                $manager->persist($validateOrder);
-            }
-        }
-
-        $manager->flush();
+        // Mettre à jour le statut de la commande à 'validated'
+        $order->setStatus('validated');
     }
 }
+
+// Flush des changements dans la base de données
+$manager->flush();
+}
+
+// Méthode pour générer une clé aléatoire de jeu
+private function generateActivationKey(): string
+{
+    return bin2hex(random_bytes(16)); // Exemple de clé hexadécimale de 16 octets
+}
+}
+

@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Order index{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <h1 class="text-center mb-4">Order index</h1>
+
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Firstname</th>
+                            <th>Lastname</th>
+                            <th>Nickname</th>
+                            <th>CreatedAt</th>
+                            <th>Status</th>
+                            <th>Total</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <div class="text-center mt-3">
+                            <a href="{{ path('app_order_main') }}" class="btn btn-primary btn-sm mb-2">Back to List</a>
+                        </div
+                        {% for order in orders %}
+                            {% if order.status == 'validated' %}
+                                <tr>
+                                    <td>{{ order.id }}</td>
+                                    <td>{{ order.user.firstname }}</td>
+                                    <td>{{ order.user.lastname }}</td>
+                                    <td>{{ order.user.nickname }}</td>
+                                    <td>{{ order.createdAt ? order.createdAt.format('Y-m-d H:i:s') : '' }}</td>
+                                    <td>{{ order.status }}</td>
+                                    <td>{{ order.total }}€</td>
+                                    <td>
+                                        <a href="{{ path('app_order_show', {'id': order.id}) }}" class="btn btn-primary btn-sm mb-2">Show</a>
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

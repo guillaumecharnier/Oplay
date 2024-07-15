@@ -11,7 +11,7 @@
                 <table class="table table-striped">
                     <tbody>
                         <tr>
-                            <th style="width: 20%">Id</th>
+                            <th style="width: 20%">Order n°</th>
                             <td>{{ order.id }}</td>
                         </tr>
                         <tr>
@@ -23,30 +23,54 @@
                             <td>{{ order.status }}</td>
                         </tr>
                         <tr>
-                            <th>Total</th>
-                            <td>{{ order.total }} €</td>
+                            <th>User</th>
+                            <td>{{ order.user.nickname }}</td>
                         </tr>
                         <tr>
                             <th>Games</th>
                             <td>
-                                <ul>
-                                    {% for game in order.games %}
-                                        <li>
-                                            {{ game.name }} - {{ game.price }} € 
-                                            <span class="badge badge-primary" style="background-color: #007bff; color: white; padding: 5px 10px; border-radius: 10px;">{{ order.getQuantity(game) }}x</span>
-                                        </li>
-                                    {% endfor %}
-                                </ul>
+                                {% for gameOrder in order.gameOrders %}
+                                    <div class="card mb-3">
+                                        <div class="card-body">
+                                            <p class="card-text">{{ gameOrder.game.name }} - {{ gameOrder.game.price }} €</p>
+                                            <p class="card-text">Quantity: {{ gameOrder.quantity }}</p>
+
+                                            {% set orderGameKeys = [] %}
+                                            {% for userGameKey in gameOrder.game.userGameKeys %}
+                                                {% if userGameKey.user.id == order.user.id and userGameKey.game.id == gameOrder.game.id %}
+                                                    {% if userGameKey.createdAt|date('Y-m-d H:i') == gameOrder.order.createdAt|date('Y-m-d H:i') %}
+                                                        {% set orderGameKeys = orderGameKeys|merge([userGameKey]) %}
+                                                    {% endif %}
+                                                {% endif %}
+                                            {% endfor %}
+
+                                            {% if orderGameKeys|length > 0 %}
+                                                <ul>
+                                                    {% for userGameKey in orderGameKeys %}
+                                                        <li>Key: {{ userGameKey.gameKey|mask_key }}</li>
+                                                    {% endfor %}
+                                                </ul>
+                                            {% else %}
+                                                <p class="card-text">No keys available</p>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                {% endfor %}
                             </td>
+                        </tr>
+                        <tr>
+                            <th>Total</th>
+                            <td>{{ order.total }} €</td>
                         </tr>
                     </tbody>
                 </table>
 
                 <div class="text-center mt-3">
-                    <a href="{{ path('app_order_index') }}" class="btn btn-primary btn-sm mb-2">Back to List</a>
+                    <a href="{{ path('app_user_show', {'id': order.user.id}) }}" class="btn btn-primary btn-sm mb-2">User Details</a>
                 </div>
+
                 <div class="text-center mt-3">
-                    {{ include('backoffice/order/_delete_form.html.twig') }}
+                    <a href="{{ path('app_order_main') }}" class="btn btn-primary btn-sm mb-2">Back to List</a>
                 </div>
             </div>
         </div>

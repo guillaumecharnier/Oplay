@@ -21,28 +21,28 @@ use Symfony\Component\Serializer\SerializerInterface;
 class UserController extends AbstractController
 {
 
-    #[Route('/', name: 'browse', methods: ['GET'])]
-    public function browse(UserRepository $userRepository, SerializerInterface $serializer): JsonResponse
-    {
-        // Récupérer tous les utilisateurs depuis le repository
-        $users = $userRepository->findAll();
+    // #[Route('/', name: 'browse', methods: ['GET'])]
+    // public function browse(UserRepository $userRepository, SerializerInterface $serializer): JsonResponse
+    // {
+    //     // Récupérer tous les utilisateurs depuis le repository
+    //     $users = $userRepository->findAll();
 
-        // Sérialiser les utilisateurs en utilisant SerializerInterface
-        $serializedData = $serializer->serialize($users, 'json', [
-            'groups' => 'user_browse',
-            'circular_reference_handler' => function ($object) {
-                return $object->getId();
-            }
-        ]);
+    //     // Sérialiser les utilisateurs en utilisant SerializerInterface
+    //     $serializedData = $serializer->serialize($users, 'json', [
+    //         'groups' => 'user_browse',
+    //         'circular_reference_handler' => function ($object) {
+    //             return $object->getId();
+    //         }
+    //     ]);
 
-        // Retourner la réponse JSON contenant les utilisateurs sérialisés
-        return new JsonResponse($serializedData, Response::HTTP_OK, [], true);
-    }
+    //     // Retourner la réponse JSON contenant les utilisateurs sérialisés
+    //     return new JsonResponse($serializedData, Response::HTTP_OK, [], true);
+    // }
 
     #[Route('/detail', name: 'show', methods: ['GET'])]
     public function show(): JsonResponse
     {
-        // Trouver l'utilisateur spécifié par son ID
+        // Récupérer l'utilisateur actuellement authentifié
         $user = $this->getUser();
         if (!$user) {
             return new JsonResponse(['error' => 'Utilisateur non authentifié'], 401);
@@ -115,20 +115,18 @@ class UserController extends AbstractController
         return new JsonResponse(['message' => 'Utilisateur créé avec succès'], 201);
     }
 
-    #[Route('/{id}', name: 'edit', methods: ['PATCH'])]
+    #[Route('/edit', name: 'edit', methods: ['PATCH'])]
     public function edit(
-        int $id,
         Request $request,
         EntityManagerInterface $entityManager,
         ValidatorInterface $validator,
         UserPasswordHasherInterface $passwordHasher
     ): JsonResponse {
-        // Récupérer l'utilisateur depuis la base de données
-        $user = $entityManager->getRepository(User::class)->find($id);
 
-        // Si l'utilisateur n'est pas trouvé, retourner une réponse JSON avec un message d'erreur
+        // Récupérer l'utilisateur actuellement authentifié
+        $user = $this->getUser();
         if (!$user) {
-            return new JsonResponse(['error' => 'Utilisateur non trouvé'], 404);
+            return new JsonResponse(['error' => 'Utilisateur non authentifié'], 401);
         }
 
         // Décoder les données JSON de la requête

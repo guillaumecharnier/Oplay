@@ -14,7 +14,7 @@ class Order
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
+    #[ORM\Column(type: 'integer')]
     #[Groups([
         'user_browse',
         'user_show'
@@ -28,47 +28,37 @@ class Order
     ])]
     private ?\DateTimeImmutable $createdAt = null;
 
-    #[ORM\Column(length: 50)]
-    #[Groups([
-        'user_browse',
-        'user_show'
-    ])]
-    private ?string $status = null;
-
-    #[ORM\Column]
+    #[ORM\Column(type: 'float')]
     #[Groups([
         'user_browse',
         'user_show'
     ])]
     private ?float $total = null;
 
-    #[ORM\ManyToOne(inversedBy: 'purchasedOrder')]
-    private ?User $user = null;
-
-    /**
-     * @var Collection<int, Game>
-     */
-    #[ORM\ManyToMany(targetEntity: Game::class, mappedBy: 'gameHasOrder')]
+    #[ORM\Column(length: 25)]
     #[Groups([
         'user_browse',
         'user_show'
     ])]
-    private Collection $games;
+    private ?string $status = null;
+
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'orders')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $user = null;
 
     /**
-     * @var Collection<int, ValidateOrder>
+     * @var Collection<int, GameOrder>
      */
-    #[ORM\ManyToMany(targetEntity: ValidateOrder::class, mappedBy: 'orders')]
-    private Collection $validateOrders;
-
-    #[ORM\Column(type: 'json')]
-    private array $quantities = [];
+    #[ORM\OneToMany(targetEntity: GameOrder::class, mappedBy: 'order', cascade: ['persist', 'remove'])]
+    #[Groups([
+        'user_browse',
+        'user_show'
+    ])]
+    private Collection $gameOrders;
 
     public function __construct()
     {
-        $this->games = new ArrayCollection();
-        $this->validateOrders = new ArrayCollection();
-        $this->quantities = []; // Initialisation du tableau quantities
+        $this->gameOrders = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -81,21 +71,9 @@ class Order
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    public function setCreatedAt(\DateTimeImmutable $createdAt): self
     {
         $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    public function getStatus(): ?string
-    {
-        return $this->status;
-    }
-
-    public function setStatus(string $status): static
-    {
-        $this->status = $status;
 
         return $this;
     }
@@ -105,9 +83,21 @@ class Order
         return $this->total;
     }
 
-    public function setTotal(float $total): static
+    public function setTotal(float $total): self
     {
         $this->total = $total;
+
+        return $this;
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(string $status): self
+    {
+        $this->status = $status;
 
         return $this;
     }
@@ -117,7 +107,7 @@ class Order
         return $this->user;
     }
 
-    public function setUser(?User $user): static
+    public function setUser(?User $user): self
     {
         $this->user = $user;
 
@@ -125,74 +115,31 @@ class Order
     }
 
     /**
-     * @return Collection<int, Game>
-     */
-    public function getGames(): Collection
-    {
-        return $this->games;
-    }
+    * @return Collection<int, GameOrder>
+    */
+   public function getGameOrders(): Collection
+   {
+       return $this->gameOrders;
+   }
 
-    public function addGame(Game $game, int $quantity = 1): static
-    {
-        if (!$this->games->contains($game)) {
-            $this->games->add($game);
-            $game->addGameHasOrder($this);
-            $this->quantities[$game->getId()] = $quantity;
-        } else {
-            $this->quantities[$game->getId()] += $quantity;
-        }
+   public function addGameOrder(GameOrder $gameOrder): static
+   {
+       if (!$this->gameOrders->contains($gameOrder)) {
+           $this->gameOrders[] = $gameOrder;
+           $gameOrder->setOrder($this);
+       }
 
-        return $this;
-    }
+       return $this;
+   }
 
-    public function removeGame(Game $game): static
-    {
-        if ($this->games->removeElement($game)) {
-            $game->removeGameHasOrder($this);
-            unset($this->quantities[$game->getId()]);
-        }
+   public function removeGameOrder(GameOrder $gameOrder): static
+   {
+       $this->gameOrders->removeElement($gameOrder);
+       // set the owning side to null (unless already changed)
+       if ($gameOrder->getOrder() === $this) {
+           $gameOrder->setOrder(null);
+       }
 
-        return $this;
-    }
-
-    public function getQuantity(Game $game): int
-    {
-        return $this->quantities[$game->getId()] ?? 0;
-    }
-
-    public function setQuantity(array $quantities): static
-    {
-        foreach ($quantities as $gameId => $quantity) {
-            $this->quantities[$gameId] = $quantity;
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, ValidateOrder>
-     */
-    public function getValidateOrders(): Collection
-    {
-        return $this->validateOrders;
-    }
-
-    public function addValidateOrder(ValidateOrder $validateOrder): static
-    {
-        if (!$this->validateOrders->contains($validateOrder)) {
-            $this->validateOrders->add($validateOrder);
-            $validateOrder->addOrder($this);
-        }
-
-        return $this;
-    }
-
-    public function removeValidateOrder(ValidateOrder $validateOrder): static
-    {
-        if ($this->validateOrders->removeElement($validateOrder)) {
-            $validateOrder->removeOrder($this);
-        }
-
-        return $this;
-    }
+       return $this;
+   }
 }

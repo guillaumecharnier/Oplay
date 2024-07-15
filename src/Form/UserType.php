@@ -35,7 +35,8 @@ class UserType extends AbstractType
                     'User' => 'ROLE_USER',
                 ],
                 'attr' => ['class' => 'form-control'],
-            ])->add('chooseTheme', EntityType::class, [
+            ])
+            ->add('chooseTheme', EntityType::class, [
                 'class' => Theme::class,
                 'choice_label' => 'name',
                 'attr' => ['class' => 'form-control'],
@@ -53,14 +54,9 @@ class UserType extends AbstractType
                 'multiple' => true,
                 'expanded' => true,
                 'attr' => ['class' => 'form-control'],
-            ])
-            ->add('userGetGame', EntityType::class, [
-                'class' => Game::class,
-                'choice_label' => 'name',
-                'multiple' => true,
-                'expanded' => true,
-                'attr' => ['class' => 'form-control'],
             ]);
+            
+            
     }
 
     public function configureOptions(OptionsResolver $resolver): void

@@ -8,11 +8,13 @@ use App\Entity\Tag;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\Image;
 
 class GameType extends AbstractType
 {
@@ -43,12 +45,17 @@ class GameType extends AbstractType
                     new Assert\NotBlank(),
                 ],
             ])
-            ->add('picture', null, [
-                'label' => 'Image',
-                'attr' => ['class' => 'form-control'],
+            ->add('pictures', FileType::class, [
+                'label' => 'Picture',
+                'multiple' => false,
+                'mapped' => false,
+                'required' => false,
                 'constraints' => [
-                    new Assert\Url(),
-                ],
+                    new Image([
+                        'maxWidth' => '1080',
+                        'maxWidthMessage' => 'L\'image doit faire {{ max_width }} pixels de large au maximum'
+                    ])
+                ]
             ])
             ->add('price', MoneyType::class, [
                 'label' => 'Prix',

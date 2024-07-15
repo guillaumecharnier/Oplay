@@ -31,7 +31,11 @@
                         <td>{{ game.name }}</td>
                         <td>{{ game.releaseDate ? game.releaseDate|date('Y-m-d') : '' }}</td>
                         <td>{{ game.createdAt ? game.createdAt|date('Y-m-d') : '' }}</td>
-                        <td>{{ game.picture }}</td>
+                        <td>{% if game.picture %}
+                                <img src="{{ asset(game.picture) }}" class="d-block w-10" alt="{{ game.name }}">
+                            {% else %}
+                                No picture
+                            {% endif %}</td>
                         <td>{{ game.price }}</td>
                         <td>{{ game.description }}</td>
                         <td>{{ game.editor }}</td>

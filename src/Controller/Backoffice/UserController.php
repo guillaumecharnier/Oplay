@@ -2,6 +2,7 @@
 
 namespace App\Controller\Backoffice;
 
+use App\Entity\Order;
 use App\Entity\User;
 use App\Form\UserType;
 use App\Repository\UserRepository;
