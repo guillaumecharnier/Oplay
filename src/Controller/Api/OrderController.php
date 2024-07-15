@@ -109,90 +109,94 @@ class OrderController extends AbstractController
     }
 
     #[Route('/remove', name: 'remove', methods: ['POST'])]
-    public function removeFromCart(Request $request, GameRepository $gameRepository, OrderRepository $orderRepository, EntityManagerInterface $entityManager): JsonResponse
-    {
-        // Récupérer l'utilisateur actuellement authentifié
-        $user = $this->getUser();
-        if (!$user) {
-            return new JsonResponse(['error' => 'Utilisateur non authentifié'], 401);
-        }
-
-        // Récupérer les données JSON de la requête
-        $data = json_decode($request->getContent(), true);
-        $gameId = $data['game_id'] ?? null;
-
-        // Vérifier si l'ID du jeu est présent dans la requête
-        if (!$gameId) {
-            return new JsonResponse(['error' => 'ID du jeu requis'], 400);
-        }
-
-        // Rechercher le jeu correspondant à l'ID
-        $game = $gameRepository->find($gameId);
-        if (!$game) {
-            return new JsonResponse(['error' => 'Jeu non trouvé'], 404);
-        }
-
-        // Rechercher un panier en cours pour l'utilisateur
-        $order = $orderRepository->findOneBy([
-            'user' => $user,
-            'status' => 'pending'
-        ]);
-
-        if (!$order) {
-            return new JsonResponse(['error' => 'Aucun panier en cours trouvé'], 404);
-        }
-
-        // Rechercher l'objet GameOrder correspondant au jeu dans le panier
-        $gameOrder = null;
-        foreach ($order->getGameOrders() as $item) {
-            if ($item->getGame()->getId() === $game->getId()) {
-                $gameOrder = $item;
-                break;
-            }
-        }
-
-        if (!$gameOrder) {
-            return new JsonResponse(['error' => 'Le jeu n\'est pas dans le panier'], 400);
-        }
-
-        // Si la quantité est supérieure à 1, diminuer la quantité
-        if ($gameOrder->getQuantity() > 1) {
-            $gameOrder->setQuantity($gameOrder->getQuantity() - 1);
-            $gameOrder->setTotalPrice($game->getPrice() * $gameOrder->getQuantity());
-        } else {
-            // Si la quantité est 1, supprimer le jeu du panier
-            $order->removeGameOrder($gameOrder);
-            $entityManager->remove($gameOrder);
-        }
-
-        // Calculer le nouveau total du panier
-        $total = 0;
-        foreach ($order->getGameOrders() as $item) {
-            $total += $item->getTotalPrice();
-        }
-        $order->setTotal($total);
-
-        // Persister et enregistrer les modifications dans la base de données
-        $entityManager->persist($order);
-        $entityManager->flush();
-
-        // Construire la réponse JSON avec les détails du panier
-        $cart = [];
-        foreach ($order->getGameOrders() as $item) {
-            $cart[] = [
-                'id' => $item->getGame()->getId(),
-                'name' => $item->getGame()->getName(),
-                'price' => $item->getGame()->getPrice(),
-                'quantity' => $item->getQuantity(),
-            ];
-        }
-
-        return new JsonResponse([
-            'message' => 'Jeu retiré du panier',
-            'cart' => $cart,
-            'total' => $order->getTotal(),
-        ], 200);
+public function removeFromCart(Request $request, GameRepository $gameRepository, OrderRepository $orderRepository, EntityManagerInterface $entityManager): JsonResponse
+{
+    // Récupérer l'utilisateur actuellement authentifié
+    $user = $this->getUser();
+    if (!$user) {
+        return new JsonResponse(['error' => 'Utilisateur non authentifié'], 401);
     }
+
+    // Récupérer les données JSON de la requête
+    $data = json_decode($request->getContent(), true);
+    $gameId = $data['game_id'] ?? null;
+
+    // Vérifier si l'ID du jeu est présent dans la requête
+    if (!$gameId) {
+        return new JsonResponse(['error' => 'ID du jeu requis'], 400);
+    }
+
+    // Rechercher le jeu correspondant à l'ID
+    $game = $gameRepository->find($gameId);
+    if (!$game) {
+        return new JsonResponse(['error' => 'Jeu non trouvé'], 404);
+    }
+
+    // Rechercher un panier en cours pour l'utilisateur
+    $order = $orderRepository->findOneBy([
+        'user' => $user,
+        'status' => 'pending'
+    ]);
+
+    if (!$order) {
+        return new JsonResponse(['error' => 'Aucun panier en cours trouvé'], 404);
+    }
+
+    // Rechercher l'objet GameOrder correspondant au jeu dans le panier
+    $gameOrder = null;
+    foreach ($order->getGameOrders() as $item) {
+        if ($item->getGame()->getId() === $game->getId()) {
+            $gameOrder = $item;
+            break;
+        }
+    }
+
+    if (!$gameOrder) {
+        return new JsonResponse(['error' => 'Le jeu n\'est pas dans le panier'], 400);
+    }
+
+    // Si la quantité est supérieure à 1, diminuer la quantité
+    if ($gameOrder->getQuantity() > 1) {
+        $gameOrder->setQuantity($gameOrder->getQuantity() - 1);
+        $gameOrder->setTotalPrice($game->getPrice() * $gameOrder->getQuantity());
+    } else {
+        // Si la quantité est 1, supprimer le jeu du panier
+        $order->removeGameOrder($gameOrder);
+        $entityManager->remove($gameOrder);
+    }
+
+    // Calculer le nouveau total du panier
+    $total = 0;
+    foreach ($order->getGameOrders() as $item) {
+        $total += $item->getTotalPrice();
+    }
+    $order->setTotal($total);
+
+    // Si le panier est vide, le supprimer
+    if ($order->getGameOrders()->isEmpty()) {
+        $entityManager->remove($order);
+    }
+
+    // Persister et enregistrer les modifications dans la base de données
+    $entityManager->flush();
+
+    // Construire la réponse JSON avec les détails du panier
+    $cart = [];
+    foreach ($order->getGameOrders() as $item) {
+        $cart[] = [
+            'id' => $item->getGame()->getId(),
+            'name' => $item->getGame()->getName(),
+            'price' => $item->getGame()->getPrice(),
+            'quantity' => $item->getQuantity(),
+        ];
+    }
+
+    return new JsonResponse([
+        'message' => 'Jeu retiré du panier',
+        'cart' => $cart,
+        'total' => $order->getTotal(),
+    ], 200);
+}
 
     #[Route('/clear', name: 'clear', methods: ['POST'])]
     public function clearCart(OrderRepository $orderRepository, EntityManagerInterface $entityManager): JsonResponse
