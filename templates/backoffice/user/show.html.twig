@@ -51,7 +51,11 @@
                     </tr>
                     <tr>
                         <th>Selected Theme</th>
-                        <td>{{ user.chooseTheme.name }}</td>
+                        <td>
+                        {% if user.chooseTheme is not null %}
+                            {{ user.chooseTheme.name }}
+                        {% endif %}
+                        </td>
                     </tr>
                     <tr>
                         <th>Roles</th>

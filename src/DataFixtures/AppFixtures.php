@@ -129,7 +129,7 @@ class AppFixtures extends Fixture
         foreach ($tagData as $tagInfo) {
             $tag = new Tag();
             $tag->setName($tagInfo['name']);
-            $tag->setPicture($tagInfo['picture']);
+            $tag->setPicture($tagInfo['name']);
             $manager->persist($tag);
             $tagEntityList[] = $tag;
         }
@@ -759,6 +759,8 @@ class AppFixtures extends Fixture
         $adminUser->setChooseTheme($themes[array_rand($themes)]);
         $adminUser->setRoles(['ROLE_ADMIN']); // Attribution du rôle ROLE_ADMIN à cet utilisateur
         $manager->persist($adminUser);
+
+        $manager->flush();
 
         // Création de 20 utilisateurs
         $users = [];

@@ -11,7 +11,7 @@
                 <table class="table table-striped">
                     <tbody>
                         <tr>
-                            <th style="width: 20%">Order n° </th>
+                            <th style="width: 20%">Order n°</th>
                             <td>{{ order.id }}</td>
                         </tr>
                         <tr>
@@ -29,11 +29,11 @@
                         <tr>
                             <th>Games</th>
                             <td>
-                                 {% for gameOrder in order.gameOrders %}
+                                {% for gameOrder in order.gameOrders %}
                                     <div class="card mb-3">
                                         <div class="card-body">
                                             <p class="card-text">{{ gameOrder.game.name }} - {{ gameOrder.game.price }} €</p>
-                                            <p class="card-text">Quantité : {{ gameOrder.quantity }}</p>
+                                            <p class="card-text">Quantity: {{ gameOrder.quantity }}</p>
 
                                             {% set orderGameKeys = [] %}
                                             {% for userGameKey in gameOrder.game.userGameKeys %}
@@ -47,26 +47,27 @@
                                             {% if orderGameKeys|length > 0 %}
                                                 <ul>
                                                     {% for userGameKey in orderGameKeys %}
-                                                        <li>
-                                                            Key : {{ userGameKey.gameKey|mask_key }}
-                                                        </li>
+                                                        <li>Key: {{ userGameKey.gameKey|mask_key }}</li>
                                                     {% endfor %}
                                                 </ul>
                                             {% else %}
-                                                <p class="card-text">Aucune clé disponible</p>
+                                                <p class="card-text">No keys available</p>
                                             {% endif %}
                                         </div>
                                     </div>
-                                {% endfor %}             
-                            <tr>
-                            <th>Total</th>
-                                <td>{{ order.total }} €</td>
-                            </tr>
-                                </ul>
+                                {% endfor %}
                             </td>
+                        </tr>
+                        <tr>
+                            <th>Total</th>
+                            <td>{{ order.total }} €</td>
                         </tr>
                     </tbody>
                 </table>
+
+                <div class="text-center mt-3">
+                    <a href="{{ path('app_user_show', {'id': order.user.id}) }}" class="btn btn-primary btn-sm mb-2">User Details</a>
+                </div>
 
                 <div class="text-center mt-3">
                     <a href="{{ path('app_order_main') }}" class="btn btn-primary btn-sm mb-2">Back to List</a>

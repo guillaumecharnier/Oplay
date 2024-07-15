@@ -27,7 +27,6 @@ class OrderController extends AbstractController
     {
         return $this->render('backoffice/order/pendingOrders.html.twig', [
             'orders' => $orderRepository->findAll(),
-
         ]);
     }
 

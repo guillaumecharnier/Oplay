@@ -44,11 +44,10 @@ class UserController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_user_show', methods: ['GET'])]
-    public function show(User $user, Order $order): Response
+    public function show(User $user): Response
     {
         return $this->render('backoffice/user/show.html.twig', [
             'user' => $user,
-            'order' => $order,
         ]);
     }
 

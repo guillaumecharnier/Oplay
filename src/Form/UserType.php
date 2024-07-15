@@ -54,15 +54,9 @@ class UserType extends AbstractType
                 'multiple' => true,
                 'expanded' => true,
                 'attr' => ['class' => 'form-control'],
-            ])
-            ->add('userGameKeys', EntityType::class, [
-                'class' => Game::class,
-                'choice_label' => 'name',
-                'multiple' => true,
-                'expanded' => true,
-                'attr' => ['class' => 'form-control'],
-                'mapped' => false // Since UserGameKeys is not a direct property of User, we set this to false
             ]);
+            
+            
     }
 
     public function configureOptions(OptionsResolver $resolver): void
