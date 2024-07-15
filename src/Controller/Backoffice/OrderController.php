@@ -47,17 +47,5 @@ class OrderController extends AbstractController
             'order' => $order,
         ]);
     }
-
-    #[Route('/{id}', name: 'app_order_delete', methods: ['POST'])]
-    public function delete(Request $request, Order $order, EntityManagerInterface $entityManager): Response
-    {
-        if ($this->isCsrfTokenValid('delete'.$order->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($order);
-            $entityManager->flush();
-        }
-
-        return $this->redirectToRoute('app_order_main', [], Response::HTTP_SEE_OTHER);
-    }
-
 }
 
