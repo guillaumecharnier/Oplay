@@ -18,6 +18,7 @@
                             <tr>
                                 <th>Id</th>
                                 <th>Name</th>
+                                <th>Picture</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -26,6 +27,13 @@
                                 <tr>
                                     <td>{{ tag.id }}</td>
                                     <td>{{ tag.name }}</td>
+                                    <td>
+                            {% if tag.picture %}
+                                <img src="{{ asset(tag.picture) }}" class="d-block w-10" alt="{{ tag.name }}">
+                            {% else %}
+                                No picture
+                            {% endif %}
+                        </td>
                                     <td>
                                         <a href="{{ path('app_tag_show', {'id': tag.id}) }}" class="btn btn-primary btn-sm">Show</a>
                                         <a href="{{ path('app_tag_edit', {'id': tag.id}) }}" class="btn btn-secondary btn-sm">Edit</a>
