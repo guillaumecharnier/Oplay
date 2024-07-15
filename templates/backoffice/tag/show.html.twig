@@ -19,6 +19,16 @@
                                 <th>Name</th>
                                 <td>{{ tag.name }}</td>
                             </tr>
+                            <tr>
+                            <th>Picture</th>
+                            <td>
+                                {% if tag.picture %}
+                                    <img src="{{ asset(tag.picture) }}" class="d-block w-10" alt="{{ tag.name }}">
+                                {% else %}
+                                    No picture
+                                {% endif %}
+                            </td>
+                        </tr>
                         </tbody>
                     </table>
                 </div>

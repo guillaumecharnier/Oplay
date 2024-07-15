@@ -12,6 +12,8 @@
                     <thead>
                         <tr>
                             <th>Id</th>
+                            <th>Firstname</th>
+                            <th>Lastname</th>
                             <th>Nickname</th>
                             <th>CreatedAt</th>
                             <th>Status</th>
@@ -27,6 +29,8 @@
                             {% if order.status == 'validated' %}
                                 <tr>
                                     <td>{{ order.id }}</td>
+                                    <td>{{ order.user.firstname }}</td>
+                                    <td>{{ order.user.lastname }}</td>
                                     <td>{{ order.user.nickname }}</td>
                                     <td>{{ order.createdAt ? order.createdAt.format('Y-m-d H:i:s') : '' }}</td>
                                     <td>{{ order.status }}</td>
