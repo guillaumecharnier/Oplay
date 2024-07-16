@@ -44,11 +44,11 @@ class AppFixtures extends Fixture
                 'picture' => 'https://picsum.photos/200',
             ],
             [
-                'name' => 'RPG',
+                'name' => 'Horror',
                 'picture' => 'https://picsum.photos/200',
             ],
             [
-                'name' => 'Strategy',
+                'name' => 'Multiplayer',
                 'picture' => 'https://picsum.photos/200',
             ],
             [

@@ -35,6 +35,8 @@ bin/console doctrine:database:create
 bin/console make:migration
 # appliquer les migrations
 bin/console doctrine:migration:migrate
+# appliquer une fixture
+bin/console doctrine:fixtures:load
 # crée une jwt key pair (à chaque deploy)
 bin/console lexik:jwt:generate-keypair
 ```
