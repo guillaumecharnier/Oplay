@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/api/game', name: 'app_api_game_')]
+#[Route('/public/api/game', name: 'app_api_game_')]
 class GameController extends AbstractController
 {
     #[Route('/', name: 'browse', methods: "GET")]

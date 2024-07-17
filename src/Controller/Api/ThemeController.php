@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/api/theme', name: 'app_api_theme_')]
+#[Route('/public/api/theme', name: 'app_api_theme_')]
 class ThemeController extends AbstractController
 {
     #[Route('/', name: 'browse', methods: "GET")]

@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
-#[Route('/api/tag', name: 'app_api_tag_')]
+#[Route('/public/api/tag', name: 'app_api_tag_')]
 class TagController extends AbstractController
 {
     #[Route('/', name: 'browse', methods: "GET")]

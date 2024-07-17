@@ -45,17 +45,10 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        - { path: ^/api/login, roles: PUBLIC_ACCESS }
-        # - { path: ^/api,       roles: IS_AUTHENTICATED_FULLY }
-        # - { path: ^/api,       roles: ROLE_ADMIN }
-        #- { path: ^/, roles: ROLE_ADMIN }
-        # - { path: ^/api/order/add, roles: ROLE_USER }
-        # - { path: ^/api/order/remove, roles: ROLE_USER }
-        # - { path: ^/api/order/clear, roles: ROLE_USER }
-        # - { path: ^/api/order/checkout, roles: ROLE_USER }
-        # - { path: ^/api/user/browse, roles: ROLE_ADMIN }
-        # - { path: ^/api/user/show/*, roles: ROLE_USER }
-        # - { path: ^/api/user/edit/*, roles: ROLE_USER }
+        - { path: ^/api/login_check, roles: PUBLIC_ACCESS }
+        - { path: ^/public,       roles: PUBLIC_ACCESS }
+        - { path: ^/api,       roles: IS_AUTHENTICATED_FULLY }
+
     role_hierarchy:
         ROLE_ADMIN: [ROLE_ADMIN]
         ROLE_USER: [ROLE_USER]
