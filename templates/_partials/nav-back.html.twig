@@ -1,16 +1,24 @@
 <!-- Nav -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
-        <a href="{{ path('app_main_home') }}" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none header-logo">
-            
-            <span class="header-logo__title">O'Play</span>
-        </a>
+        {% if app.request.attributes.get('_route') != 'app_main_home' and app.request.attributes.get('_route') != 'app_login' %}
+            <a href="{{ path('app_main_home') }}" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none header-logo">
+                <span class="header-logo__title">O'Play</span>
+            </a>
+        {% endif %}
+        
         <a class="nav-link active text-white" href="http://localhost:5173/">Front</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
             <span class="navbar-toggler-icon"></span>
         </button>
+        <form action="{{ path('app_logout') }}" method="post" style="display: none;" id="logout-form">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('logout') }}">
+        </form>
+
+        <a class="nav-link active text-white" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Déconnexion</a>
+        
         <div class="collapse navbar-collapse justify-content-center" id="navbarSupportedContent">
-            {% if app.request.attributes.get('_route') != 'app_main_home' %}
+            {% if app.request.attributes.get('_route') != 'app_main_home' and app.request.attributes.get('_route') != 'app_login' %}
                 <ul class="navbar-nav mb-2 mb-lg-0">
                     <li class="nav-item">
                         <a class="nav-link {% if app.request.attributes.get('_route') == 'app_category_index' %}active{% endif %}" href="{{ path('app_category_index') }}">Catégories</a>

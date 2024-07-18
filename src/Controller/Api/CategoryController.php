@@ -10,7 +10,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
 
-#[Route('/api/category', name: 'app_api_category_')]
+#[Route('/public/api/category', name: 'app_api_category_')]
 class CategoryController extends AbstractController
 {
     #[Route('/', name: 'browse', methods: "GET")]
