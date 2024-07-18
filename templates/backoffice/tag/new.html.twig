@@ -7,9 +7,7 @@
         <div class="w-50">
             <h1 class="text-center">Create new Tag</h1>
 
-            <form method="post">
-                {{ form_start(form) }}
-                {{ form_widget(form) }}
+            {{ include('backoffice/tag/_form.html.twig') }}
 
                 <div class="text-center mt-3">
                     <button type="submit" class="btn btn-secondary">Save</button>
