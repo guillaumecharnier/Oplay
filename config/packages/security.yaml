@@ -48,7 +48,6 @@ security:
     access_control:
         - { path: ^/api/login_check, roles: PUBLIC_ACCESS }
         - { path: ^/public,       roles: PUBLIC_ACCESS }
-        - { path: ^/api/register,       roles: }
         - { path: ^/api,       roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/back/, roles: ROLE_ADMIN }
 
