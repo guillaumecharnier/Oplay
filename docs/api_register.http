@@ -1,0 +1,12 @@
+### Register User
+POST http://localhost:8080/public/api/register
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3MjEzMDQ5MjEsImV4cCI6MTcyMTMwODUyMSwicm9sZXMiOlsiUk9MRV9BRE1JTiIsIlJPTEVfVVNFUiJdLCJ1c2VybmFtZSI6ImFkbWluQG9wbGF5LmZyIn0.A75s-QCikl-2uWkxTXX_0FS9xHY-kDwBxgpVM8G_ewHAd7vKnRN8x6FXouQaByiYDoxvC7tTbwIQX0_GWjzAV_Y6LWbpy5pSRDZ737lK2ultrXf7S2xHaEwEBvJ-OxWA8dUgcV44AYGfJlAIccSKGrZ8Wy2_NbC7xzDKJsA5cg3KvC6niWFIpwi6s8mFaalN2_svv7OtR89uFgNZ6TfujYq2J1XG_UqCwrz1dhkxuOhmUTzeUfSC8WtjHd7zbVfM09_8Wy4V1SFQd1AiwFGmCTbTQpi7doWtQrB70rOYYSk3WMwwOX-XAd2SE6WTaOJrgnYwPs_FGvDtvz68GoCVFA
+
+{
+    "firstname": "Gui",
+    "lastname": "Gui",
+    "nickname": "GIOM",
+    "email": "gui.@oplay.fr",
+    "password": "123",
+    "picture": ""
+}

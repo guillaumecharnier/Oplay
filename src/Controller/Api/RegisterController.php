@@ -12,7 +12,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 
-#[Route('/public/api', name: 'app_api_user_')]
+#[Route('/public/api', name: 'app_api_register_')]
 class RegisterController extends AbstractController
 {
 

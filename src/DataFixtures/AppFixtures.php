@@ -129,7 +129,7 @@ class AppFixtures extends Fixture
         foreach ($tagData as $tagInfo) {
             $tag = new Tag();
             $tag->setName($tagInfo['name']);
-            $tag->setPicture($tagInfo['name']);
+            $tag->setPicture($tagInfo['picture']);
             $manager->persist($tag);
             $tagEntityList[] = $tag;
         }
